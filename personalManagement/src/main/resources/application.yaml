@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://124.223.38.131:3306/springdb?useUnicode=true&characterEncoding=utf-8&&useSSL=false
+    username: root
+    password: Tfboys20011222
+  redis:
+    host: 124.223.38.131
+    port: 6379
+    password: root
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.titos.studentinfosystem.model
+YK:
+  sys-conf:
+    enable-mail-register: true
