@@ -1,6 +1,8 @@
 package com.titos.personalmanagement.service;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.user.query.LoginQuery;
+import com.titos.info.user.vo.LoginVo;
 import com.titos.personalmanagement.model.User;
 
 /**
@@ -28,4 +30,19 @@ public interface UserService {
      * @return 检验结果
      */
     boolean isEmailExisted(String email);
+
+    /**
+     * 登录操作
+     * @param loginQuery
+     * @return
+     */
+    CommonResult<LoginVo> login(LoginQuery loginQuery);
+
+    /**
+     * 注册时邮箱验证操作
+     * @param username 用户名
+     * @param key redis中用户的key
+     * @return 验证的结果
+     */
+    CommonResult<LoginVo> verifyEmail(String username, String key);
 }

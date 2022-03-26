@@ -11,16 +11,23 @@ spring:
     password: root
   mail:
     host: smtp.qq.com
+    port: 465
     username: titos_yunke@qq.com
-    password: ugpukiriifardfge
-
-
+    password: xbayvkiinblkdcee
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.titos.studentinfosystem.model
+  type-aliases-package: com.titos.personalmanagement
 YK:
   sys-conf:
     enable-mail-register: true
-    front-end-url: 124.223.38.131
-    mail-sender: YUNKE
+    front-end-url: 127.0.0.1:8080
+    mail-sender: titos_yunke@qq.com
+  token:
+    secretKey: YUNKE
