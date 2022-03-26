@@ -1,5 +1,6 @@
 package com.titos.personalmanagement.dao;
 
+import com.titos.info.user.query.LoginQuery;
 import com.titos.personalmanagement.model.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -23,4 +24,11 @@ public interface UserDao {
      * @return 用户id
      */
     Integer selectIdDynamic(User user);
+
+    /**
+     * 根据用户名或邮箱来查询用户
+     * @param loginQuery 接收前端的参数封装的类
+     * @return 返回查询的用户对象
+     */
+    User selectUserToLogin(LoginQuery loginQuery);
 }

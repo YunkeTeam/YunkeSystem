@@ -1,13 +1,14 @@
-package com.titos.personalmanagement.rpc.impl;
+package com.titos.personalmanagement.mail.impl;
 
 import com.titos.info.mailbox.ToEmail;
 import com.titos.personalmanagement.config.YkSysConf;
 import com.titos.personalmanagement.model.User;
-import com.titos.personalmanagement.rpc.MailHandler;
+import com.titos.personalmanagement.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Repository;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter;
  * 发送邮件的实现类
  * @author Titos
  */
+@Repository
 public class MailHandlerImpl implements MailHandler {
     @Autowired
     private YkSysConf ykSysConf;
@@ -61,13 +63,14 @@ public class MailHandlerImpl implements MailHandler {
      */
     private ToEmail createPostEmail(String[] receiver, String key, String username) {
         // 获取ip地址
-        String url = ykSysConf.getFrontEndUrl();
+        String host = ykSysConf.getFrontEndUrl();
+        String url = "http://"+host+"/user/verifyEmail/key/username" ;
         // 当前发送邮件的时间
         String sendTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
         String subject = "云客系统注册平台验证";
         String content = "<html>\n" +
                 "<body>\n" +
-                "    <h1>亲爱的username你好!你于sendtime在云客平台发起了注册，如果是你本人需要点击url来验证是你的本人</h1>\n" +
+                "    <div>亲爱的"+username+"你好!你于"+sendTime+"在云客平台发起了注册，如果是你本人需要点击url来验证是否你的本人</div>\n" +
                 "</body>\n" +
                 "</html>";
         return new ToEmail(receiver, subject, content);

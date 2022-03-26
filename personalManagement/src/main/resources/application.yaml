@@ -18,9 +18,11 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.titos.studentinfosystem.model
+  type-aliases-package: com.titos.personalmanagement
 YK:
   sys-conf:
     enable-mail-register: true
-    front-end-url: 124.223.38.131
+    front-end-url: 124.223.38.131:8080
     mail-sender: YUNKE
+  token:
+    secretKey: YUNKE

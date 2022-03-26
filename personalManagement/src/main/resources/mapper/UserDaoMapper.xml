@@ -32,4 +32,19 @@
             </choose>
         </where>
     </select>
+
+    <select id="selectUserToLogin" resultMap="BaseResult">
+        select id, username, email, person_type, password
+        from user
+        <where>
+            <choose>
+                <when test="email != null and email != ''">
+                    and email = #{email, jdbcType = VARCHAR}
+                </when>
+                <otherwise>
+                    and username = #{username, jdbcType = VARCHAR}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
 </mapper>

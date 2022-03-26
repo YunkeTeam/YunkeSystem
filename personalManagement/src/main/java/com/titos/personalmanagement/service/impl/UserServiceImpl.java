@@ -2,15 +2,26 @@ package com.titos.personalmanagement.service.impl;
 
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
+import com.titos.info.user.query.LoginQuery;
+import com.titos.info.user.vo.LoginVo;
 import com.titos.personalmanagement.cache.UserInfoCache;
 import com.titos.personalmanagement.config.YkSysConf;
 import com.titos.personalmanagement.dao.UserDao;
+import com.titos.personalmanagement.factory.LoginQueryFactory;
+import com.titos.personalmanagement.factory.UserFactory;
 import com.titos.personalmanagement.model.User;
+import com.titos.personalmanagement.mail.MailHandler;
 import com.titos.personalmanagement.service.UserService;
 import com.titos.tool.check.VerifyPasswordUtil;
 import com.titos.tool.check.VerifyStringUtil;
+import com.titos.tool.token.CustomStatement;
+import com.titos.tool.token.TokenContent;
+import com.titos.tool.token.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -26,6 +37,8 @@ public class UserServiceImpl implements UserService {
     private YkSysConf ykSysConf;
     @Autowired
     private UserInfoCache userInfoCache;
+    @Autowired
+    private MailHandler mailHandler;
 
     @Override
     public CommonResult register(User user) {
@@ -39,9 +52,32 @@ public class UserServiceImpl implements UserService {
         if (ykSysConf.getEnableMailRegister()) {
             // 将用户数据暂时存储到redis
             String key = userInfoCache.cacheInfo(user);
-            boolean isSuccess =
+            boolean isSuccess = mailHandler.sendAccountVerify(user, key);
+            if (isSuccess) {
+                return new CommonResult(StatusEnum.SUCCESS.getCode(), "发送注册邮件成功");
+            } else {
+                return new CommonResult(StatusEnum.MAIL_ERROR.getCode(), "邮件发送失败");
+            }
+        } else {
+            User newUser = doRegister(user);
+            return new CommonResult(StatusEnum.SUCCESS.getCode(), newUser, "注册");
         }
-        return null;
+    }
+
+    /**
+     * 进行注册，将注册信息
+     * @param user
+     * @return
+     */
+    private User doRegister(User user) {
+        // 加密后存储
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodePwd = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodePwd);
+        UserFactory userFactory = new UserFactory();
+        User newUser = userFactory.build(user);
+        userDao.addNewUser(newUser);
+        return newUser;
     }
 
     /**
@@ -68,6 +104,45 @@ public class UserServiceImpl implements UserService {
         Integer userId = userDao.selectIdDynamic(userQuery);
         return userId != null;
     }
+
+    @Override
+    public CommonResult<LoginVo> login(LoginQuery loginQuery) {
+        // 根据前端传递的参数查找数据库中的数据
+        User user = userDao.selectUserToLogin(loginQuery);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        // 如果存在该用户
+        if (passwordEncoder.matches(loginQuery.getPassword(), user.getPassword())) {
+            // JWT的payload中的自定义的私有字段
+            CustomStatement customStatement = new CustomStatement();
+            customStatement.setId(user.getId());
+            customStatement.setUsername(user.getUsername());
+            customStatement.setRole(user.getPersonType());
+            TokenContent tokenContent = new TokenContent(customStatement, ykSysConf.getTokenSecretKey());
+            String token = TokenUtil.buildToken(tokenContent);
+            LoginVo loginVo = new LoginVo(token, user.getId(), user.getUsername());
+            return new CommonResult<>(StatusEnum.SUCCESS.getCode(), loginVo, "登录成功");
+        }
+        return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "密码错误");
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Override
+    public CommonResult<LoginVo> verifyEmail(String username, String key) {
+        User user = userInfoCache.getInfoByKey(key);
+        if (user == null) {
+            return new CommonResult<>(StatusEnum.PARAM_ERROR.getCode(), "用户信息不存在");
+        }
+        // 验证数据是否重复
+        Optional<CommonResult> res = verifyUser(user);
+        // 数据重复
+        if (res.isPresent()) {
+            return res.get();
+        }
+        User newUser = doRegister(user);
+        LoginQuery loginQuery = new LoginQueryFactory().build(user);
+        return login(loginQuery);
+    }
+
 
     /**
      * 验证用户的密码是否符合要求，数据库中是否有相同的用户名和邮箱

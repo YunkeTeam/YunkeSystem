@@ -1,4 +1,4 @@
-package com.titos.personalmanagement.rpc;
+package com.titos.personalmanagement.mail;
 
 import com.titos.personalmanagement.model.User;
 
