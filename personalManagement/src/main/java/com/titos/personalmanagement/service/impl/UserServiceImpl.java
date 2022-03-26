@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         if (ykSysConf.getEnableMailRegister()) {
             // 将用户数据暂时存储到redis
             String key = userInfoCache.cacheInfo(user);
-            boolean isSuccess =
+            boolean isSuccess = false;
         }
         return null;
     }
