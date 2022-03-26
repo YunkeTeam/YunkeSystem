@@ -50,6 +50,10 @@ public enum StatusEnum {
      */
     FILE_SIZE_ERROR(408),
     /**
+     * 验证错误
+     */
+    VERIFY_ERROR(409),
+    /**
      * 文件保存错误
      */
     FILE_SAVE_ERROR(500);

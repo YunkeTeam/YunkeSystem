@@ -24,7 +24,7 @@ public class UserLoginAndRegisterController {
      * @param user
      * @return
      */
-    @PostMapping("/singUp")
+    @PostMapping("/signUp")
     public CommonResult register(@RequestBody User user) {
         return userService.register(user);
     }

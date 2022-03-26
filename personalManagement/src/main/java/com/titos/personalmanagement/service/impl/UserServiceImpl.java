@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
-    public CommonResult<LoginVo> verifyEmail(String username, String key) {
+    public CommonResult verifyEmail(String username, String key) {
         User user = userInfoCache.getInfoByKey(key);
         if (user == null) {
             return new CommonResult<>(StatusEnum.PARAM_ERROR.getCode(), "用户信息不存在");
@@ -138,9 +138,12 @@ public class UserServiceImpl implements UserService {
         if (res.isPresent()) {
             return res.get();
         }
-        User newUser = doRegister(user);
-        LoginQuery loginQuery = new LoginQueryFactory().build(user);
-        return login(loginQuery);
+        try {
+            doRegister(user);
+            return new CommonResult(StatusEnum.SUCCESS.getCode(), "注册成功");
+        } catch (Exception e) {
+            return new CommonResult(StatusEnum.VERIFY_ERROR.getCode(), "注册失败");
+        }
     }
 
 

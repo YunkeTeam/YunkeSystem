@@ -37,7 +37,7 @@ public class TokenUtil {
                 .setExpiration(expireDate)
                 .setIssuer(tokenContent.getJwtIssuer())
                 .setAudience(tokenContent.getJwtAud())
-                .signWith(SignatureAlgorithm.ES256, tokenContent.getSecretKey())
+                .signWith(SignatureAlgorithm.HS256, tokenContent.getSecretKey())
                 .compact();
         return jwtToken;
     }

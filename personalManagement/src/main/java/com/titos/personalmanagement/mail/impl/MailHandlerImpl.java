@@ -7,9 +7,11 @@ import com.titos.personalmanagement.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDate;
@@ -23,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 public class MailHandlerImpl implements MailHandler {
     @Autowired
     private YkSysConf ykSysConf;
-    @Autowired
+    @Resource
     private JavaMailSender mailSender;
     @Override
     public boolean sendAccountVerify(User user, String key) {
@@ -47,6 +49,7 @@ public class MailHandlerImpl implements MailHandler {
                 mailSender.send(message);
                 return true;
             } catch (MailException e) {
+                e.printStackTrace();
                 return false;
             }
         } catch (MessagingException e) {
@@ -64,13 +67,13 @@ public class MailHandlerImpl implements MailHandler {
     private ToEmail createPostEmail(String[] receiver, String key, String username) {
         // 获取ip地址
         String host = ykSysConf.getFrontEndUrl();
-        String url = "http://"+host+"/user/verifyEmail/key/username" ;
+        String url = "http://"+host+"/user/verifyEmail/"+key+"/" + username ;
         // 当前发送邮件的时间
         String sendTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
         String subject = "云客系统注册平台验证";
         String content = "<html>\n" +
                 "<body>\n" +
-                "    <div>亲爱的"+username+"你好!你于"+sendTime+"在云客平台发起了注册，如果是你本人需要点击url来验证是否你的本人</div>\n" +
+                "    <div>亲爱的"+username+"你好!你于"+sendTime+"在云客平台发起了注册，如果是你本人需要点击<a href=\""+url+"\">YUNKE验证平台</a>来验证是否你的本人。(有效时间30分钟)</div>\n" +
                 "</body>\n" +
                 "</html>";
         return new ToEmail(receiver, subject, content);
