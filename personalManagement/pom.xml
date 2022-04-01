@@ -98,20 +98,6 @@
             <version>2.2.7.RELEASE</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>1.2.8</version>
-        </dependency>
-
-        <!-- added MySQL support -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-
     </dependencies>
 
     <build>

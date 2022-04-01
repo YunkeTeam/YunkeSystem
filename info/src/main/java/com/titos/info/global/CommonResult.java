@@ -32,4 +32,7 @@ public class CommonResult<T> {
     public CommonResult(Integer code, T data) {
         this(code, data, null);
     }
+
+
+
 }
