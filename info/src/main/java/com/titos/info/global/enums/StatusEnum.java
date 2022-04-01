@@ -62,7 +62,11 @@ public enum StatusEnum {
     /**
      * 文件保存错误
      */
-    FILE_SAVE_ERROR(500, "文件保存错误");
+    FILE_SAVE_ERROR(500, "文件保存错误"),
+    /**
+     * 失败
+     */
+    FAIL(51000, "操作失败");
 
     /**
      * 状态码
