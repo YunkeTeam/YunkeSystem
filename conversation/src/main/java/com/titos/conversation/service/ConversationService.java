@@ -1,8 +1,7 @@
-package com.titos.conversation.dao;
+package com.titos.conversation.service;
 
-import com.titos.conversation.vo.User;
+import com.titos.conversation.vo.Message;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**
@@ -12,9 +11,9 @@ import java.util.List;
  * @Description:
  */
 @Service
-public class conversationService {
+public class ConversationService {
 
-    public List<User> selectAllConnection() {
+    public List<Message> selectAllConnection() {
         return null;
     }
 }

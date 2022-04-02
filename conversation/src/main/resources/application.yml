@@ -1,6 +1,17 @@
 spring:
+
+  port: 8080
   application:
     name: conversation
 
-server:
-  port: 8080
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://124.223.38.131:3306/yunke?useUnicode=true&characterEncoding=utf-8&&useSSL=false
+      username: root
+      password: root
+
+# mybatis 配置
+mybatis:
+  mapper-locations:
+    - classpath:mappers/*.xml

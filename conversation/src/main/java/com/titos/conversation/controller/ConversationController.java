@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping("/conversation")
-public class conversationController {
+public class ConversationController {
 
     @GetMapping("/startChat")
     public ModelAndView startChat(String token, String uid) {
