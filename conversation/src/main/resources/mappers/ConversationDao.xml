@@ -3,9 +3,19 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace 写接口的全限定名 -->
-<mapper namespace="">
+<mapper namespace="com.titos.conversation.dao.ConversationDao">
     <!-- id写接口里面的方法 ，返回类型是类-->
-    <select id="" resultType="">
-        
+    <select id="selectAllDialog" resultType="com.titos.conversation.po.MessagePO">
+        select id,
+               send_id as sendId,
+               receive_id as receiveId,
+               content,
+               image_addr as imageAddr,
+               release_time as releaseTime,
+               is_complete as isComplete
+        from message
+        where (send_id = #{id} and receive_id = #{otherId})
+           or (send_id = #{otherId} and receive_id = #{id})
     </select>
+
 </mapper>
