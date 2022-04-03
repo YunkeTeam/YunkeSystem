@@ -10,9 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("com.titos.conversation.dao")
 public class ConversationApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ConversationApplication.class, args);
     }
-
 }

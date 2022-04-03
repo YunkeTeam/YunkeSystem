@@ -97,6 +97,7 @@
             <artifactId>spring-cloud-context</artifactId>
             <version>2.2.7.RELEASE</version>
         </dependency>
+
     </dependencies>
 
     <build>

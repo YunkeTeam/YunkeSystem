@@ -30,7 +30,11 @@
       <option name="IGNORE_JAVADOC_PERIOD" value="true" />
       <option name="IGNORE_DUPLICATED_THROWS" value="false" />
       <option name="IGNORE_POINT_TO_ITSELF" value="false" />
+<<<<<<< HEAD
       <option name="myAdditionalJavadocTags" value="date,Version:,DateTime:,Author:,Description:" />
+=======
+      <option name="myAdditionalJavadocTags" value="date,ClassName,Description,Author,Date" />
+>>>>>>> main
     </inspection_tool>
   </profile>
 </component>
