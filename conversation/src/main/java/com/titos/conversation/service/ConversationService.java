@@ -1,6 +1,6 @@
 package com.titos.conversation.service;
 
-import com.titos.conversation.vo.Message;
+import com.titos.conversation.po.Message;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -11,9 +11,7 @@ import java.util.List;
  * @Description:
  */
 @Service
-public class ConversationService {
+public interface ConversationService {
 
-    public List<Message> selectAllConnection() {
-        return null;
-    }
+    public List<Message> selectAllConnection();
 }

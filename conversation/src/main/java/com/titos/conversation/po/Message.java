@@ -1,5 +1,6 @@
-package com.titos.conversation.vo;
+package com.titos.conversation.po;
 
+import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
  * @Version: 1.0.0
  * @Description:
  */
-
+@Data
 public class Message {
     private Long id;
     private Long sendId;
