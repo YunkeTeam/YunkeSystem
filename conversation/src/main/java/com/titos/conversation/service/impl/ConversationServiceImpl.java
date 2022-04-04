@@ -28,4 +28,19 @@ public class ConversationServiceImpl implements ConversationService {
         List<MessagePO> messagePOList = conversationDao.selectAllDialog(id, otherId);
         return new CommonResult<>(true, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg(), messagePOList);
     }
+
+    @Override
+    public CommonResult<Boolean> deleteDialog(Integer id, Integer otherId) {
+        return null;
+    }
+
+    @Override
+    public CommonResult<Boolean> sendDialog(Integer id, Integer otherId, String message) {
+        return null;
+    }
+
+    @Override
+    public CommonResult<Boolean> addFriend(Integer id, Integer otherId) {
+        return null;
+    }
 }

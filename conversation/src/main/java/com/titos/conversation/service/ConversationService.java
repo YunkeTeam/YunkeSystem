@@ -22,4 +22,30 @@ public interface ConversationService {
      * @return 返回两个人的所有对话信息
      */
     CommonResult<List<MessagePO>> selectAllDialog(Integer id, Integer otherId);
+
+    /**
+     * 删除对话
+     * @param id 发起者id
+     * @param otherId 被删除者id
+     * @return 返回删除情况
+     */
+    CommonResult<Boolean> deleteDialog(Integer id, Integer otherId);
+
+    /**
+     * 发送信息
+     * @param id 发送者id
+     * @param otherId 接收者id
+     * @param message 发送的消息
+     * @return 返回接收情况
+     */
+    CommonResult<Boolean> sendDialog(Integer id, Integer otherId, String message);
+
+    /**
+     * 添加好友
+     * @param id 添加者
+     * @param otherId 被添加者
+     * @return 返回是否添加成功
+     */
+    CommonResult<Boolean> addFriend(Integer id, Integer otherId);
+
 }

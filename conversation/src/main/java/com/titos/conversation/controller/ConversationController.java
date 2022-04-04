@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +31,14 @@ public class ConversationController {
     @Autowired
     ConversationServiceImpl service;
 
-    @GetMapping("/clickAvatar")
-    @ResponseBody
-    public String startDialog(ModelMap model, String token, String id) {
+    /**
+     * 用户点击交流框，会返回与被点击头像私信用户的所有聊天信息。
+     * @param model model
+     * @param token 传入token
+     * @param id 点击用户的 id
+     */
+    @GetMapping("/clickBox")
+    public void startDialog(ModelMap model, String token, String id) {
         CommonResult<List<MessagePO>> commonResult = null;
         try {
             Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
@@ -45,6 +48,65 @@ public class ConversationController {
             commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
         }
         model.addAttribute("commonResult", commonResult);
-        return commonResult.toString();
     }
+
+
+    /**
+     * 删除两个用户交流的所有信息
+     * @param model model
+     * @param token 传入token
+     * @param id 被删除的用户的 id
+     */
+    @DeleteMapping("/deleteDialog")
+    public void deleteDialog(ModelMap model, String token, String id) {
+        CommonResult<Boolean> commonResult = null;
+        try {
+            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer otherUserId = Integer.parseInt(id);
+            commonResult = service.deleteDialog(userId, otherUserId);
+        }catch (ExpiredJwtException e) {
+            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        }
+        model.addAttribute("commonResult", commonResult);
+    }
+
+    /**
+     * 发送聊天信息
+     * @param model model
+     * @param token 传入token
+     * @param id 接收者的id
+     * @param message 传输的信息
+     */
+    @PostMapping("/sendMessage")
+    public void sendMessage(ModelMap model, String token, String id, String message) {
+        CommonResult<Boolean> commonResult = null;
+        try {
+            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer otherUserId = Integer.parseInt(id);
+            commonResult = service.sendDialog(userId, otherUserId,message);
+        }catch (ExpiredJwtException e) {
+            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        }
+        model.addAttribute("commonResult", commonResult);
+    }
+
+    /**
+     * 添加好友
+     * @param model model
+     * @param token 传入token
+     * @param id 被加好友的id
+     */
+    @PostMapping("/addFriend")
+    public void addFriend(ModelMap model, String token, String id) {
+        CommonResult<Boolean> commonResult = null;
+        try {
+            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer otherUserId = Integer.parseInt(id);
+            commonResult = service.addFriend(userId, otherUserId);
+        }catch (ExpiredJwtException e) {
+            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        }
+        model.addAttribute("commonResult", commonResult);
+    }
+
 }
