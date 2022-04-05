@@ -2,6 +2,7 @@ package com.titos.conversation.controller;
 
 import com.sun.deploy.net.HttpResponse;
 import com.titos.conversation.po.MessagePO;
+import com.titos.conversation.service.ConversationService;
 import com.titos.conversation.service.impl.ConversationServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
@@ -29,7 +30,7 @@ import java.util.List;
 public class ConversationController {
 
     @Autowired
-    ConversationServiceImpl service;
+    ConversationService service;
 
     /**
      * 用户点击交流框，会返回与被点击头像私信用户的所有聊天信息。
@@ -44,7 +45,7 @@ public class ConversationController {
             Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.selectAllDialog(userId, otherUserId);
-        }catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
         }
         model.addAttribute("commonResult", commonResult);

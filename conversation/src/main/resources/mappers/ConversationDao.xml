@@ -18,4 +18,26 @@
            or (send_id = #{otherId} and receive_id = #{id})
     </select>
 
+    <delete id="deleteDialog">
+        delete from message
+        where (send_id = #{id} and receive_id = #{otherId})
+           or (send_id = #{otherId} and receive_id = #{id})
+    </delete>
+
+    <insert id="insertDialog">
+        insert into message(send_id, receive_id, content, image_addr, release_time, is_complete)
+        values(#{id}, #{otherId}, #{message}, #{message}, now(), 0)
+    </insert>
+
+    <insert id="insertFriend">
+        insert into contactperson(user_id, friend_id)
+        values(#{id}, #{otherId})
+    </insert>
+
+    <delete id="deleteFriend">
+        delete from contactperson
+        where  (user_id = #{id} and friend_id = #{otherId})
+           or (friend_id = #{otherId} and user_id = #{id})
+    </delete>
+
 </mapper>
