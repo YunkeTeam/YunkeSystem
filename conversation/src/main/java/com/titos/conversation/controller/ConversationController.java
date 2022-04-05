@@ -42,7 +42,7 @@ public class ConversationController {
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.selectAllDialog(userId, otherUserId);
         }catch (ExpiredJwtException e) {
-            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+            commonResult = new CommonResult<>(StatusEnum.TOKEN_ERROR.getCode(), null, StatusEnum.TOKEN_ERROR.getMsg());
         }
         model.addAttribute("commonResult", commonResult);
         return commonResult.toString();

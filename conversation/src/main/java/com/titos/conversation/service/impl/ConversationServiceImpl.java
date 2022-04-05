@@ -26,6 +26,6 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     public CommonResult<List<MessagePO>> selectAllDialog(Integer id, Integer otherId) {
         List<MessagePO> messagePOList = conversationDao.selectAllDialog(id, otherId);
-        return new CommonResult<>(true, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg(), messagePOList);
+        return CommonResult.success(messagePOList);
     }
 }
