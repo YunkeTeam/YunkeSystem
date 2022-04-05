@@ -20,6 +20,13 @@ spring:
         smtp:
           socketFactory:
             class: javax.net.ssl.SSLSocketFactory
+  application:
+    name: web_addmin
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        register-enabled: true
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -31,3 +38,6 @@ YK:
     mail-sender: titos_yunke@qq.com
   token:
     secretKey: YUNKE
+server:
+  port: 8001
+

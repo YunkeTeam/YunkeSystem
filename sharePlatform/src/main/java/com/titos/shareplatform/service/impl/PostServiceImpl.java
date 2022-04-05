@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
             List<CommentDTO> commentList = commentDao.listUserByPostId(sharePlatform.getId());
             sharePlatform.setCommentList(commentList);
         }
-        return CommonResult.ok(listSharePlatform);
+        return CommonResult.success(listSharePlatform);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PostServiceImpl implements PostService {
             Object tmp = redisRpc.get(RedisPrefixConst.TALENT);
             log.info((String) tmp);
         }
-        return CommonResult.ok(listTalentUser);
+        return CommonResult.success(listTalentUser);
     }
 
 }
