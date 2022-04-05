@@ -1,11 +1,14 @@
 package com.titos.info.shareplatform.vo;
 
+import com.titos.info.shareplatform.dto.CommentDTO;
+import com.titos.info.user.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @ClassName ConversationVO
@@ -37,21 +40,36 @@ public class SharePlatformVO {
     /**
      * 帖子封面图片
      */
-    private String imageAddr;
+    private String postCover;
+
+    /**
+     * 评论量
+     */
+    private Integer comments;
+
+    /**
+     * 点赞量
+     */
+    private Integer likes;
 
     /**
      * 帖子发表时间
      */
-    private LocalDateTime releaseTime;
+    private LocalDateTime createTime;
 
     /**
-     * 发布帖子的用户ID
+     * 发布帖子的用户消息
      */
-    private Integer userId;
+    private UserDTO user;
 
     /**
-     * 发布帖子的用户ID
+     * 帖子点赞用户头像（最近五名）
      */
-    private Integer username;
+    private List<String> likesUserAvatar;
+
+    /**
+     * 评论信息
+     */
+    private List<CommentDTO> commentList;
 
 }

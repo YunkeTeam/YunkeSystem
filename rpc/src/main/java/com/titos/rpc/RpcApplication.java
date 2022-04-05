@@ -2,8 +2,16 @@ package com.titos.rpc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
+/**
+ * @ClassName RpcApplication
+ * @Description TODO
+ * @Author Kurihada
+ * @Date 2022/4/4 17:22
+ **/
 @SpringBootApplication
+@EnableFeignClients
 public class RpcApplication {
 
     public static void main(String[] args) {
