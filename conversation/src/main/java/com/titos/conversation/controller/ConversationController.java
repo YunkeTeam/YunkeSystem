@@ -38,7 +38,8 @@ public class ConversationController {
     public String startDialog(ModelMap model, String token, String id) {
         CommonResult<List<MessagePO>> commonResult = null;
         try {
-            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+//            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer userId = (Integer) TokenUtil.getTokenValueByKey(token, "YUNKE", "id");
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.selectAllDialog(userId, otherUserId);
         }catch (ExpiredJwtException e) {

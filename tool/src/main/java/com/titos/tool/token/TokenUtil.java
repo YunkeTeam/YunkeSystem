@@ -1,6 +1,11 @@
 package com.titos.tool.token;
 
+import com.titos.tool.exception.JwtExpireException;
+import com.titos.tool.exception.JwtNotExistException;
+import com.titos.tool.exception.JwtVerifyException;
 import io.jsonwebtoken.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +16,11 @@ import java.util.Map;
  * @author Titos
  */
 public class TokenUtil {
+
+    public static final String TOKEN_HEADER = "Token";
+    public static final String ID = "id";
+    public static final String ROLE = "role";
+    public static final String USERNAME = "username";
 
     /**
      * 私有方法防止构造
@@ -46,42 +56,79 @@ public class TokenUtil {
     }
 
     /**
-     * TODO：key写死了
-     * @param token 传入token
+     * 从toke中获取用户的自定义变量信息
+     * @param request http请求
+     * @param secretKey 密钥
+     * @return 用户在token中的自定义信息
+     */
+    public static CustomStatement getMsgFromToken(HttpServletRequest request, String secretKey) {
+        String token = getToken(request);
+        CustomStatement customStatement = new CustomStatement();
+        customStatement.setId((Integer) getTokenValueByKey(token, secretKey, ID));
+        customStatement.setRole((Integer) getTokenValueByKey(token, secretKey, ROLE));
+        customStatement.setUsername((String) getTokenValueByKey(token, secretKey, USERNAME));
+        return customStatement;
+    }
+
+    /**
+     * 从toke中获取用户的自定义变量信息
+     * @param token token值
+     * @param secretKey 密钥
+     * @return 用户在token中的自定义信息
+     */
+    public static CustomStatement getMsgFromToken(String token, String secretKey) {
+        CustomStatement customStatement = new CustomStatement();
+        customStatement.setId((Integer) getTokenValueByKey(token, secretKey, ID));
+        customStatement.setRole((Integer) getTokenValueByKey(token, secretKey, ROLE));
+        customStatement.setUsername((String) getTokenValueByKey(token, secretKey, USERNAME));
+        return customStatement;
+    }
+
+    /**
+     * 根据Token中的键获取对应的值
+     * @param jwt token
+     * @param secretKey 密钥
+     * @param key 键
+     * @return 值
+     */
+    public static Object getTokenValueByKey(String jwt, String secretKey, String key) {
+        Claims claims = parse(jwt, secretKey);
+        if (claims == null || claims.get(key) == null) {
+            return null;
+        }
+        return claims.get(key);
+    }
+
+    /**
+     * 将token字符串解析为Jws对象，然后获取claims
+     * @param jwt 前端头部的携带的token值
+     * @param secretKey 密钥
      * @return
-     * @throws ExpiredJwtException 抛出失效异常
      */
-    public static Integer verifyTokenAndGetUserId(String token) throws ExpiredJwtException {
-        Jws<Claims> jws = Jwts.parser()
-                .setSigningKey("YUNKE")
-                .parseClaimsJws(token);
-        return (Integer) jws.getBody().get("id");
+    public static Claims parse(String jwt, String secretKey) {
+        Claims claims = null;
+        try {
+            claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt).getBody();
+        } catch (ExpiredJwtException expiredJwtException) {
+            throw new JwtExpireException("token过期");
+        } catch (JwtException jwtException) {
+            throw new JwtVerifyException("JWT验证错误");
+        } catch (IllegalArgumentException illegalArgumentException) {
+            throw new JwtNotExistException("Token为空");
+        }
+        return claims;
     }
 
     /**
-     *
-     * @param token 传入token
-     * @return 返回用户角色编号
-     * @throws ExpiredJwtException 抛出失效异常
+     * 从http请求的Header中获取token
+     * @param request http请求
+     * @return token值
      */
-    public static Integer verifyTokenAndGetUserRole(String token) throws ExpiredJwtException {
-        Jws<Claims> jws = Jwts.parser()
-                .setSigningKey("YUNKE")
-                .parseClaimsJws(token);
-        return (Integer) jws.getBody().get("role");
+    public static String getToken(HttpServletRequest request) {
+        String token = request.getHeader(TOKEN_HEADER);
+        if (token == null) {
+            throw new JwtNotExistException("Token不存在");
+        }
+        return token;
     }
-
-    /**
-     *
-     * @param token 传入token
-     * @return 返回用户名称
-     * @throws ExpiredJwtException
-     */
-    public static String verifyTokenAndGetUserName(String token) throws ExpiredJwtException {
-        Jws<Claims> jws = Jwts.parser()
-                .setSigningKey("YUNKE")
-                .parseClaimsJws(token);
-        return (String) jws.getBody().get("username");
-    }
-
 }
