@@ -1,10 +1,8 @@
 package com.titos.shareplatform.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.titos.info.global.CommonResult;
 import com.titos.info.redis.constant.RedisPrefixConst;
-import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -64,7 +62,7 @@ public class PostServiceImpl implements PostService {
         if (!redisRpc.hasKey(RedisPrefixConst.TALENT)) {
             PageHelper.startPage(pageNum, pageSize);
             listTalentUser = postDao.listTalentUserId();
-            redisRpc.set(JSON.toJSONString(new RedisVO(RedisPrefixConst.TALENT, listTalentUser, null)));
+            //redisRpc.set(JSON.toJSONString(new RedisVO(RedisPrefixConst.TALENT, listTalentUser, null)));
             log.info("走mysql");
         } else {
             listTalentUser = castList(redisRpc.get(RedisPrefixConst.TALENT), TalentVO.class);
