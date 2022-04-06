@@ -11,6 +11,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients // 开启feign
 @EnableDiscoveryClient // 开启nacos服务注册与发现
 @SpringBootApplication
+@EnableDiscoveryClient
+@EnableFeignClients
 public class PersonalManagementApplication {
 
     public static void main(String[] args) {
