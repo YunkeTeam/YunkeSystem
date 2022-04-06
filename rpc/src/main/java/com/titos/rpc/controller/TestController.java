@@ -1,5 +1,6 @@
 package com.titos.rpc.controller;
 
+import com.titos.info.global.CommonResult;
 import com.titos.info.redis.vo.RedisVO;
 import com.titos.rpc.redis.RedisRpc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,13 @@ public class TestController {
 
     /**
      * 将键值对存入redis
+     *
      * @param redisVO 键值对和过期时间
      * @return null
      */
     @PostMapping(value = "/set")
-    public String set(@RequestBody RedisVO redisVO) {
-        redisRpc.set(redisVO);
-        return null;
+    public CommonResult<Boolean> set(@RequestBody RedisVO redisVO) {
+        return redisRpc.set(redisVO);
     }
 
     /**
@@ -37,7 +38,7 @@ public class TestController {
      * @return 值
      */
     @GetMapping(value = "/get")
-    public Object get(@RequestParam(required = true) String key) {
+    public CommonResult<Object> get(@RequestParam(required = true) String key) {
         return redisRpc.get(key);
     }
 
@@ -48,7 +49,7 @@ public class TestController {
      * @return 是否删除成功
      */
     @PostMapping(value = "/delete")
-    public Boolean delete(@RequestParam(required = true) String key) {
+    public CommonResult<Boolean> delete(@RequestParam(required = true) String key) {
         return redisRpc.delete(key);
     }
 
@@ -59,7 +60,7 @@ public class TestController {
      * @return Long
      */
     @PostMapping(value = "/delete/list")
-    public Long delete(@RequestParam(required = true) List<String> keys) {
+    public CommonResult<Long> delete(@RequestParam(required = true) List<String> keys) {
         return redisRpc.delete(keys);
     }
 
@@ -71,7 +72,7 @@ public class TestController {
      * @return 是否设置成功
      */
     @PostMapping(value = "/setexpire")
-    public Boolean expire(
+    public CommonResult<Boolean> expire(
             @RequestParam(required = true) String key,
             @RequestParam(required = true) Long time) {
         return redisRpc.expire(key, time);
@@ -84,7 +85,7 @@ public class TestController {
      * @return 过期时间
      */
     @GetMapping(value = "/getexpire")
-    public Long getExpire(@RequestParam(required = true) String key) {
+    public CommonResult<Long> getExpire(@RequestParam(required = true) String key) {
         return redisRpc.getExpire(key);
     }
 
@@ -95,7 +96,7 @@ public class TestController {
      * @return 是否有这个key
      */
     @GetMapping(value = "/haskey")
-    public Boolean hasKey(@RequestParam(required = true) String key) {
+    public CommonResult<Boolean> hasKey(@RequestParam(required = true) String key) {
         return redisRpc.hasKey(key);
     }
 
