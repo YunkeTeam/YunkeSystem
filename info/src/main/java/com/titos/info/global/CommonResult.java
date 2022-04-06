@@ -14,21 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class CommonResult<T> {
-
-    /**
-     * 返回状态
-     */
-    private Boolean flag;
-
     /**
      * 状态码
      */
     private Integer code;
-
-    /**
-     * 消息
-     */
-    private String message;
 
     /**
      * 返回数据
@@ -36,13 +25,26 @@ public class CommonResult<T> {
     private T data;
 
     /**
+     * 消息
+     */
+    private String message;
+
+    public CommonResult(Integer code, T data) {
+        this(code, data, null);
+    }
+
+    public CommonResult(Integer code, String message) {
+        this(code, null, message);
+    }
+
+    /**
      * 什么都不带的成功
      *
      * @param <T> 数据类型
      * @return restResult
      */
-    public static <T> CommonResult<T> ok() {
-        return restResult(true, null, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg());
+    public static <T> CommonResult<T> success() {
+        return new CommonResult<>( StatusEnum.SUCCESS.getCode(),null, StatusEnum.SUCCESS.getMsg());
     }
 
     /**
@@ -52,8 +54,8 @@ public class CommonResult<T> {
      * @param <T>  数据类型
      * @return restResult
      */
-    public static <T> CommonResult<T> ok(T data) {
-        return restResult(true, data, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg());
+    public static <T> CommonResult<T> success(T data) {
+        return new CommonResult<>(StatusEnum.SUCCESS.getCode(), data, StatusEnum.SUCCESS.getMsg());
     }
 
     /**
@@ -64,8 +66,8 @@ public class CommonResult<T> {
      * @param <T>     数据类型
      * @return restResult
      */
-    public static <T> CommonResult<T> ok(T data, String message) {
-        return restResult(true, data, StatusEnum.SUCCESS.getCode(), message);
+    public static <T> CommonResult<T> success(T data, String message) {
+        return new CommonResult<>(StatusEnum.SUCCESS.getCode(), data, message);
     }
 
     /**
@@ -75,7 +77,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail() {
-        return restResult(false, null, StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
+        return new CommonResult<>( StatusEnum.FAIL.getCode(),null, StatusEnum.FAIL.getMsg());
     }
 
     /**
@@ -86,7 +88,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail(StatusEnum statusEnum) {
-        return restResult(false, null, statusEnum.getCode(), statusEnum.getMsg());
+        return new CommonResult<>(statusEnum.getCode(),null, statusEnum.getMsg());
     }
 
     /**
@@ -97,7 +99,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail(T data) {
-        return restResult(false, data, StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
+        return new CommonResult<>(StatusEnum.FAIL.getCode(), data, StatusEnum.FAIL.getMsg());
     }
 
     /**
@@ -109,7 +111,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail(T data, String message) {
-        return restResult(false, data, StatusEnum.FAIL.getCode(), message);
+        return new CommonResult<>(StatusEnum.FAIL.getCode(), data, message);
     }
 
     /**
@@ -121,26 +123,6 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail(Integer code, String message) {
-        return restResult(false, null, code, message);
+        return new CommonResult<>(code, null, message);
     }
-
-    /**
-     * 返回结果
-     *
-     * @param flag    状态
-     * @param data    数据
-     * @param code    状态码
-     * @param message 消息
-     * @param <T>     数据类型
-     * @return CommonResult
-     */
-    private static <T> CommonResult<T> restResult(Boolean flag, T data, Integer code, String message) {
-        CommonResult<T> apiResult = new CommonResult<>();
-        apiResult.setFlag(flag);
-        apiResult.setData(data);
-        apiResult.setCode(code);
-        apiResult.setMessage(message);
-        return apiResult;
-    }
-
 }

@@ -16,6 +16,9 @@
     <sql id="Base_Column_List">
         id, username, password, gender, email, person_type, head_image, birthday, phone, registry_time
     </sql>
+    <sql id="Base_Column_List_Except_PWD">
+        id, username, gender, email, person_type, head_image, birthday, phone, registry_time
+    </sql>
     <insert id="addNewUser" useGeneratedKeys="true" keyProperty="id">
         insert into user(username, password, email, person_type, registry_time) values(#{username}, #{password}, #{email}, #{personType}, #{registryTime});
     </insert>
@@ -46,5 +49,37 @@
                 </otherwise>
             </choose>
         </where>
+    </select>
+
+    <update id="updateUserInfoByIdSelective" parameterType="com.titos.personalmanagement.model.User">
+        update user
+        <set>
+            <if test="username != null">
+                username = #{username, jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null">
+                gender = #{gender, jdbcType=CHAR},
+            </if>
+            <if test="email != null">
+                email = #{email, jdbcType=VARCHAR},
+            </if>
+            <if test="headImage != null">
+                head_image = #{headImage, jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday, jdbcType=DATE},
+            </if>
+            <if test="phone != null">
+                phone = #{phone, jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <select id="selectUserInfoById" resultType="com.titos.personalmanagement.model.User">
+        select
+        <include refid="Base_Column_List_Except_PWD"/>
+        from user
+        where id = #{id, jdbcType=INTEGER}
     </select>
 </mapper>

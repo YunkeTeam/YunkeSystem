@@ -28,9 +28,7 @@ class ConversationApplicationTests {
             e.printStackTrace();
         }
         try {
-            System.out.println(TokenUtil.verifyTokenAndGetUserId(token));
-            System.out.println(TokenUtil.verifyTokenAndGetUserName(token));
-            System.out.println(TokenUtil.verifyTokenAndGetUserRole(token));
+            CustomStatement customStatement1 = TokenUtil.getMsgFromToken(token, "YUNKE");
         }catch (ExpiredJwtException e) {
             System.out.println("失效了");
         }

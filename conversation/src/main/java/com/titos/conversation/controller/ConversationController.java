@@ -6,6 +6,7 @@ import com.titos.conversation.service.ConversationService;
 import com.titos.conversation.service.impl.ConversationServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
+import com.titos.tool.exception.ParameterException;
 import com.titos.tool.token.TokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.val;
@@ -42,11 +43,11 @@ public class ConversationController {
     public void startDialog(ModelMap model, String token, String id) {
         CommonResult<List<MessagePO>> commonResult = null;
         try {
-            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer userId = (Integer) TokenUtil.getTokenValueByKey(token, "YUNKE", "id");
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.selectAllDialog(userId, otherUserId);
-        } catch (ExpiredJwtException e) {
-            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        } catch (ParameterException e) {
+            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
         }
         model.addAttribute("commonResult", commonResult);
     }
@@ -62,11 +63,11 @@ public class ConversationController {
     public void deleteDialog(ModelMap model, String token, String id) {
         CommonResult<Boolean> commonResult = null;
         try {
-            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer userId = (Integer) TokenUtil.getTokenValueByKey(token, "YUNKE", "id");
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.deleteDialog(userId, otherUserId);
-        }catch (ExpiredJwtException e) {
-            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        } catch (ParameterException e) {
+            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
         }
         model.addAttribute("commonResult", commonResult);
     }
@@ -82,11 +83,11 @@ public class ConversationController {
     public void sendMessage(ModelMap model, String token, String id, String message) {
         CommonResult<Boolean> commonResult = null;
         try {
-            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer userId = (Integer) TokenUtil.getTokenValueByKey(token, "YUNKE", "id");
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.sendDialog(userId, otherUserId,message);
-        }catch (ExpiredJwtException e) {
-            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        } catch (ParameterException e) {
+            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
         }
         model.addAttribute("commonResult", commonResult);
     }
@@ -101,11 +102,11 @@ public class ConversationController {
     public void addFriend(ModelMap model, String token, String id) {
         CommonResult<Boolean> commonResult = null;
         try {
-            Integer userId = TokenUtil.verifyTokenAndGetUserId(token);
+            Integer userId = (Integer) TokenUtil.getTokenValueByKey(token, "YUNKE", "id");
             Integer otherUserId = Integer.parseInt(id);
             commonResult = service.addFriend(userId, otherUserId);
-        }catch (ExpiredJwtException e) {
-            commonResult = new CommonResult<>(false, StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg(), null);
+        } catch (ParameterException e) {
+            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
         }
         model.addAttribute("commonResult", commonResult);
     }

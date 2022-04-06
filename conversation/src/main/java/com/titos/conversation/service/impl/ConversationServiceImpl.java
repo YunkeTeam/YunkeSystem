@@ -40,9 +40,9 @@ public class ConversationServiceImpl implements ConversationService {
         try {
             messagePoList = conversationDao.selectAllDialog(id, otherId);
         } catch (DataAccessException e) {
-            return new CommonResult<>(false, StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg(), null);
+            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
         }
-        return new CommonResult<>(true, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg(), messagePoList);
+        return CommonResult.success(messagePoList);
     }
 
     /**
@@ -60,9 +60,9 @@ public class ConversationServiceImpl implements ConversationService {
         } catch (DataAccessException e) {
             // 捕获了异常，手动回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return new CommonResult<>(false, StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg(), false);
+            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
         }
-        return new CommonResult<>(true, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg(), true);
+        return CommonResult.success(true);
     }
 
     /**
@@ -81,9 +81,9 @@ public class ConversationServiceImpl implements ConversationService {
             cnt = 0;
         }
         if(cnt == 0) {
-            return new CommonResult<>(false, StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg(), false);
+            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
         }
-        return new CommonResult<>(true, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg(), true);
+        return CommonResult.success(true);
     }
 
     /**
@@ -102,9 +102,9 @@ public class ConversationServiceImpl implements ConversationService {
             cnt = 0;
         }
         if(cnt == 0) {
-            return new CommonResult<>(false, StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg(), false);
+            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
         }
-        return new CommonResult<>(true, StatusEnum.SUCCESS.getCode(), StatusEnum.SUCCESS.getMsg(), true);
+        return CommonResult.success(true);
     }
 
 }

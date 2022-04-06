@@ -2,10 +2,12 @@ package com.titos.personalmanagement.service.impl;
 
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
+import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
 import com.titos.info.user.vo.LoginVo;
 import com.titos.personalmanagement.cache.UserInfoCache;
 import com.titos.personalmanagement.config.YkSysConf;
+import com.titos.personalmanagement.convert.UserConvert;
 import com.titos.personalmanagement.dao.UserDao;
 import com.titos.personalmanagement.factory.LoginQueryFactory;
 import com.titos.personalmanagement.factory.UserFactory;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 /**
@@ -145,6 +148,20 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             return new CommonResult(StatusEnum.VERIFY_ERROR.getCode(), "注册失败");
         }
+    }
+    /**
+     * 修改用户信息
+     * @param userInfoDomain 接收用户参数封装的实体类
+     * @param customStatement 用户在token中的信息
+     * @return 修改后的用户信息
+     */
+    @Override
+    public CommonResult<UserInfoDomain> modifyUserInfo(UserInfoDomain userInfoDomain, CustomStatement customStatement) {
+        User user = UserConvert.toModel(userInfoDomain);
+        userDao.updateUserInfoByIdSelective(user);
+        User userInfo = userDao.selectUserInfoById(user.getId());
+        userInfoDomain = UserConvert.toDomain(userInfo);
+        return CommonResult.success(userInfoDomain, "修改用户信息");
     }
 
 

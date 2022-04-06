@@ -47,9 +47,13 @@ public class User {
      */
     private String headImage;
     /**
+     * 出生日期
+     */
+    private LocalDateTime birthday;
+    /**
      * 电话号码
      */
-    private Date  phone;
+    private String  phone;
     /**
      * 注册时间
      */
