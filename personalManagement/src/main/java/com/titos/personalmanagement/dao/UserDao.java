@@ -1,5 +1,6 @@
 package com.titos.personalmanagement.dao;
 
+import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
 import com.titos.personalmanagement.model.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -31,4 +32,18 @@ public interface UserDao {
      * @return 返回查询的用户对象
      */
     User selectUserToLogin(LoginQuery loginQuery);
+
+    /**
+     * 用户用户id来动态更新用户信息
+     * @param user 用户对象
+     * @return 更新的结果
+     */
+    int updateUserInfoByIdSelective(User user);
+
+    /**
+     * 根据用户id查询用户信息（不包含密码）
+     * @param id 用户id
+     * @return 查询的用户对象
+     */
+    User selectUserInfoById(Integer id);
 }

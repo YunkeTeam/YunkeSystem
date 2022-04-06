@@ -1,20 +1,19 @@
-package com.titos.personalmanagement.model;
+package com.titos.info.user.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
- * 用户的实体类信息
+ * 修改用户信息是接收参数封装成的实体类
  * @author Titos
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Data
+public class UserInfoDomain {
     /**
      * 用户id，唯一标识
      */
@@ -23,10 +22,6 @@ public class User {
      * 用户名
      */
     private String username;
-    /**
-     * 密码
-     */
-    private String password;
     /**
      * 性别
      */
@@ -53,9 +48,5 @@ public class User {
     /**
      * 电话号码
      */
-    private String  phone;
-    /**
-     * 注册时间
-     */
-    private LocalDateTime registryTime;
+    private String phone;
 }

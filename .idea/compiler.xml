@@ -7,9 +7,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="common" />
         <module name="rpc" />
         <module name="personalManagement" />
-        <module name="common" />
         <module name="technicalArchive" />
         <module name="sharePlatform" />
         <module name="admin" />
