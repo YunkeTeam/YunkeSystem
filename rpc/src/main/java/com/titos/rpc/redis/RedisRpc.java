@@ -13,7 +13,7 @@ import java.util.List;
  * @Author Kurihada
  * @Date 2022/4/4 17:23
  **/
-@FeignClient("COMMON-REDIS")
+@FeignClient("Common")
 public interface RedisRpc {
 
     /**

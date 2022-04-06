@@ -1,8 +1,10 @@
 package com.titos.shareplatform.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.titos.info.global.CommonResult;
 import com.titos.info.redis.constant.RedisPrefixConst;
+import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -29,7 +31,7 @@ import java.util.List;
 @Slf4j
 public class PostServiceImpl implements PostService {
 
-    @Autowired
+    @Resource
     private PostDao postDao;
 
     @Autowired
@@ -58,29 +60,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public CommonResult<List<TalentVO>> listTalent(Integer pageNum, Integer pageSize) {
         List<TalentVO> listTalentUser = null;
-        log.info(String.valueOf(redisRpc.hasKey(RedisPrefixConst.TALENT)));
-        if (!redisRpc.hasKey(RedisPrefixConst.TALENT)) {
+        if (!redisRpc.hasKey(RedisPrefixConst.TALENT).getData()) {
             PageHelper.startPage(pageNum, pageSize);
             listTalentUser = postDao.listTalentUserId();
-            //redisRpc.set(JSON.toJSONString(new RedisVO(RedisPrefixConst.TALENT, listTalentUser, null)));
-            log.info("走mysql");
+            redisRpc.set(new RedisVO(RedisPrefixConst.TALENT, JSON.toJSONString(listTalentUser), null));
         } else {
-            listTalentUser = castList(redisRpc.get(RedisPrefixConst.TALENT), TalentVO.class);
-            log.info("走redis");
+            listTalentUser = JSON.parseObject(redisRpc.get(RedisPrefixConst.TALENT).getData().toString(), List.class);
         }
         return CommonResult.success(listTalentUser);
     }
-
-    public static <T> List<T> castList(Object obj, Class<T> clazz) {
-        List<T> result = new ArrayList<T>();
-        if (obj instanceof List<?>) {
-            for (Object o : (List<?>) obj) {
-                result.add(clazz.cast(o));
-            }
-            return result;
-        }
-        return null;
-    }
-
 
 }

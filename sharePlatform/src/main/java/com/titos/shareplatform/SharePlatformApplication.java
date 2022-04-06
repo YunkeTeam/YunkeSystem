@@ -13,8 +13,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Date 2022/3/30 22:20
  **/
 @MapperScan("com.titos.shareplatform.dao")
-@EnableFeignClients // 开启feign
-@EnableDiscoveryClient // 开启nacos服务注册与发现
+@EnableFeignClients("com.titos.rpc.redis")
+@EnableDiscoveryClient
 @SpringBootApplication
 public class SharePlatformApplication {
     public static void main(String[] args) {
