@@ -97,7 +97,15 @@
             <artifactId>spring-cloud-context</artifactId>
             <version>2.2.7.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.titos</groupId>
+            <artifactId>rpc</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
