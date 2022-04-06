@@ -44,7 +44,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> success() {
-        return new CommonResult<T>(StatusEnum.SUCCESS.getCode(), null, StatusEnum.SUCCESS.getMsg());
+        return new CommonResult<>( StatusEnum.SUCCESS.getCode(),null, StatusEnum.SUCCESS.getMsg());
     }
 
     /**
@@ -55,7 +55,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> success(T data) {
-        return new CommonResult<T>(StatusEnum.SUCCESS.getCode(), data, StatusEnum.SUCCESS.getMsg());
+        return new CommonResult<>(StatusEnum.SUCCESS.getCode(), data, StatusEnum.SUCCESS.getMsg());
     }
 
     /**
@@ -77,7 +77,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail() {
-        return new CommonResult<>(StatusEnum.FAIL.getCode(), null, StatusEnum.FAIL.getMsg());
+        return new CommonResult<>( StatusEnum.FAIL.getCode(),null, StatusEnum.FAIL.getMsg());
     }
 
     /**
@@ -88,7 +88,7 @@ public class CommonResult<T> {
      * @return restResult
      */
     public static <T> CommonResult<T> fail(StatusEnum statusEnum) {
-        return new CommonResult<>( statusEnum.getCode(), null, statusEnum.getMsg());
+        return new CommonResult<>(statusEnum.getCode(),null, statusEnum.getMsg());
     }
 
     /**
@@ -125,5 +125,4 @@ public class CommonResult<T> {
     public static <T> CommonResult<T> fail(Integer code, String message) {
         return new CommonResult<>(code, null, message);
     }
-
 }
