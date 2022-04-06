@@ -1,6 +1,5 @@
 package com.titos.common.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.titos.common.service.RedisService;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;

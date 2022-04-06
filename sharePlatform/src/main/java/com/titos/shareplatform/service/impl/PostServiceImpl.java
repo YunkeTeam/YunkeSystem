@@ -1,5 +1,6 @@
 package com.titos.shareplatform.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.titos.info.global.CommonResult;
 import com.titos.info.redis.constant.RedisPrefixConst;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,15 +60,29 @@ public class PostServiceImpl implements PostService {
     @Override
     public CommonResult<List<TalentVO>> listTalent(Integer pageNum, Integer pageSize) {
         List<TalentVO> listTalentUser = null;
-        if (redisRpc.hasKey(RedisPrefixConst.TALENT)) {
+        log.info(String.valueOf(redisRpc.hasKey(RedisPrefixConst.TALENT)));
+        if (!redisRpc.hasKey(RedisPrefixConst.TALENT)) {
             PageHelper.startPage(pageNum, pageSize);
             listTalentUser = postDao.listTalentUserId();
-            redisRpc.set(new RedisVO(RedisPrefixConst.TALENT, listTalentUser, null));
+            redisRpc.set(JSON.toJSONString(new RedisVO(RedisPrefixConst.TALENT, listTalentUser, null)));
+            log.info("走mysql");
         } else {
-            Object tmp = redisRpc.get(RedisPrefixConst.TALENT);
-            log.info((String) tmp);
+            listTalentUser = castList(redisRpc.get(RedisPrefixConst.TALENT), TalentVO.class);
+            log.info("走redis");
         }
         return CommonResult.ok(listTalentUser);
     }
+
+    public static <T> List<T> castList(Object obj, Class<T> clazz) {
+        List<T> result = new ArrayList<T>();
+        if (obj instanceof List<?>) {
+            for (Object o : (List<?>) obj) {
+                result.add(clazz.cast(o));
+            }
+            return result;
+        }
+        return null;
+    }
+
 
 }

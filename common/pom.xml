@@ -75,11 +75,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.80</version>
-        </dependency>
-        <dependency>
             <groupId>com.titos</groupId>
             <artifactId>info</artifactId>
             <version>0.0.1-SNAPSHOT</version>
