@@ -11,8 +11,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Author Kurihada
  * @Date 2022/4/4 12:00
  **/
-@EnableFeignClients // 开启feign
-@EnableDiscoveryClient // 开启nacos服务注册与发现
+@EnableFeignClients
+@EnableDiscoveryClient
 @SpringBootApplication
 public class CommonApplication {
     public static void main(String[] args) {
