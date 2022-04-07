@@ -1,11 +1,14 @@
 package com.titos.shareplatform.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.titos.info.global.CommonResult;
 import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
+import com.titos.info.shareplatform.entity.Post;
+import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
 import com.titos.rpc.redis.RedisRpc;
@@ -13,11 +16,15 @@ import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.PostService;
+import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +36,7 @@ import java.util.List;
  **/
 @Service
 @Slf4j
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostService {
 
     @Resource
     private PostDao postDao;
@@ -42,6 +49,9 @@ public class PostServiceImpl implements PostService {
 
     @Resource
     private RedisRpc redisRpc;
+
+    @Autowired
+    private PostService postService;
 
     @Override
     public CommonResult<List<SharePlatformVO>> listSharePlatform(Integer pageNum, Integer pageSize) {
@@ -68,6 +78,21 @@ public class PostServiceImpl implements PostService {
             listTalentUser = JSON.parseObject(redisRpc.get(RedisPrefixConst.TALENT).getData().toString(), List.class);
         }
         return CommonResult.success(listTalentUser);
+    }
+
+    @Override
+    public CommonResult<Boolean> addPost(CustomStatement customStatement, PostVO postVO) {
+        Post post = BeanCopyUtils.copyObject(postVO, Post.class);
+        post.setUserId(customStatement.getId());
+        postDao.insert(post);
+        return CommonResult.success(Boolean.TRUE);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Boolean> deletePosts(List<Integer> postIdList) {
+        postDao.deleteBatchIds(postIdList);
+        return CommonResult.success(Boolean.TRUE);
     }
 
 }
