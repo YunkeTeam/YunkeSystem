@@ -1,9 +1,13 @@
 package com.titos.personalmanagement.controller;
 
+import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.titos.info.global.CommonResult;
 import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
+import com.titos.info.user.query.RegisterQuery;
+import com.titos.info.user.query.UserPassword;
 import com.titos.info.user.vo.LoginVo;
+import com.titos.personalmanagement.cache.verifycode.VerifyCodeCache;
 import com.titos.personalmanagement.model.User;
 import com.titos.personalmanagement.service.UserService;
 import com.titos.tool.annotions.InjectToken;
@@ -11,6 +15,16 @@ import com.titos.tool.annotions.ParamVerify;
 import com.titos.tool.token.CustomStatement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * 普通用户的登录、注册操作
@@ -21,16 +35,21 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private DefaultKaptcha defaultKaptcha;
+    @Autowired
+    private VerifyCodeCache verifyCodeCache;
 
     /**
      * 注册，将用户信息缓存到redis中并发送邮件
-     * @param user
+     * @param registerQuery
      * @return
      */
     @ParamVerify(notNull = {"user.username", "user.email", "user.password"})
     @PostMapping("/signUp")
-    public CommonResult register(@RequestBody User user) {
-        return userService.register(user);
+    public CommonResult register(@RequestBody RegisterQuery registerQuery, HttpServletRequest request) {
+        String redisKey = request.getHeader("Redis-Key");
+        return userService.register(registerQuery, redisKey);
     }
 
     /**
@@ -48,8 +67,9 @@ public class UserController {
      * @return 登录的结果
      */
     @PostMapping("/login")
-    public CommonResult<LoginVo> login(@RequestBody LoginQuery loginQuery) {
-        return userService.login(loginQuery);
+    public CommonResult<LoginVo> login(@RequestBody LoginQuery loginQuery, HttpServletRequest request) {
+        String redisKey = request.getHeader("Redis-Key");
+        return userService.login(loginQuery, redisKey);
     }
 
     /**
@@ -67,5 +87,53 @@ public class UserController {
         return userService.modifyUserInfo(userInfoDomain, customStatement);
     }
 
+    /**
+     * 根据用户id修改用户头像
+     * @param customStatement 用户在token中的信息
+     * @param img 头像文件
+     * @return 头像的url地址
+     */
+    @InjectToken
+    @PostMapping("/fix/avatar")
+    public CommonResult<String> modifyUserAvatar(CustomStatement customStatement, @RequestParam MultipartFile img) {
+        return userService.modifyUserAvatar(img, customStatement);
+    }
 
+    /**
+     * 修改用户密码
+     * @param customStatement token中用户的信息
+     * @param userPassword 用户密码信息的封装类
+     * @return 修改的结果
+     */
+    @InjectToken
+    @PostMapping("/fix/password")
+    public CommonResult modifyUserPassword(CustomStatement customStatement, @RequestBody UserPassword userPassword) {
+        return userService.modifyUserPassword(customStatement, userPassword);
+    }
+    @GetMapping("/verifyCode")
+    public void verifyCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ServletOutputStream servletOutputStream = response.getOutputStream();
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            // 生成验证码字符串
+            String code = defaultKaptcha.createText();
+            // 存储在redis中的key
+            String key = verifyCodeCache.cacheVerifyCode(code);
+            BufferedImage image = defaultKaptcha.createImage(code);
+            ImageIO.write(image, "jpg", outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            response.setHeader("Cache-Control", "no-store");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Redis-Key", key);
+            response.setDateHeader("Expires", 0);
+            response.setContentType("image/jpeg");
+            servletOutputStream.write(bytes);
+            servletOutputStream.flush();
+        } catch (Exception e) {
+            // 出错的话跳转到错误页面
+            response.sendError(HttpServletResponse.SC_NO_CONTENT);
+        } finally {
+            servletOutputStream.close();
+        }
+    }
 }

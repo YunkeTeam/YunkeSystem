@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class LoginQuery {
+    private String verifyCode;
     private String username;
     private String email;
     private String password;
-    public LoginQuery(String email, String password) {
+    public LoginQuery(String email, String password, String verifyCode) {
         this.email = email;
         this.password = password;
+        this.verifyCode = verifyCode;
     }
 }

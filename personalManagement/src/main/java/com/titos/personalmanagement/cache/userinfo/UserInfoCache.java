@@ -1,4 +1,4 @@
-package com.titos.personalmanagement.cache;
+package com.titos.personalmanagement.cache.userinfo;
 
 import com.titos.personalmanagement.model.User;
 
