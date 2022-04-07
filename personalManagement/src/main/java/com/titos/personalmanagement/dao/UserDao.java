@@ -2,6 +2,7 @@ package com.titos.personalmanagement.dao;
 
 import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
+import com.titos.info.user.query.UserPassword;
 import com.titos.personalmanagement.model.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -41,7 +42,7 @@ public interface UserDao {
     int updateUserInfoByIdSelective(User user);
 
     /**
-     * 根据用户id查询用户信息（不包含密码）
+     * 根据用户id查询用户信息
      * @param id 用户id
      * @return 查询的用户对象
      */

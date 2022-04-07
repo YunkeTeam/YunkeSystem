@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @author Titos
  */
-@EnableFeignClients // 开启feign
+@EnableFeignClients(basePackages = "com.titos.rpc") // 开启feign
 @EnableDiscoveryClient // 开启nacos服务注册与发现
 @SpringBootApplication
 public class PersonalManagementApplication {

@@ -9,6 +9,6 @@ import com.titos.personalmanagement.model.User;
  */
 public class LoginQueryFactory {
     public LoginQuery build(User user) {
-        return new LoginQuery(user.getEmail(), user.getPassword());
+        return new LoginQuery(user.getEmail(), user.getPassword(), "");
     }
 }

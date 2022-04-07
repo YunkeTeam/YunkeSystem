@@ -1,9 +1,7 @@
-package com.titos.personalmanagement.cache.impl;
+package com.titos.personalmanagement.cache.verifycode.impl;
 
-import com.titos.personalmanagement.cache.UserInfoCache;
+import com.titos.personalmanagement.cache.verifycode.VerifyCodeCache;
 import com.titos.personalmanagement.model.User;
-import com.titos.tool.exception.ParameterException;
-import org.apache.ibatis.builder.ParameterExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -17,24 +15,23 @@ import java.util.concurrent.TimeUnit;
  * @author Titos
  */
 @Repository
-public class UserInfoCacheImpl implements UserInfoCache {
+public class VerifyCodeCacheImpl implements VerifyCodeCache {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public String cacheInfo(User user) {
-        Assert.notNull(user, "User information can't be null");
+    public String cacheVerifyCode(String verifyCode) {
+        Assert.notNull(verifyCode, "verifyCode can't be null");
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        redisTemplate.opsForValue().set(uuid, user);
-        redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(uuid, verifyCode);
+        redisTemplate.expire(uuid, 2, TimeUnit.MINUTES);
         return uuid;
     }
 
     @Override
-    public User getInfoByKey(String key) {
+    public String getCodeByKey(String key) {
         Assert.notNull(key, "key can't be null");
-        User user = (User) redisTemplate.opsForValue().get(key);
-        redisTemplate.delete(key);
-        return user;
+        String code = (String) redisTemplate.opsForValue().get(key);
+        return code;
     }
 }
