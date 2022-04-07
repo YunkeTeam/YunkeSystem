@@ -66,4 +66,6 @@ public class UserController {
         }
         return userService.modifyUserInfo(userInfoDomain, customStatement);
     }
+
+
 }
