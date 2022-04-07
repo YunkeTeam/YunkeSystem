@@ -7,7 +7,10 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
+<<<<<<< Updated upstream
 import com.titos.info.shareplatform.entity.Post;
+=======
+>>>>>>> Stashed changes
 import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -81,6 +84,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     }
 
     @Override
+<<<<<<< Updated upstream
     public CommonResult<Boolean> addPost(CustomStatement customStatement, PostVO postVO) {
         Post post = BeanCopyUtils.copyObject(postVO, Post.class);
         post.setUserId(customStatement.getId());
@@ -93,6 +97,10 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public CommonResult<Boolean> deletePosts(List<Integer> postIdList) {
         postDao.deleteBatchIds(postIdList);
         return CommonResult.success(Boolean.TRUE);
+=======
+    public void addPost(PostVO postVO) {
+
+>>>>>>> Stashed changes
     }
 
 }

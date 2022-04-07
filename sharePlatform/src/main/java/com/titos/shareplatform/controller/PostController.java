@@ -56,6 +56,7 @@ public class PostController {
     }
 
     /**
+<<<<<<< Updated upstream
      * 新增帖子
      *
      * @param customStatement 用户信息
@@ -77,6 +78,16 @@ public class PostController {
     @PostMapping("/delete")
     public CommonResult<Boolean> deletePosts(@RequestBody List<Integer> postIdList) {
         return postService.deletePosts(postIdList);
+=======
+     * 新建帖子
+     * @param postVO 帖子信息
+     * @return 是否成功
+     */
+    @PostMapping("/add")
+    public CommonResult<Boolean> addPost(@Valid @RequestBody PostVO postVO) {
+        postService.addPost(postVO);
+        return CommonResult.success(true);
+>>>>>>> Stashed changes
     }
 
 }
