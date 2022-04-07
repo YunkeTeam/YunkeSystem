@@ -1,7 +1,6 @@
 package com.titos.common.Controller;
 
-import com.titos.common.service.RedisService;
-import com.titos.info.global.CommonResult;
+import com.titos.common.service.redis.RedisService;
 import com.titos.info.redis.vo.RedisVO;
 import org.springframework.web.bind.annotation.*;
 
