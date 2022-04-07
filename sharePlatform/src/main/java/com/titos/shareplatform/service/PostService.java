@@ -2,10 +2,7 @@ package com.titos.shareplatform.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
-<<<<<<< Updated upstream
 import com.titos.info.shareplatform.entity.Post;
-=======
->>>>>>> Stashed changes
 import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -42,7 +39,6 @@ public interface PostService extends IService<Post> {
     /**
      * 新建帖子
      *
-<<<<<<< Updated upstream
      * @param customStatement 用户信息
      * @param postVO          帖子信息
      * @return 新建结果
@@ -56,10 +52,5 @@ public interface PostService extends IService<Post> {
      * @return 删除是否成功
      */
     CommonResult<Boolean> deletePosts(List<Integer> postIdList);
-=======
-     * @param postVO 帖子信息
-     */
-    void addPost(PostVO postVO);
 
->>>>>>> Stashed changes
 }
