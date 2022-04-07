@@ -1,5 +1,6 @@
 package com.titos.rpc.redis;
 
+import com.titos.info.global.CommonResult;
 import com.titos.info.redis.vo.RedisVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -12,16 +13,17 @@ import java.util.List;
  * @Author Kurihada
  * @Date 2022/4/4 17:23
  **/
-@FeignClient("COMMON")
+@FeignClient("Common")
 public interface RedisRpc {
 
     /**
      * 将键值对存入redis
+     *
      * @param redisVO 键值对和过期时间
      * @return null
      */
     @PostMapping(value = "/redis/set")
-    String set(@RequestBody RedisVO redisVO);
+    CommonResult<Boolean> set(@RequestBody RedisVO redisVO);
 
     /**
      * 从redis中根据键获取值
@@ -30,7 +32,7 @@ public interface RedisRpc {
      * @return 值
      */
     @GetMapping(value = "/redis/get")
-    Object get(@RequestParam(required = true) String key);
+    CommonResult<Object> get(@RequestParam(required = true) String key);
 
     /**
      * 根据key从redis删除键值对
@@ -39,7 +41,7 @@ public interface RedisRpc {
      * @return 是否删除成功
      */
     @PostMapping(value = "/redis/delete")
-    Boolean delete(@RequestParam(required = true) String key);
+    CommonResult<Boolean> delete(@RequestParam(required = true) String key);
 
     /**
      * 根据key从redis批量删除键值对
@@ -48,7 +50,7 @@ public interface RedisRpc {
      * @return Long
      */
     @PostMapping(value = "/redis/delete/list")
-    Long delete(@RequestParam(required = true) List<String> keys);
+    CommonResult<Long> delete(@RequestParam(required = true) List<String> keys);
 
     /**
      * 根据key设置键值对的过期时间
@@ -58,7 +60,7 @@ public interface RedisRpc {
      * @return 是否设置成功
      */
     @PostMapping(value = "/redis/setexpire")
-    Boolean expire(
+    CommonResult<Boolean> expire(
             @RequestParam(required = true) String key,
             @RequestParam(required = true) Long time);
 
@@ -69,7 +71,7 @@ public interface RedisRpc {
      * @return 过期时间
      */
     @GetMapping(value = "/redis/getexpire")
-    Long getExpire(@RequestParam(required = true) String key);
+    CommonResult<Long> getExpire(@RequestParam(required = true) String key);
 
     /**
      * 判断是否有某个key
@@ -78,7 +80,7 @@ public interface RedisRpc {
      * @return 是否有这个key
      */
     @GetMapping(value = "/redis/haskey")
-    Boolean hasKey(@RequestParam(required = true) String key);
+    CommonResult<Boolean> hasKey(@RequestParam(required = true) String key);
 
 }
 

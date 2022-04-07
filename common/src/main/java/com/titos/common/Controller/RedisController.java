@@ -28,9 +28,9 @@ public class RedisController {
      * @return null
      */
     @PostMapping(value = "/set")
-    public String set(@RequestBody RedisVO redisVO) {
+    public CommonResult<Boolean> set(@RequestBody RedisVO redisVO) {
         redisService.set(redisVO.getKey(), redisVO.getValue(), redisVO.getTime());
-        return null;
+        return CommonResult.success(Boolean.TRUE);
     }
 
     /**
@@ -40,8 +40,8 @@ public class RedisController {
      * @return 值
      */
     @GetMapping(value = "/get")
-    public Object get(@RequestParam(required = true) String key) {
-        return redisService.get(key);
+    public CommonResult<Object> get(@RequestParam(required = true) String key) {
+        return CommonResult.success(redisService.get(key));
     }
 
     /**
@@ -51,8 +51,8 @@ public class RedisController {
      * @return 是否删除成功
      */
     @PostMapping(value = "/delete")
-    public Boolean delete(@RequestParam(required = true) String key) {
-        return redisService.del(key);
+    public CommonResult<Boolean> delete(@RequestParam(required = true) String key) {
+        return CommonResult.success(redisService.del(key));
     }
 
     /**
@@ -62,8 +62,8 @@ public class RedisController {
      * @return Long
      */
     @PostMapping(value = "/delete/list")
-    public Long delete(@RequestParam(required = true) List<String> keys) {
-        return redisService.del(keys);
+    public CommonResult<Long> delete(@RequestParam(required = true) List<String> keys) {
+        return CommonResult.success(redisService.del(keys));
     }
 
     /**
@@ -74,10 +74,10 @@ public class RedisController {
      * @return 是否设置成功
      */
     @PostMapping(value = "/setexpire")
-    public Boolean expire(
+    public CommonResult<Boolean> expire(
             @RequestParam(required = true) String key,
             @RequestParam(required = true) Long time) {
-        return redisService.expire(key, time);
+        return CommonResult.success(redisService.expire(key, time));
     }
 
     /**
@@ -87,8 +87,8 @@ public class RedisController {
      * @return 过期时间
      */
     @GetMapping(value = "/getexpire")
-    public Long getExpire(@RequestParam(required = true) String key) {
-        return redisService.getExpire(key);
+    public CommonResult<Long> getExpire(@RequestParam(required = true) String key) {
+        return CommonResult.success(redisService.getExpire(key));
     }
 
     /**
@@ -98,8 +98,8 @@ public class RedisController {
      * @return 是否有这个key
      */
     @GetMapping(value = "/haskey")
-    public Boolean hasKey(@RequestParam(required = true) String key) {
-        return redisService.hasKey(key);
+    public CommonResult<Boolean> hasKey(@RequestParam(required = true) String key) {
+        return CommonResult.success(redisService.hasKey(key));
     }
 
 }
