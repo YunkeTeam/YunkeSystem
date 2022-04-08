@@ -17,7 +17,7 @@ class ConversationApplicationTests {
     @Test
     public void test01() {
         CustomStatement customStatement = new CustomStatement();
-        customStatement.setId(10002);
+        customStatement.setId(10001);
         customStatement.setUsername("ddgo");
         customStatement.setRole(1);
         TokenContent tokenContent = new TokenContent(customStatement, "YUNKE");
@@ -27,7 +27,13 @@ class ConversationApplicationTests {
 
     @Test
     public void test02() {
-
+        CustomStatement customStatement = new CustomStatement();
+        customStatement.setId(10002);
+        customStatement.setUsername("ddgotxdy");
+        customStatement.setRole(1);
+        TokenContent tokenContent = new TokenContent(customStatement, "YUNKE");
+        String token = TokenUtil.buildToken(tokenContent);
+        System.out.println(token);
     }
 
     @Test

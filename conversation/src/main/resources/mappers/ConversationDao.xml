@@ -24,7 +24,7 @@
            or (send_id = #{otherId} and receive_id = #{id})
     </delete>
 
-    <insert id="insertDialog">
+    <insert id="insertDialog" parameterType="com.titos.conversation.po.MaxIncrementIdPO" useGeneratedKeys="true" keyProperty="messageId">
         insert into message(send_id, receive_id, content, image_addr, release_time, is_complete)
         values(#{id}, #{otherId}, #{message}, #{message}, now(), #{isComplete})
     </insert>
@@ -56,6 +56,18 @@
     <update id="updateComplete">
         update message set is_complete = 1
         where (send_id = #{id} and receive_id = #{otherId} and is_complete = 0)
+    </update>
+
+    <select id="selectFriend">
+        select user_id from contactperson
+        where (user_id = #{id} and friend_id = #{otherId})
+            or (friend_id = #{otherId} and user_id = #{id})
+    </select>
+
+    <update id="updateFriend">
+        update contactperson set message_id = #{maxId}
+        where (user_id = #{id} and friend_id = #{otherId})
+           or (friend_id = #{otherId} and user_id = #{id})
     </update>
 
 </mapper>

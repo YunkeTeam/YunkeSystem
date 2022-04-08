@@ -4,7 +4,6 @@ import com.titos.tool.token.CustomStatement;
 import com.titos.tool.token.TokenUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +16,7 @@ import java.io.IOException;
  * @Version: 1.0.0
  * @Description:
  */
-@Order(1)
-@Component
-@WebFilter(filterName = "WebsocketFilter", urlPatterns = "/chat/*")
+@WebFilter(filterName = "WebsocketFilter", urlPatterns = "/conversation/chat/*")
 public class WebsocketFilter implements Filter {
 
     @Override
@@ -32,7 +29,7 @@ public class WebsocketFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String token = ((HttpServletRequest) servletRequest).getHeader("Sec-WebSocket-Protocol");
         response.setHeader("Sec-WebSocket-Protocol",token);
-//        CustomStatement customStatement = TokenUtil.getMsgFromToken(token, "YUNKE");
+        CustomStatement customStatement = TokenUtil.getMsgFromToken(token, "YUNKE");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

@@ -1,8 +1,10 @@
 package com.titos.conversation.service.impl;
 
 import com.titos.conversation.dao.ConversationDao;
+import com.titos.conversation.po.MaxIncrementIdPO;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
+import com.titos.conversation.vo.SimpleInformationVO;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import org.springframework.dao.DataAccessException;
@@ -74,12 +76,17 @@ public class ConversationServiceImpl implements ConversationService {
      * @param isComplete 是否成功
      * @return
      */
+    @Transactional
     @Override
     public int sendDialog(Integer id, Integer otherId, String message, Integer isComplete) {
         int cnt = 0;
+        MaxIncrementIdPO maxIncrementIdPO = new MaxIncrementIdPO();
         try {
-            cnt = conversationDao.insertDialog(id, otherId, message, isComplete);
+            cnt = conversationDao.insertDialog(id, otherId, message, isComplete, maxIncrementIdPO);
+            conversationDao.updateFriend(id, otherId, maxIncrementIdPO.getMessageId());
         } catch (DataAccessException e) {
+            // 捕获了异常，手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             cnt = -1;
         }
         return cnt;
@@ -94,7 +101,7 @@ public class ConversationServiceImpl implements ConversationService {
      */
     @Override
     public int addFriend(Integer id, Integer otherId) {
-        int cnt  =0;
+        int cnt = 0;
         try {
             cnt = conversationDao.insertFriend(id, otherId);
         } catch (DataAccessException e) {
@@ -109,10 +116,57 @@ public class ConversationServiceImpl implements ConversationService {
         try {
             list = conversationDao.selectAllDialogReceiveNotComplete(id, otherId);
         } catch (DataAccessException e) {
-            // 捕获了异常，手动回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+            list = null;
         }
         return list;
+    }
+
+    @Override
+    public int isFriend(Integer id, Integer otherId) {
+        int cnt = 0;
+        try {
+            cnt = conversationDao.selectFriend(id, otherId);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            cnt = -1;
+        }
+        return cnt;
+    }
+
+    @Override
+    public int updateFriend(Integer id, Integer otherId, Integer maxId) {
+        int cnt = 0;
+        try {
+            cnt = conversationDao.updateFriend(id, otherId, maxId);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            cnt = -1;
+        }
+        return cnt;
+    }
+
+    @Override
+    public int updateComplete(Integer id, Integer otherId) {
+        int cnt = 0;
+        try {
+            cnt = conversationDao.updateComplete(id, otherId);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            cnt = -1;
+        }
+        return cnt;
+    }
+
+    @Override
+    public List<SimpleInformationVO> getSimpleInformation(Integer id) {
+        List<SimpleInformationVO> simpleInformationVO = null;
+        try {
+            simpleInformationVO = conversationDao.getSimpleInformation(id);
+        } catch (DataAccessException e) {
+            simpleInformationVO = null;
+        }
+        return simpleInformationVO;
     }
 
 }

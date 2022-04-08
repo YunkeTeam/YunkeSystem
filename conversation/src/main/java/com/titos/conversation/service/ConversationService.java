@@ -1,6 +1,8 @@
 package com.titos.conversation.service;
 
+import com.titos.conversation.po.MaxIncrementIdPO;
 import com.titos.conversation.po.MessagePO;
+import com.titos.conversation.vo.SimpleInformationVO;
 import com.titos.info.global.CommonResult;
 
 import java.util.List;
@@ -57,4 +59,36 @@ public interface ConversationService {
      * @return 返回两个人的所有对话信息
      */
     List<MessagePO> selectAllDialogReceiveNotComplete(Integer id, Integer otherId);
+
+    /**
+     * 查询两个人是不是好友关系
+     * @param id
+     * @param otherId
+     * @return
+     */
+    int isFriend(Integer id, Integer otherId);
+
+    /**
+     * 更新两个好友的最后聊天信息
+     * @param id
+     * @param otherId
+     * @param maxId
+     * @return
+     */
+    int updateFriend(Integer id, Integer otherId, Integer maxId);
+
+    /**
+     * 更新消息是否接收成功
+     * @param id
+     * @param otherId
+     * @return
+     */
+    int updateComplete(Integer id, Integer otherId);
+
+    /**
+     * 返回id 对应聊天用户的简单信息
+     * @return
+     */
+    List<SimpleInformationVO> getSimpleInformation(Integer id);
+
 }

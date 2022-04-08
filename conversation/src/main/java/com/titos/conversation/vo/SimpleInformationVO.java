@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class SimpleInformationVO {
-    private String imageUrl;
+    private String headImage;
     private String userName;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

@@ -1,6 +1,8 @@
 package com.titos.conversation.dao;
 
+import com.titos.conversation.po.MaxIncrementIdPO;
 import com.titos.conversation.po.MessagePO;
+import com.titos.conversation.vo.SimpleInformationVO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
@@ -40,7 +42,7 @@ public interface ConversationDao {
      * @return 返回插入条数
      * @throws DataAccessException 数据访问错误
      */
-    int insertDialog(Integer id, Integer otherId, String message, Integer isComplete) throws DataAccessException;
+    int insertDialog(Integer id, Integer otherId, String message, Integer isComplete, MaxIncrementIdPO maxIncrementIdPO) throws DataAccessException;
 
     /**
      * 建立两个好友之间的关系
@@ -77,4 +79,31 @@ public interface ConversationDao {
      * @throws DataAccessException
      */
     int updateComplete(Integer id, Integer otherId) throws DataAccessException;
+
+    /**
+     * 查询两个人是否是好友关系
+     * @param id
+     * @param otherId
+     * @return
+     * @throws DataAccessException
+     */
+    int selectFriend(Integer id, Integer otherId) throws DataAccessException;
+
+    /**
+     * 更新两个好友间的最近消息
+     * @param id
+     * @param otherId
+     * @param maxId
+     * @return
+     * @throws DataAccessException
+     */
+    int updateFriend(Integer id, Integer otherId, Integer maxId) throws DataAccessException;
+
+    /**
+     * 返回当前好友聊天的简单信息
+     * @param id
+     * @return
+     * @throws DataAccessException
+     */
+    List<SimpleInformationVO> getSimpleInformation(Integer id) throws DataAccessException;
 }

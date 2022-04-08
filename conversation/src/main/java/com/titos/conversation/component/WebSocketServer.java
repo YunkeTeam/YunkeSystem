@@ -1,20 +1,17 @@
 package com.titos.conversation.component;
 
-import com.alibaba.fastjson.JSONObject;
 import com.titos.conversation.config.CustomSpringConfigurator;
 import com.titos.conversation.dao.ConversationDao;
 import com.titos.conversation.po.MessagePO;
-import com.titos.conversation.vo.ConnectionVO;
+import com.titos.conversation.service.ConversationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,35 +20,38 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version: 1.0.0
  * @Description:
  */
-@ServerEndpoint(value = "/chat/{id}/{toId}",configurator = CustomSpringConfigurator.class)
+@ServerEndpoint(value = "/conversation/chat/{id}/{toId}",configurator = CustomSpringConfigurator.class)
 @Component
 public class WebSocketServer {
     private static ConcurrentHashMap<Integer,Session> webSocketMap = new ConcurrentHashMap<>();
     private Session session;
-    @Resource
-    ConversationDao conversationDao;
+    @Autowired
+    ConversationService conversationService;
 
     /**
-     * 开启连接
-     * @param session
-     * @param toId
+     * 建立连接时的处理，利用session通信
+     * @param session OnOpen 处理session
+     * @param id 发起者id
+     * @param toId 建立者id
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("id") String id, @PathParam("toId") String toId) {
         this.session = session;
         int userId = Integer.parseInt(id);
+        // 将当前用户的 session 加入到 map 里面
         if(webSocketMap.containsKey(userId)) {
             webSocketMap.remove(userId);
             webSocketMap.put(userId, this.session);
         }else {
             webSocketMap.put(userId, this.session);
         }
-        // 从数据库里面拿看是否有toId 向 id 发离线消息
-        List<MessagePO> messagePOList = conversationDao.selectAllDialogReceiveNotComplete(Integer.parseInt(toId), userId);
+        // 从数据库里面拿看是否有 toId 向 id 发送过离线消息，按时间顺序从小到大
+        List<MessagePO> messagePOList = conversationService.selectAllDialogReceiveNotComplete(Integer.parseInt(toId), userId);
         if(messagePOList != null) {
+            // 通过session 发送信息，发送成功则将数据库的is_complete 设置为 1
             try {
                 for(MessagePO messagePO : messagePOList) {
-                    conversationDao.updateComplete(Integer.parseInt(toId), userId);
+                    conversationService.updateComplete(Integer.parseInt(toId), userId);
                     sendMessage(messagePO.getContent());
                 }
             } catch (IOException e) {
@@ -62,6 +62,7 @@ public class WebSocketServer {
 
     @OnClose
     public void onClose(@PathParam("id") String id) {
+        // 关闭时，将用户的 session 删除
         Integer userId = Integer.parseInt(id);
         if(webSocketMap.containsKey(userId)) {
             webSocketMap.remove(userId);
@@ -76,27 +77,26 @@ public class WebSocketServer {
         Integer userId = Integer.parseInt(id);
         Integer toId = Integer.parseInt(toId1);
         if(webSocketMap.containsKey(toId)) {
-            System.out.println(webSocketMap.size());
+            // 在线，则通过 session 的
             try {
-                webSocketMap.get(toId).getBasicRemote().sendText(message);
-                conversationDao.insertDialog(userId, toId, message, 1);
-            } catch (IOException e) {
-                System.out.println("发送失败");
+                conversationService.sendDialog(userId, toId, message, 1);
+                webSocketMap.get(toId).getAsyncRemote().sendText(message);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
-            // 不在线，存到数据库，redis，保存为0
-            conversationDao.insertDialog(userId, toId, message, 0);
+            // 不在线，存到数据库，保存为 0
+            conversationService.sendDialog(userId, toId, message, 1);
         }
-
     }
 
     @OnError
-    public void onError(Session session, Throwable error) {
+    public void onError(Throwable error) {
         error.printStackTrace();
     }
 
     public void sendMessage(String message) throws IOException {
-        this.session.getBasicRemote().sendText(message);
+        this.session.getAsyncRemote().sendText(message);
     }
 
 }
