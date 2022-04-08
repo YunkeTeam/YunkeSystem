@@ -59,6 +59,7 @@ public enum StatusEnum {
      * 验证错误
      */
     VERIFY_ERROR(409, "验证错误"),
+    USER_UNEXISTED(410, "用户不存在"),
     /**
      * 文件保存错误
      */

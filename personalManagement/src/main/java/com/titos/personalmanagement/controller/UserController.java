@@ -81,6 +81,7 @@ public class UserController {
     @InjectToken
     @PostMapping("/modifyInfo")
     public CommonResult<UserInfoDomain> modifyUserInfo(CustomStatement customStatement, @RequestBody UserInfoDomain userInfoDomain) {
+        System.out.println("结果是: " + customStatement);
         if (userInfoDomain.getId() == null) {
             userInfoDomain.setId(customStatement.getId());
         }

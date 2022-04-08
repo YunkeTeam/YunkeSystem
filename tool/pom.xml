@@ -61,6 +61,11 @@
             <artifactId>info</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-core</artifactId>
+            <version>10.10.1</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -5,6 +5,7 @@ import com.titos.tool.exception.JwtNotExistException;
 import com.titos.tool.exception.JwtVerifyException;
 import io.jsonwebtoken.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 import java.util.Date;
@@ -120,15 +121,23 @@ public class TokenUtil {
     }
 
     /**
-     * 从http请求的Header中获取token
+     * 从http请求的Cookie中获取token
      * @param request http请求
      * @return token值
      */
     public static String getToken(HttpServletRequest request) {
-        String token = request.getHeader(TOKEN_HEADER);
+        String token =request.getHeader(TOKEN_HEADER);
         if (token == null) {
             throw new JwtNotExistException("Token不存在");
         }
         return token;
+    }
+
+    public static boolean isTokenExisted(HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        if(token == null) {
+            return false;
+        }
+        return true;
     }
 }

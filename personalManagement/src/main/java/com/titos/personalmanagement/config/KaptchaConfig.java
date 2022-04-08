@@ -57,7 +57,7 @@ public class KaptchaConfig {
         /**
          * kaptcha.textproducer.char.length 验证码长度
          */
-        properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "5");
+        properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
 
         /**
          * kaptcha.textproducer.char.string 使用那些字符生成验证码
