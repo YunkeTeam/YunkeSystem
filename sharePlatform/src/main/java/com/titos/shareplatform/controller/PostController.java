@@ -31,7 +31,7 @@ public class PostController {
      *
      * @param pageNum  当前页
      * @param pageSize 每页的数量
-     * @return 结果
+     * @return 帖子列表
      */
     @GetMapping("/list")
     public CommonResult<List<SharePlatformVO>> listConversation(
