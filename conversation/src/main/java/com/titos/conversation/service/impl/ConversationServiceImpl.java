@@ -35,14 +35,14 @@ public class ConversationServiceImpl implements ConversationService {
      * @return
      */
     @Override
-    public CommonResult<List<MessagePO>> selectAllDialog(Integer id, Integer otherId) {
+    public List<MessagePO> selectAllDialog(Integer id, Integer otherId) {
         List<MessagePO> messagePoList = null;
         try {
             messagePoList = conversationDao.selectAllDialog(id, otherId);
         } catch (DataAccessException e) {
-            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
+            return null;
         }
-        return CommonResult.success(messagePoList);
+        return messagePoList;
     }
 
     /**
@@ -53,16 +53,17 @@ public class ConversationServiceImpl implements ConversationService {
      */
     @Override
     @Transactional
-    public CommonResult<Boolean> deleteDialog(Integer id, Integer otherId) {
+    public int deleteDialog(Integer id, Integer otherId) {
+        int cnt;
         try {
             conversationDao.deleteFriend(id, otherId);
-            conversationDao.deleteDialog(id, otherId);
+            cnt = conversationDao.deleteDialog(id, otherId);
         } catch (DataAccessException e) {
             // 捕获了异常，手动回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
+            return -1;
         }
-        return CommonResult.success(true);
+        return cnt;
     }
 
     /**
@@ -70,20 +71,18 @@ public class ConversationServiceImpl implements ConversationService {
      * @param id 发送者id
      * @param otherId 接收者id
      * @param message 发送的消息
+     * @param isComplete 是否成功
      * @return
      */
     @Override
-    public CommonResult<Boolean> sendDialog(Integer id, Integer otherId, String message) {
+    public int sendDialog(Integer id, Integer otherId, String message, Integer isComplete) {
         int cnt = 0;
         try {
-            cnt = conversationDao.insertDialog(id, otherId, message);
+            cnt = conversationDao.insertDialog(id, otherId, message, isComplete);
         } catch (DataAccessException e) {
-            cnt = 0;
+            cnt = -1;
         }
-        if(cnt == 0) {
-            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
-        }
-        return CommonResult.success(true);
+        return cnt;
     }
 
     /**
@@ -94,17 +93,26 @@ public class ConversationServiceImpl implements ConversationService {
      * @return CommonResult<Boolean>
      */
     @Override
-    public CommonResult<Boolean> addFriend(Integer id, Integer otherId) {
+    public int addFriend(Integer id, Integer otherId) {
         int cnt  =0;
         try {
             cnt = conversationDao.insertFriend(id, otherId);
         } catch (DataAccessException e) {
-            cnt = 0;
+            cnt = -1;
         }
-        if(cnt == 0) {
-            return CommonResult.fail(StatusEnum.FAIL.getCode(), StatusEnum.FAIL.getMsg());
+        return cnt;
+    }
+
+    @Override
+    public List<MessagePO> selectAllDialogReceiveNotComplete(Integer id, Integer otherId) {
+        List<MessagePO> list = null;
+        try {
+            list = conversationDao.selectAllDialogReceiveNotComplete(id, otherId);
+        } catch (DataAccessException e) {
+            // 捕获了异常，手动回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
-        return CommonResult.success(true);
+        return list;
     }
 
 }

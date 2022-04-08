@@ -26,7 +26,7 @@
 
     <insert id="insertDialog">
         insert into message(send_id, receive_id, content, image_addr, release_time, is_complete)
-        values(#{id}, #{otherId}, #{message}, #{message}, now(), 0)
+        values(#{id}, #{otherId}, #{message}, #{message}, now(), #{isComplete})
     </insert>
 
     <insert id="insertFriend">
@@ -39,5 +39,23 @@
         where  (user_id = #{id} and friend_id = #{otherId})
            or (friend_id = #{otherId} and user_id = #{id})
     </delete>
+
+    <select id="selectAllDialogReceiveNotComplete" resultType="com.titos.conversation.po.MessagePO">
+        select id,
+               send_id as sendId,
+               receive_id as receiveId,
+               content,
+               image_addr as imageAddr,
+               release_time as releaseTime,
+               is_complete as isComplete
+        from message
+        where (send_id = #{id} and receive_id = #{otherId}) and is_complete = 0
+        order by release_time
+    </select>
+
+    <update id="updateComplete">
+        update message set is_complete = 1
+        where (send_id = #{id} and receive_id = #{otherId} and is_complete = 0)
+    </update>
 
 </mapper>

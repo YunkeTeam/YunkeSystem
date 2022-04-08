@@ -2,6 +2,7 @@ package com.titos.conversation.dao;
 
 import com.titos.conversation.po.MessagePO;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -35,10 +36,11 @@ public interface ConversationDao {
      * @param id 发起者id
      * @param otherId 接收者id
      * @param message 传输信息
+     * @param isComplete 是否接收成功
      * @return 返回插入条数
      * @throws DataAccessException 数据访问错误
      */
-    int insertDialog(Integer id, Integer otherId, String message) throws DataAccessException;
+    int insertDialog(Integer id, Integer otherId, String message, Integer isComplete) throws DataAccessException;
 
     /**
      * 建立两个好友之间的关系
@@ -57,4 +59,22 @@ public interface ConversationDao {
      * @throws DataAccessException 数据访问错误
      */
     int deleteFriend(Integer id, Integer otherId) throws DataAccessException;
+
+    /**
+     * 返回otherId没有接收到id 的所有信息
+     * @param id id
+     * @param otherId otherId
+     * @return 返回信息
+     * @throws DataAccessException
+     */
+    List<MessagePO> selectAllDialogReceiveNotComplete(Integer id, Integer otherId) throws DataAccessException;
+
+    /**
+     * 更新消息的接收
+     * @param id 接收者
+     * @param otherId 发送者
+     * @return
+     * @throws DataAccessException
+     */
+    int updateComplete(Integer id, Integer otherId) throws DataAccessException;
 }

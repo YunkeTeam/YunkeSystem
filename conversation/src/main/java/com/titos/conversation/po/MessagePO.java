@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @Data
 public class MessagePO {
     private Long id;
-    private Long sendId;
-    private Long receiveId;
+    private Integer sendId;
+    private Integer receiveId;
     private String content;
     private String imageAddr;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime releaseTime;
-    private Long isComplete;
+    private Integer isComplete;
 }
