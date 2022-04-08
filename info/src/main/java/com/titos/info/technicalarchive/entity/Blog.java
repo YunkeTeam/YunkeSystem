@@ -53,6 +53,12 @@ public class Blog {
     private String category;
 
     /**
+     * 文章状态
+     * 状态值 1公开 2私密
+     */
+    private Integer status;
+
+    /**
      * 博客创建时间
      */
     private LocalDateTime createTime;

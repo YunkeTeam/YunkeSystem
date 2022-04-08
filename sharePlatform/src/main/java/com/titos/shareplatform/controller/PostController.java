@@ -1,6 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -34,10 +35,28 @@ public class PostController {
      * @return 帖子列表
      */
     @GetMapping("/list")
-    public CommonResult<List<SharePlatformVO>> listConversation(
+    public CommonResult<List<SharePlatformVO>> listPost(
             @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Integer pageSize) {
-        return postService.listSharePlatform(pageNum, pageSize);
+        return postService.listPost(pageNum, pageSize);
+    }
+
+    /**
+     * 获取当前用户的帖子
+     *
+     * @param customStatement 用户信息
+     * @param pageNum         当前页
+     * @param pageSize        每页的数量
+     * @return 帖子列表
+     */
+    @InjectToken
+    @GetMapping("/listme")
+    public CommonResult<List<MyPostVO>> listMyPost(
+            CustomStatement customStatement,
+            @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,
+            @RequestParam(defaultValue = "10", value = "pageSize") Integer pageSize
+    ) {
+        return postService.listMyPost(customStatement, pageNum, pageSize);
     }
 
     /**
@@ -47,7 +66,6 @@ public class PostController {
      * @param pageSize 每页的数量
      * @return 结果
      */
-    @InjectToken
     @GetMapping("/talent")
     public CommonResult<List<TalentVO>> listTalent(
             @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,

@@ -3,6 +3,7 @@ package com.titos.shareplatform.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Post;
+import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -25,7 +26,17 @@ public interface PostService extends IService<Post> {
      * @param pageSize 每页的数量
      * @return 结果
      */
-    CommonResult<List<SharePlatformVO>> listSharePlatform(Integer pageNum, Integer pageSize);
+    CommonResult<List<SharePlatformVO>> listPost(Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取当前用户的帖子
+     *
+     * @param customStatement 用户信息
+     * @param pageNum         当前页
+     * @param pageSize        每页的数量
+     * @return 帖子列表
+     */
+    CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Integer pageNum, Integer pageSize);
 
     /**
      * 查询活跃达人

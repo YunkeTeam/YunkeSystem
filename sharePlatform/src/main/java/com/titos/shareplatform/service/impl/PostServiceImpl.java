@@ -8,6 +8,7 @@ import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.entity.Post;
+import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
@@ -49,7 +50,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     private RedisRpc redisRpc;
 
     @Override
-    public CommonResult<List<SharePlatformVO>> listSharePlatform(Integer pageNum, Integer pageSize) {
+    public CommonResult<List<SharePlatformVO>> listPost(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<SharePlatformVO> listSharePlatform = postDao.listSharePlatform();
         for (SharePlatformVO sharePlatform : listSharePlatform) {
@@ -60,6 +61,12 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
             sharePlatform.setCommentList(commentList);
         }
         return CommonResult.success(listSharePlatform);
+    }
+
+    @Override
+    public CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Integer pageNum, Integer pageSize) {
+        
+        return null;
     }
 
     @Override
