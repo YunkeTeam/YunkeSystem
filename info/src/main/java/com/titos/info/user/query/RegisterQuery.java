@@ -1,20 +1,19 @@
-package com.titos.personalmanagement.model;
+package com.titos.info.user.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
- * 用户的实体类信息
  * @author Titos
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Data
+public class RegisterQuery {
+    private String verifyCode;
     /**
      * 用户id，唯一标识
      */
@@ -58,12 +57,4 @@ public class User {
      * 注册时间
      */
     private LocalDateTime registryTime;
-    /**
-     * 职位
-     */
-    private String jobTitle;
-    /**
-     * 描述信息
-     */
-    private String description;
 }
