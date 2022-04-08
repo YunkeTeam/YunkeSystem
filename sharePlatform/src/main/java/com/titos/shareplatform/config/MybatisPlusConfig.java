@@ -1,4 +1,4 @@
-package com.titos.technicalarchive.config;
+package com.titos.shareplatform.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
  * @ClassName MybatisPlusConfig
  * @Description MybatisPlus分页插件
  * @Author Kurihada
- * @Date 2022/4/8 15:33
+ * @Date 2022/4/8 23:56
  **/
 @Configuration
-@MapperScan(("com.titos.technicalarchive.dao"))
+@MapperScan(("com.titos.shareplatform.dao"))
 public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

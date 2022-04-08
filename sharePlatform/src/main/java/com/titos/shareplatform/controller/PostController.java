@@ -89,12 +89,14 @@ public class PostController {
     /**
      * 批量删除帖子
      *
-     * @param postIdList 帖子列表
+     * @param customStatement 用户信息
+     * @param postIdList      帖子列表
      * @return 删除是否成功
      */
+    @InjectToken
     @PostMapping("/delete")
-    public CommonResult<Boolean> deletePosts(@RequestBody List<Integer> postIdList) {
-        return postService.deletePosts(postIdList);
+    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, @RequestBody List<Integer> postIdList) {
+        return postService.deletePosts(customStatement, postIdList);
     }
 
 }

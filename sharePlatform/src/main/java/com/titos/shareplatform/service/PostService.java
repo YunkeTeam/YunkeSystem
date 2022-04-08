@@ -59,9 +59,10 @@ public interface PostService extends IService<Post> {
     /**
      * 批量删除帖子
      *
+     * @param customStatement 用户信息
      * @param postIdList 帖子列表
      * @return 删除是否成功
      */
-    CommonResult<Boolean> deletePosts(List<Integer> postIdList);
+    CommonResult<Boolean> deletePosts(CustomStatement customStatement, List<Integer> postIdList);
 
 }
