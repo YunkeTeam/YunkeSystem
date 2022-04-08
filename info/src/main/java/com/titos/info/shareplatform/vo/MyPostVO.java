@@ -49,7 +49,6 @@ public class MyPostVO {
     /**
      * 帖子发表时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
 }

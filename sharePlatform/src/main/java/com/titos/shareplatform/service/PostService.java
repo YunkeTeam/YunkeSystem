@@ -24,7 +24,7 @@ public interface PostService extends IService<Post> {
      *
      * @param pageNum  当前页
      * @param pageSize 每页的数量
-     * @return 结果
+     * @return 帖子列表
      */
     CommonResult<List<SharePlatformVO>> listPost(Integer pageNum, Integer pageSize);
 

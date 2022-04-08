@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.titos.shareplatform.dao.InfoDao">
+
+    <select id="listInfo" resultType="com.titos.info.shareplatform.vo.InfoVO">
+        SELECT i.id, i.info_cover, i.info_title, i.info_content, i.user_id, u.username, u.email, i.type, i.create_time
+        FROM info i
+        LEFT JOIN user u ON i.user_id = u.id
+        WHERE i.is_violation = 0
+        ORDER BY i.create_time DESC
+        LIMIT #{pageNum}, #{pageSize}
+    </select>
+
+</mapper>
