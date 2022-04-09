@@ -1,19 +1,24 @@
 package com.titos.personalmanagement.service.impl;
 
+import com.titos.info.file.FileInfo;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
+import com.titos.info.user.query.RegisterQuery;
+import com.titos.info.user.query.UserPassword;
 import com.titos.info.user.vo.LoginVo;
-import com.titos.personalmanagement.cache.UserInfoCache;
+import com.titos.personalmanagement.cache.userinfo.UserInfoCache;
+import com.titos.personalmanagement.cache.verifycode.VerifyCodeCache;
 import com.titos.personalmanagement.config.YkSysConf;
+import com.titos.personalmanagement.convert.RegisterQueryConvert;
 import com.titos.personalmanagement.convert.UserConvert;
 import com.titos.personalmanagement.dao.UserDao;
-import com.titos.personalmanagement.factory.LoginQueryFactory;
 import com.titos.personalmanagement.factory.UserFactory;
 import com.titos.personalmanagement.model.User;
 import com.titos.personalmanagement.mail.MailHandler;
 import com.titos.personalmanagement.service.UserService;
+import com.titos.rpc.file.FileRpc;
 import com.titos.tool.check.VerifyPasswordUtil;
 import com.titos.tool.check.VerifyStringUtil;
 import com.titos.tool.token.CustomStatement;
@@ -24,8 +29,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
+import javax.annotation.Resource;
 import java.util.Optional;
 
 /**
@@ -34,17 +40,26 @@ import java.util.Optional;
  */
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
+    @Resource
     private UserDao userDao;
-    @Autowired
+    @Resource
     private YkSysConf ykSysConf;
-    @Autowired
+    @Resource
     private UserInfoCache userInfoCache;
-    @Autowired
+    @Resource
+    private VerifyCodeCache verifyCodeCache;
+    @Resource
     private MailHandler mailHandler;
+    @Resource
+    private FileRpc fileRpc;
 
     @Override
-    public CommonResult register(User user) {
+    public CommonResult register(RegisterQuery registerQuery, String redisKey) {
+        CommonResult commonResult = checkVerifyCode(redisKey, registerQuery.getVerifyCode());
+        if (!StatusEnum.SUCCESS.getCode().equals(commonResult.getCode())) {
+            return commonResult;
+        }
+        User user = RegisterQueryConvert.convert(registerQuery);
         // 验证用户密码是否符合要求，用户名或邮箱是否存在
         Optional<CommonResult> res = verifyUser(user);
         // 不满足，直接返回结果
@@ -110,23 +125,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CommonResult<LoginVo> login(LoginQuery loginQuery) {
+    public CommonResult<LoginVo> login(LoginQuery loginQuery, String redisKey) {
+        CommonResult commonResult = checkVerifyCode(redisKey, loginQuery.getVerifyCode());
+        if (!StatusEnum.SUCCESS.getCode().equals(commonResult.getCode())) {
+            return commonResult;
+        }
         // 根据前端传递的参数查找数据库中的数据
         User user = userDao.selectUserToLogin(loginQuery);
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        // 如果存在该用户
-        if (passwordEncoder.matches(loginQuery.getPassword(), user.getPassword())) {
-            // JWT的payload中的自定义的私有字段
-            CustomStatement customStatement = new CustomStatement();
-            customStatement.setId(user.getId());
-            customStatement.setUsername(user.getUsername());
-            customStatement.setRole(user.getPersonType());
-            TokenContent tokenContent = new TokenContent(customStatement, ykSysConf.getTokenSecretKey());
-            String token = TokenUtil.buildToken(tokenContent);
-            LoginVo loginVo = new LoginVo(token, user.getId(), user.getUsername());
-            return new CommonResult<>(StatusEnum.SUCCESS.getCode(), loginVo, "登录成功");
+        if (user != null) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            // 如果存在该用户
+            if (passwordEncoder.matches(loginQuery.getPassword(), user.getPassword())) {
+                // JWT的payload中的自定义的私有字段
+                CustomStatement customStatement = new CustomStatement();
+                customStatement.setId(user.getId());
+                customStatement.setUsername(user.getUsername());
+                customStatement.setRole(user.getPersonType());
+                TokenContent tokenContent = new TokenContent(customStatement, ykSysConf.getTokenSecretKey());
+                String token = TokenUtil.buildToken(tokenContent);
+                LoginVo loginVo = new LoginVo(token, user.getId(), user.getUsername());
+                return new CommonResult<>(StatusEnum.SUCCESS.getCode(), loginVo, "登录成功");
+            } else {
+                return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "密码错误");
+            }
         }
-        return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "密码错误");
+        return new CommonResult<>(StatusEnum.USER_UNEXISTED.getCode(), "用户名不存在");
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -163,6 +186,63 @@ public class UserServiceImpl implements UserService {
         userInfoDomain = UserConvert.toDomain(userInfo);
         return CommonResult.success(userInfoDomain, "修改用户信息");
     }
+    /**
+     * 修改用户头像
+     * @param image 用户头像文件
+     * @param customStatement token中用户的信息部分
+     * @return 保存成功后的用户图片在服务器上的url地址
+     */
+    @Override
+    public CommonResult<String> modifyUserAvatar(MultipartFile image, CustomStatement customStatement) {
+        if (image.isEmpty()) {
+            return new CommonResult<>(StatusEnum.PARAM_ERROR.getCode(), "文件为空");
+        }
+        CommonResult<FileInfo> res = fileRpc.upload(image);
+        if (!StatusEnum.SUCCESS.getCode().equals(res.getCode())) {
+            return new CommonResult<>(StatusEnum.FILE_SIZE_ERROR.getCode(), "文件存储失败");
+        }
+        User user = new User();
+        user.setId(customStatement.getId());
+        user.setHeadImage(res.getData().getUrl());
+        userDao.updateUserInfoByIdSelective(user);
+        return CommonResult.success(res.getData().getUrl(), "修改成功");
+    }
+
+    @Override
+    public CommonResult modifyUserPassword(CustomStatement customStatement, UserPassword userPassword) {
+        // 根据用户id获取用户的信息
+        User user = userDao.selectUserInfoById(customStatement.getId());
+        if (user == null) {
+            return CommonResult.fail(StatusEnum.PASSWORD_WRONG,StatusEnum.PASSWORD_WRONG.getMsg());
+        }
+        User userQuery = new User();
+        userQuery.setId(userPassword.getUserID());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        // 验证用户的密码是否正确
+        if (passwordEncoder.matches(userPassword.getOldPassword(), user.getPassword())) {
+            User newUser = new User();
+            // 加密后存储
+            String encodePwd = passwordEncoder.encode(userPassword.getNewPassword());
+            newUser.setPassword(encodePwd);
+            newUser.setId(customStatement.getId());
+            int res = userDao.updateUserInfoByIdSelective(newUser);
+            // 修改成功
+            if (res == 1) {
+                return CommonResult.success("密码修改成功");
+            }
+        }
+        return CommonResult.fail(StatusEnum.PASSWORD_WRONG, StatusEnum.PASSWORD_WRONG.getMsg());
+    }
+
+    @Override
+    public CommonResult<UserInfoDomain> getUserInfo(CustomStatement customStatement) {
+        User user = userDao.selectUserInfoById(customStatement.getId());
+        if (user == null) {
+            return new CommonResult<>(StatusEnum.USER_UNEXISTED.getCode(), "用户信息不存在");
+        }
+        UserInfoDomain userInfoDomain = UserConvert.toDomain(user);
+        return CommonResult.success(userInfoDomain, "用户查询成功");
+    }
 
 
     /**
@@ -196,5 +276,24 @@ public class UserServiceImpl implements UserService {
             res = new CommonResult(StatusEnum.EMAIL_EXISTED.getCode(), "邮箱已经存在");
         }
         return Optional.ofNullable(res);
+    }
+
+    /**
+     * 验证用户输入的验证码是否正确
+     * @param redisKey 存放验证码对应的key
+     * @param verifyCode 用户输入的验证码
+     * @return 验证的结果
+     */
+    private CommonResult checkVerifyCode(String redisKey, String verifyCode) {
+        // 获取redis中的验证码
+        String code = verifyCodeCache.getCodeByKey(redisKey);
+        if (code == null) {
+            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码过期");
+        }
+        if (code.equals(verifyCode)) {
+            return CommonResult.success("验证成功");
+        } else {
+            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");
+        }
     }
 }

@@ -5,13 +5,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@EnableFeignClients // 开启feign
-@EnableDiscoveryClient // 开启nacos服务注册与发现
+/**
+ * @ClassName TechnicalArchiveApplication
+ * @Description TODO
+ * @Author Kurihada
+ * @Date 2022/4/8 14:32
+ **/
+@EnableFeignClients
+@EnableDiscoveryClient
 @SpringBootApplication
 public class TechnicalArchiveApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(TechnicalArchiveApplication.class, args);
     }
-
 }

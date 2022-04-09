@@ -1,5 +1,6 @@
 package com.titos.conversation;
 
+import com.titos.tool.annotions.EnableYunKeAutoUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * @author ddgo
  */
+@EnableYunKeAutoUtils
 @SpringBootApplication
 @MapperScan("com.titos.conversation.dao")
 @ServletComponentScan("com.titos.conversation.filter")

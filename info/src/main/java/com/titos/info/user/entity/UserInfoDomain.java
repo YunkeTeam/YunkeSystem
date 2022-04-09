@@ -49,4 +49,12 @@ public class UserInfoDomain {
      * 电话号码
      */
     private String phone;
+    /**
+     * 职位
+     */
+    private String jobTitle;
+    /**
+     * 描述信息
+     */
+    private String description;
 }

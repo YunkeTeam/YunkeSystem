@@ -1,5 +1,6 @@
 package com.titos.info.global.enums;
 
+import javafx.scene.input.KeyCodeCombination;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -56,18 +57,34 @@ public enum StatusEnum {
      */
     FILE_SIZE_ERROR(408, "文件大小错误"),
     /**
-     * 验证错误
-     */
-    VERIFY_ERROR(409, "验证错误"),
-    /**
      * 文件保存错误
      */
-    FILE_SAVE_ERROR(500, "文件保存错误"),
+    FILE_SAVE_ERROR(409, "文件保存错误"),
+    /**
+     * 验证错误
+     */
+    VERIFY_ERROR(410, "验证错误"),
+    /**
+     * 用户不存在
+     */
+    USER_UNEXISTED(411, "用户不存在"),
+    /**
+     * Token过期
+     */
+    TOKEN_EXPIRED(412, "token过期"),
+    /**
+     * 服务器错误
+     */
+    ERROR(500, "服务器错误"),
     /**
      * 失败
      */
-    FAIL(51000, "操作失败");
+    FAIL(51000, "操作失败"),
 
+    /**
+     * 删除帖子权限不足
+     */
+    FAIL_DEL_POST(51001, "权限不足");
     /**
      * 状态码
      */

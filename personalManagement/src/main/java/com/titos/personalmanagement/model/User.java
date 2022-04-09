@@ -58,4 +58,12 @@ public class User {
      * 注册时间
      */
     private LocalDateTime registryTime;
+    /**
+     * 职位
+     */
+    private String jobTitle;
+    /**
+     * 描述信息
+     */
+    private String description;
 }
