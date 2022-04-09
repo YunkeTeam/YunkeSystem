@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class TokenUtil {
 
-    public static final String TOKEN_HEADER = "Token";
+    public static final String TOKEN_HEADER = "Authorization";
     public static final String ID = "id";
     public static final String ROLE = "role";
     public static final String USERNAME = "username";
@@ -62,7 +62,7 @@ public class TokenUtil {
      * @param secretKey 密钥
      * @return 用户在token中的自定义信息
      */
-    public static CustomStatement getMsgFromToken(HttpServletRequest request, String secretKey) {
+    public static CustomStatement getMsgFromToken(HttpServletRequest request, String secretKey) throws JwtExpireException, JwtVerifyException , JwtNotExistException{
         String token = getToken(request);
         CustomStatement customStatement = new CustomStatement();
         customStatement.setId((Integer) getTokenValueByKey(token, secretKey, ID));
@@ -77,7 +77,7 @@ public class TokenUtil {
      * @param secretKey 密钥
      * @return 用户在token中的自定义信息
      */
-    public static CustomStatement getMsgFromToken(String token, String secretKey) {
+    public static CustomStatement getMsgFromToken(String token, String secretKey) throws JwtExpireException, JwtVerifyException , JwtNotExistException{
         CustomStatement customStatement = new CustomStatement();
         customStatement.setId((Integer) getTokenValueByKey(token, secretKey, ID));
         customStatement.setRole((Integer) getTokenValueByKey(token, secretKey, ROLE));
@@ -106,7 +106,7 @@ public class TokenUtil {
      * @param secretKey 密钥
      * @return
      */
-    public static Claims parse(String jwt, String secretKey) {
+    public static Claims parse(String jwt, String secretKey) throws JwtExpireException, JwtVerifyException , JwtNotExistException  {
         Claims claims = null;
         try {
             claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt).getBody();

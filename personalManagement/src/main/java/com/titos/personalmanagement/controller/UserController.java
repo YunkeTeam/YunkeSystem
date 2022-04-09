@@ -81,11 +81,21 @@ public class UserController {
     @InjectToken
     @PostMapping("/modifyInfo")
     public CommonResult<UserInfoDomain> modifyUserInfo(CustomStatement customStatement, @RequestBody UserInfoDomain userInfoDomain) {
-        System.out.println("结果是: " + customStatement);
         if (userInfoDomain.getId() == null) {
             userInfoDomain.setId(customStatement.getId());
         }
         return userService.modifyUserInfo(userInfoDomain, customStatement);
+    }
+
+    /**
+     * 获取用户的所有信息
+     * @param customStatement token中用户的自定义信息
+     * @return 用户信息
+     */
+    @InjectToken
+    @PostMapping("/getUserInfo")
+    public CommonResult<UserInfoDomain> getUserInfo(CustomStatement customStatement) {
+        return userService.getUserInfo(customStatement);
     }
 
     /**
@@ -99,6 +109,7 @@ public class UserController {
     public CommonResult<String> modifyUserAvatar(CustomStatement customStatement, @RequestParam MultipartFile img) {
         return userService.modifyUserAvatar(img, customStatement);
     }
+
 
     /**
      * 修改用户密码
