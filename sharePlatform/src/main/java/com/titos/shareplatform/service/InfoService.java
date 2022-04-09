@@ -60,6 +60,6 @@ public interface InfoService extends IService<Info> {
      * @param keywords 关键词
      * @return 消息列表
      */
-    CommonResult<List<InfoVO>> searchInfo(String keywords);
+    CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId);
 
 }

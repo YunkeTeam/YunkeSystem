@@ -71,8 +71,9 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     }
 
     @Override
-    public CommonResult<List<InfoVO>> searchInfo(String keywords) {
+    public CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId) {
         List<Info> infoList = infoDao.selectList(new LambdaQueryWrapper<Info>()
+                .eq(userId != null, Info::getUserId, userId)
                 .eq(Info::getIsViolation, 0)
                 .and(i -> i.like(Info::getInfoTitle, keywords)));
         List<InfoVO> infoVOList = infoList.stream().map(item -> {
