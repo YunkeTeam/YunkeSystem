@@ -5,15 +5,10 @@ import com.titos.conversation.service.ConversationService;
 import com.titos.conversation.vo.SimpleInformationVO;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
-import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.exception.ParameterException;
 import com.titos.tool.token.CustomStatement;
 import com.titos.tool.token.TokenUtil;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -91,23 +86,20 @@ public class ConversationController {
 //        return commonResult;
 //    }
     /**
-     * 返回与被点击头像私信用户的所有聊天信息。
+     * 返回与被点击头像私信用户的所有历史聊天信息。
      * @param toId 被点击用户的 toId
      * TODO：没有实现分页，redis
      */
     @PostMapping("/getAllMessage")
     public CommonResult<List<MessagePO>> getAllMessage(String token, String toId) {
         CustomStatement customStatement = TokenUtil.getMsgFromToken(token, "YUNKE");
-        CommonResult<List<MessagePO>> commonResult = null;
-        try {
-            Integer userId = customStatement.getId();
-            Integer otherUserId = Integer.parseInt(toId);
-            List<MessagePO> result = service.selectAllDialog(userId, otherUserId);
-            commonResult = CommonResult.success(result, StatusEnum.SUCCESS.getMsg());
-        } catch (ParameterException e) {
-            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
+        Integer userId = customStatement.getId();
+        Integer otherUserId = Integer.parseInt(toId);
+        List<MessagePO> result = service.selectAllDialog(userId, otherUserId);
+        if(result == null) {
+            return CommonResult.fail(null);
         }
-        return commonResult;
+        return CommonResult.success(result);
     }
 
     /**
@@ -118,15 +110,13 @@ public class ConversationController {
     public CommonResult<Boolean> deleteDialog(String token, String toId) {
         CustomStatement customStatement = TokenUtil.getMsgFromToken(token, "YUNKE");
         CommonResult<Boolean> commonResult = null;
-        try {
-            Integer userId = customStatement.getId();
-            Integer otherUserId = Integer.parseInt(toId);
-            service.deleteDialog(userId, otherUserId);
-            commonResult = CommonResult.success(true, StatusEnum.SUCCESS.getMsg());
-        } catch (ParameterException e) {
-            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
+        Integer userId = customStatement.getId();
+        Integer otherUserId = Integer.parseInt(toId);
+        int cnt = service.deleteDialog(userId, otherUserId);
+        if(cnt == -1) {
+            return CommonResult.fail(false);
         }
-        return commonResult;
+        return CommonResult.success(true);
     }
 
     /**
@@ -137,15 +127,13 @@ public class ConversationController {
     public CommonResult<Boolean> addFriend(String token, String toId) {
         CustomStatement customStatement = TokenUtil.getMsgFromToken(token, "YUNKE");
         CommonResult<Boolean> commonResult = null;
-        try {
-            Integer userId = customStatement.getId();
-            Integer otherUserId = Integer.parseInt(toId);
-            service.addFriend(userId, otherUserId);
-            commonResult = CommonResult.success(true, StatusEnum.SUCCESS.getMsg());
-        } catch (ParameterException e) {
-            commonResult = CommonResult.fail(StatusEnum.TOKEN_ERROR.getCode(), StatusEnum.TOKEN_ERROR.getMsg());
+        Integer userId = customStatement.getId();
+        Integer otherUserId = Integer.parseInt(toId);
+        int cnt = service.addFriend(userId, otherUserId);
+        if(cnt == -1) {
+            return CommonResult.fail(false);
         }
-        return commonResult;
+        return CommonResult.success(true);
     }
 
     /**
@@ -153,17 +141,30 @@ public class ConversationController {
      * @param token
      * @return
      */
-    @GetMapping("/getSimpleInformation")
-    public CommonResult<SimpleInformationVO> getSimpleInformationVO(String token) {
+    @PostMapping("/getSimpleInformation")
+    public CommonResult<List<SimpleInformationVO>> getSimpleInformationVO(String token) {
         CustomStatement customStatement = TokenUtil.getMsgFromToken(token, "YUNKE");
-        SimpleInformationVO simpleInformationVO = null;
-        try {
-
-        }catch (DataAccessException e) {
-            return CommonResult.fail(simpleInformationVO);
+        List<SimpleInformationVO> simpleInformationVO = service.getSimpleInformation(customStatement.getId());
+        if(simpleInformationVO == null) {
+            return CommonResult.fail(null);
         }
         return CommonResult.success(simpleInformationVO);
     }
 
+    /**
+     * 获取toId 在id 离线时发送的信息
+     * @param id
+     * @param toId
+     * @return
+     */
+    @PostMapping("/getAllDialogReceiveNotComplete")
+    public CommonResult<List<MessagePO>> getAllDialogReceiveNotComplete(Integer id, Integer toId) {
+        // 从数据库里面拿看是否有 toId 向 id 发送过离线消息，按时间顺序从小到大
+        List<MessagePO> messagePOList = service.selectAllDialogReceiveNotComplete(toId, id);
+        if(messagePOList == null) {
+            return CommonResult.fail(null);
+        }
+        return CommonResult.success(messagePOList);
+    }
 
 }

@@ -1,6 +1,7 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="AlibabaTransactionMustHaveRollback" enabled="false" level="MAJOR" enabled_by_default="false" />
     <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="TOP_LEVEL_CLASS_OPTIONS">
         <value>
@@ -30,11 +31,7 @@
       <option name="IGNORE_JAVADOC_PERIOD" value="true" />
       <option name="IGNORE_DUPLICATED_THROWS" value="false" />
       <option name="IGNORE_POINT_TO_ITSELF" value="false" />
-<<<<<<< HEAD
-      <option name="myAdditionalJavadocTags" value="date,Version:,DateTime:,Author:,Description:" />
-=======
-      <option name="myAdditionalJavadocTags" value="date,ClassName,Description,Author,Date" />
->>>>>>> main
+      <option name="myAdditionalJavadocTags" value="date" />
     </inspection_tool>
   </profile>
 </component>

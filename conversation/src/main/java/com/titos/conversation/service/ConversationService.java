@@ -1,9 +1,7 @@
 package com.titos.conversation.service;
 
-import com.titos.conversation.po.MaxIncrementIdPO;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.vo.SimpleInformationVO;
-import com.titos.info.global.CommonResult;
 
 import java.util.List;
 

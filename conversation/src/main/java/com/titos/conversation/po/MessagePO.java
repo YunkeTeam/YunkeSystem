@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class MessagePO {
-    private Long id;
+    private Integer id;
     private Integer sendId;
     private Integer receiveId;
     private String content;

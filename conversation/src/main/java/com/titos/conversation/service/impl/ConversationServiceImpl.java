@@ -1,20 +1,15 @@
 package com.titos.conversation.service.impl;
 
 import com.titos.conversation.dao.ConversationDao;
-import com.titos.conversation.po.MaxIncrementIdPO;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
 import com.titos.conversation.vo.SimpleInformationVO;
-import com.titos.info.global.CommonResult;
-import com.titos.info.global.enums.StatusEnum;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -42,7 +37,8 @@ public class ConversationServiceImpl implements ConversationService {
         try {
             messagePoList = conversationDao.selectAllDialog(id, otherId);
         } catch (DataAccessException e) {
-            return null;
+            e.printStackTrace();
+            messagePoList = null;
         }
         return messagePoList;
     }
@@ -61,9 +57,9 @@ public class ConversationServiceImpl implements ConversationService {
             conversationDao.deleteFriend(id, otherId);
             cnt = conversationDao.deleteDialog(id, otherId);
         } catch (DataAccessException e) {
-            // 捕获了异常，手动回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return -1;
+            e.printStackTrace();
+            cnt = -1;
         }
         return cnt;
     }
@@ -80,13 +76,18 @@ public class ConversationServiceImpl implements ConversationService {
     @Override
     public int sendDialog(Integer id, Integer otherId, String message, Integer isComplete) {
         int cnt = 0;
-        MaxIncrementIdPO maxIncrementIdPO = new MaxIncrementIdPO();
+        MessagePO messagePO = new MessagePO();
+        messagePO.setSendId(id);
+        messagePO.setReceiveId(otherId);
+        messagePO.setContent(message);
+        messagePO.setImageAddr(message);
+        messagePO.setIsComplete(isComplete);
         try {
-            cnt = conversationDao.insertDialog(id, otherId, message, isComplete, maxIncrementIdPO);
-            conversationDao.updateFriend(id, otherId, maxIncrementIdPO.getMessageId());
+            cnt = conversationDao.insertDialog(messagePO);
+            conversationDao.updateFriend(id, otherId, messagePO.getId());
         } catch (DataAccessException e) {
-            // 捕获了异常，手动回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
             cnt = -1;
         }
         return cnt;
@@ -99,23 +100,37 @@ public class ConversationServiceImpl implements ConversationService {
      * @param otherId 被添加者
      * @return CommonResult<Boolean>
      */
+    @Transactional
     @Override
     public int addFriend(Integer id, Integer otherId) {
         int cnt = 0;
         try {
-            cnt = conversationDao.insertFriend(id, otherId);
+            if(conversationDao.selectFriend(id, otherId) == 0) {
+                cnt = conversationDao.insertFriend(id, otherId);
+            }
         } catch (DataAccessException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
             cnt = -1;
         }
         return cnt;
     }
 
+    /**
+     * 返回id 向 otherId 发送的全部消息，并且更新数据库的complete信息
+     * @param id 发起者的id
+     * @param otherId 接收者的id
+     * @return
+     */
+    @Transactional
     @Override
     public List<MessagePO> selectAllDialogReceiveNotComplete(Integer id, Integer otherId) {
         List<MessagePO> list = null;
         try {
             list = conversationDao.selectAllDialogReceiveNotComplete(id, otherId);
+            conversationDao.updateComplete(id, otherId);
         } catch (DataAccessException e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             e.printStackTrace();
             list = null;
         }
@@ -162,8 +177,9 @@ public class ConversationServiceImpl implements ConversationService {
     public List<SimpleInformationVO> getSimpleInformation(Integer id) {
         List<SimpleInformationVO> simpleInformationVO = null;
         try {
-            simpleInformationVO = conversationDao.getSimpleInformation(id);
+            simpleInformationVO = conversationDao.selectSimpleInformation(id);
         } catch (DataAccessException e) {
+            e.printStackTrace();
             simpleInformationVO = null;
         }
         return simpleInformationVO;

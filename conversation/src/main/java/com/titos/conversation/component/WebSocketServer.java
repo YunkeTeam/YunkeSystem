@@ -1,9 +1,11 @@
 package com.titos.conversation.component;
 
+import com.alibaba.fastjson.JSONObject;
 import com.titos.conversation.config.CustomSpringConfigurator;
 import com.titos.conversation.dao.ConversationDao;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
+import com.titos.conversation.vo.ConnectionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
@@ -20,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version: 1.0.0
  * @Description:
  */
-@ServerEndpoint(value = "/conversation/chat/{id}/{toId}",configurator = CustomSpringConfigurator.class)
+@ServerEndpoint(value = "/conversation/chat/{id}",configurator = CustomSpringConfigurator.class)
 @Component
 public class WebSocketServer {
     private static ConcurrentHashMap<Integer,Session> webSocketMap = new ConcurrentHashMap<>();
@@ -32,10 +34,9 @@ public class WebSocketServer {
      * 建立连接时的处理，利用session通信
      * @param session OnOpen 处理session
      * @param id 发起者id
-     * @param toId 建立者id
      */
     @OnOpen
-    public void onOpen(Session session, @PathParam("id") String id, @PathParam("toId") String toId) {
+    public void onOpen(Session session, @PathParam("id") String id) {
         this.session = session;
         int userId = Integer.parseInt(id);
         // 将当前用户的 session 加入到 map 里面
@@ -44,19 +45,6 @@ public class WebSocketServer {
             webSocketMap.put(userId, this.session);
         }else {
             webSocketMap.put(userId, this.session);
-        }
-        // 从数据库里面拿看是否有 toId 向 id 发送过离线消息，按时间顺序从小到大
-        List<MessagePO> messagePOList = conversationService.selectAllDialogReceiveNotComplete(Integer.parseInt(toId), userId);
-        if(messagePOList != null) {
-            // 通过session 发送信息，发送成功则将数据库的is_complete 设置为 1
-            try {
-                for(MessagePO messagePO : messagePOList) {
-                    conversationService.updateComplete(Integer.parseInt(toId), userId);
-                    sendMessage(messagePO.getContent());
-                }
-            } catch (IOException e) {
-                System.out.println("接收失败");
-            }
         }
     }
 
@@ -70,33 +58,30 @@ public class WebSocketServer {
     }
 
     @OnMessage
-    public void onMessage(@PathParam("id") String id, @PathParam("toId") String toId1, String message) {
-        if(message == null || "".equals(message)) {
+    public void onMessage(@PathParam("id") String id, String message) {
+        ConnectionVO connectionVO = JSONObject.parseObject(message, ConnectionVO.class);
+        if(connectionVO.getMessage() == null || "".equals(connectionVO.getMessage())) {
             return;
         }
         Integer userId = Integer.parseInt(id);
-        Integer toId = Integer.parseInt(toId1);
+        Integer toId = connectionVO.getToId();
         if(webSocketMap.containsKey(toId)) {
             // 在线，则通过 session 的
             try {
-                conversationService.sendDialog(userId, toId, message, 1);
+                conversationService.sendDialog(userId, toId, connectionVO.getMessage(), 1);
                 webSocketMap.get(toId).getAsyncRemote().sendText(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             // 不在线，存到数据库，保存为 0
-            conversationService.sendDialog(userId, toId, message, 1);
+            conversationService.sendDialog(userId, toId, connectionVO.getMessage(), 0);
         }
     }
 
     @OnError
     public void onError(Throwable error) {
         error.printStackTrace();
-    }
-
-    public void sendMessage(String message) throws IOException {
-        this.session.getAsyncRemote().sendText(message);
     }
 
 }

@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class ConnectionVO {
+    Integer fromId;
     Integer toId;
     String message;
 }
