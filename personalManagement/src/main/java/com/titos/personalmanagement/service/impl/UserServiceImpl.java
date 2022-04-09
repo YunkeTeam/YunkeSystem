@@ -234,6 +234,16 @@ public class UserServiceImpl implements UserService {
         return CommonResult.fail(StatusEnum.PASSWORD_WRONG, StatusEnum.PASSWORD_WRONG.getMsg());
     }
 
+    @Override
+    public CommonResult<UserInfoDomain> getUserInfo(CustomStatement customStatement) {
+        User user = userDao.selectUserInfoById(customStatement.getId());
+        if (user == null) {
+            return new CommonResult<>(StatusEnum.USER_UNEXISTED.getCode(), "用户信息不存在");
+        }
+        UserInfoDomain userInfoDomain = UserConvert.toDomain(user);
+        return CommonResult.success(userInfoDomain, "用户查询成功");
+    }
+
 
     /**
      * 验证用户的密码是否符合要求，数据库中是否有相同的用户名和邮箱
@@ -276,15 +286,14 @@ public class UserServiceImpl implements UserService {
      */
     private CommonResult checkVerifyCode(String redisKey, String verifyCode) {
         // 获取redis中的验证码
-//        String code = verifyCodeCache.getCodeByKey(redisKey);
-//        if (code == null) {
-//            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码过期");
-//        }
-//        if (code.equals(verifyCode)) {
-//            return CommonResult.success("验证成功");
-//        } else {
-//            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");
-//        }
-        return CommonResult.success("test");
+        String code = verifyCodeCache.getCodeByKey(redisKey);
+        if (code == null) {
+            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码过期");
+        }
+        if (code.equals(verifyCode)) {
+            return CommonResult.success("验证成功");
+        } else {
+            return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");
+        }
     }
 }

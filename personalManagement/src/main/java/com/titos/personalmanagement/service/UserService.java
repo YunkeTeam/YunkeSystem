@@ -76,4 +76,11 @@ public interface UserService {
      * @return 修改的结果
      */
     CommonResult modifyUserPassword(CustomStatement customStatement, UserPassword userPassword);
+
+    /**
+     * 获取用户的所有信息（除密码）
+     * @param customStatement token中的用户自定义信息
+     * @return 用户的信息
+     */
+    CommonResult<UserInfoDomain> getUserInfo(CustomStatement customStatement);
 }

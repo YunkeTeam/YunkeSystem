@@ -59,11 +59,18 @@ public enum StatusEnum {
      * 验证错误
      */
     VERIFY_ERROR(409, "验证错误"),
+    /**
+     * 用户不存在
+     */
     USER_UNEXISTED(410, "用户不存在"),
     /**
-     * 文件保存错误
+     * Token过期
      */
-    FILE_SAVE_ERROR(500, "文件保存错误"),
+    TOKEN_EXPIRED(411, "token过期"),
+    /**
+     * 服务器错误
+     */
+    ERROR(500, "服务器错误"),
     /**
      * 失败
      */
