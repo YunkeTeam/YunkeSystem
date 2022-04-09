@@ -7,7 +7,18 @@
         SELECT i.id, i.info_cover, i.info_title, i.info_content, i.user_id, u.username, u.email, i.type, i.create_time
         FROM info i
         LEFT JOIN user u ON i.user_id = u.id
-        WHERE i.is_violation = 0
+        <where>
+            i.is_violation = 0
+            <if test="filterInfo.startTime != null">
+                AND i.create_time > #{filterInfo.startTime}
+            </if>
+            <if test="filterInfo.endTime != null">
+                AND i.create_time &lt;= #{filterInfo.endTime}
+            </if>
+            <if test="filterInfo.type != null">
+                AND i.type = #{filterInfo.type}
+            </if>
+        </where>
         ORDER BY i.create_time DESC
         LIMIT #{pageNum}, #{pageSize}
     </select>

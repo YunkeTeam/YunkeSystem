@@ -1,13 +1,11 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.shareplatform.vo.FilterInfoVO;
 import com.titos.info.shareplatform.vo.InfoVO;
 import com.titos.shareplatform.service.InfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,17 +23,19 @@ public class InformationController {
     private InfoService infoService;
 
     /**
-     * 分页查询所有的信息
+     * 按条件分页查询信息
      *
-     * @param pageNum  当前页
-     * @param pageSize 每页的数量
+     * @param filterInfo 条件
+     * @param pageNum    当前页
+     * @param pageSize   每页的数量
      * @return 信息列表
      */
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/list/filter")
     public CommonResult<List<InfoVO>> listInfo(
+            FilterInfoVO filterInfo,
             @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {
-        return infoService.listInfo(pageNum, pageSize);
+        return infoService.listInfo(filterInfo, pageNum, pageSize);
     }
 
 }
