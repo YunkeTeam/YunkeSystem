@@ -79,7 +79,7 @@ public enum StatusEnum {
     /**
      * 删除帖子权限不足
      */
-    FAIL_DEL_POST(51001, "删除帖子权限不足");
+    FAIL_DEL_POST(51001, "权限不足");
 
     /**
      * 状态码

@@ -50,6 +50,12 @@ public class Info {
     private Integer userId;
 
     /**
+     * 信息的状态
+     * 1发布中 2已完成 3取消
+     */
+    private Integer status;
+
+    /**
      * 信息的类型
      * 1二手商品 2兼职信息 3失物招领
      */

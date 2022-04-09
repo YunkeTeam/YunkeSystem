@@ -1,14 +1,19 @@
 package com.titos.shareplatform.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Info;
-import com.titos.info.shareplatform.vo.FilterInfoVO;
-import com.titos.info.shareplatform.vo.InfoVO;
+import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.dao.InfoDao;
 import com.titos.shareplatform.service.InfoService;
+import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,10 +31,40 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     @Resource
     private InfoDao infoDao;
 
-
     @Override
     public CommonResult<List<InfoVO>> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {
-        List<InfoVO> infoList = infoDao.listInfo(filterInfo, pageNum-1, pageSize);
+        List<InfoVO> infoList = infoDao.listInfo(filterInfo, pageNum - 1, pageSize);
         return CommonResult.success(infoList);
+    }
+
+    @Override
+    public CommonResult<List<MyInfoVO>> listMyInfo(CustomStatement customStatement, Integer pageNum, Integer pageSize) {
+        Page<Info> infoPage = infoDao.selectPage(new Page<>(pageNum, pageSize), new LambdaQueryWrapper<Info>()
+                .select(Info::getId, Info::getType, Info::getStatus, Info::getCreateTime)
+                .orderByDesc(Info::getCreateTime)
+                .eq(Info::getUserId, customStatement.getId()));
+        return CommonResult.success(BeanCopyUtils.copyList(infoPage.getRecords(), MyInfoVO.class));
+    }
+
+    @Override
+    public CommonResult<Boolean> addInfo(CustomStatement customStatement, AddInfoVO addInfoVO) {
+        Info info = BeanCopyUtils.copyObject(addInfoVO, Info.class);
+        info.setUserId(customStatement.getId());
+        infoDao.insert(info);
+        return CommonResult.success(Boolean.TRUE);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Boolean> updateInfo(CustomStatement customStatement, UpdateInfoVO updateInfoVO) {
+        if (!infoDao.selectById(updateInfoVO.getInfoId()).getUserId().equals(customStatement.getId())) {
+            return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+        }
+        Info info = Info.builder()
+                .id(updateInfoVO.getInfoId())
+                .status(updateInfoVO.getInfoStatus())
+                .build();
+        infoDao.updateById(info);
+        return CommonResult.success(Boolean.TRUE);
     }
 }
