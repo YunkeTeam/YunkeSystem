@@ -83,4 +83,14 @@ public class InfoController {
         return infoService.updateInfo(customStatement, updateInfoVO);
     }
 
+    /**
+     * 查询消息
+     * @param keywords 关键词
+     * @return 消息列表
+     */
+    @GetMapping(value="/search")
+    public CommonResult<List<InfoVO>> searchInfo(String keywords){
+        return infoService.searchInfo(keywords);
+    }
+
 }

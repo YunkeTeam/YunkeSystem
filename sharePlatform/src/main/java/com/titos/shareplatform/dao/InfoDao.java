@@ -1,6 +1,7 @@
 package com.titos.shareplatform.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Info;
 import com.titos.info.shareplatform.vo.FilterInfoVO;
 import com.titos.info.shareplatform.vo.InfoVO;

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Info;
 import com.titos.info.shareplatform.vo.*;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName InfoServiceImpl
@@ -66,5 +68,20 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
                 .build();
         infoDao.updateById(info);
         return CommonResult.success(Boolean.TRUE);
+    }
+
+    @Override
+    public CommonResult<List<InfoVO>> searchInfo(String keywords) {
+        List<Info> infoList = infoDao.selectList(new LambdaQueryWrapper<Info>()
+                .eq(Info::getIsViolation, 0)
+                .and(i -> i.like(Info::getInfoTitle, keywords)));
+        List<InfoVO> infoVOList = infoList.stream().map(item -> {
+            String infoTitle = item.getInfoTitle().replaceAll(keywords,
+                    CommonConst.PRE_TAG + keywords + CommonConst.POST_TAG);
+            InfoVO infoVO = BeanCopyUtils.copyObject(item, InfoVO.class);
+            infoVO.setInfoTitle(infoTitle);
+            return infoVO;
+        }).collect(Collectors.toList());
+        return CommonResult.success(infoVOList);
     }
 }
