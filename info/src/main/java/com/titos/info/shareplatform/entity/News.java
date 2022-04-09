@@ -12,40 +12,45 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * @ClassName Comment
- * @Description TODO
+ * @ClassName News
+ * @Description 新闻实体类
  * @Author Kurihada
- * @Date 2022/4/2 22:33
+ * @Date 2022/4/9 17:50
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Comment {
+public class News {
 
     /**
-     * 评论ID
+     * 主键id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 评论的用户ID
+     * 新闻封面图
+     */
+    private String newsCover;
+
+    /**
+     * 新闻标题
+     */
+    private String newsTitle;
+
+    /**
+     * 新闻内容
+     */
+    private String newsContent;
+
+    /**
+     * 发布人ID
      */
     private Integer userId;
 
     /**
-     * 被评论的帖子ID
-     */
-    private Integer postId;
-
-    /**
-     * 评论内容
-     */
-    private String content;
-
-    /**
-     * 评论时间
+     * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
