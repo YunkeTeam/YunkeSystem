@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
  * @Date 2022/4/9 0:39
  **/
 @Service
-@Slf4j
 public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoService {
 
     @Resource
