@@ -28,12 +28,13 @@ public class FileController {
 
     /**
      * 保存文件
+     *
      * @param file
      * @return
      */
     @Headers("Content-Type: multipart/form-data")
-    @PostMapping( "/upload")
-    public CommonResult<FileInfo> upload(@RequestParam MultipartFile file){
+    @PostMapping("/upload")
+    public CommonResult<FileInfo> upload(@RequestParam MultipartFile file) {
         System.out.println("接收到前端上传图片请求");
         FileService fileService = fileServiceFactory.getFileService(fileMethod);
         FileInfo fileInfo = null;
@@ -42,12 +43,12 @@ public class FileController {
             return CommonResult.success(fileInfo, "文件上传成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResult<>(StatusEnum.FILE_SAVE_ERROR.getCode(), "文件保存错误");
+            return new CommonResult<>(StatusEnum.FILE_SAVE_ERROR.getCode(), StatusEnum.FILE_SAVE_ERROR.getMsg());
         }
     }
 
-    @GetMapping( "/download")
-    public CommonResult testFile(@RequestParam("filePath") String filePath, HttpServletResponse response){
+    @GetMapping("/download")
+    public CommonResult testFile(@RequestParam("filePath") String filePath, HttpServletResponse response) {
         FileService fileService = fileServiceFactory.getFileService(fileMethod);
         boolean isSuccess = fileService.download(filePath, response);
         if (isSuccess) {
@@ -58,7 +59,7 @@ public class FileController {
     }
 
     @DeleteMapping("/delete")
-    public CommonResult delete(String filePath){
+    public CommonResult delete(String filePath) {
         FileService fileService = fileServiceFactory.getFileService(fileMethod);
         boolean isSuccess = fileService.delete(filePath);
         if (isSuccess) {
