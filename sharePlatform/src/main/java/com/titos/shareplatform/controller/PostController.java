@@ -1,6 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.shareplatform.vo.LikesVO;
 import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.AddPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
@@ -106,13 +107,13 @@ public class PostController {
      * 点赞帖子
      *
      * @param customStatement 点赞用户信息
-     * @param postId          被点赞的帖子ID
+     * @param likesVO         被点赞的帖子信息
      * @return 是否点赞成功
      */
     @InjectToken
     @PostMapping(value = "/like")
-    public CommonResult<Boolean> saveInfoLike(CustomStatement customStatement, Integer postId) {
-        return postService.savePostLike(customStatement, postId);
+    public CommonResult<Boolean> saveInfoLike(CustomStatement customStatement, @RequestBody LikesVO likesVO) {
+        return postService.savePostLike(customStatement, likesVO);
     }
 
 }

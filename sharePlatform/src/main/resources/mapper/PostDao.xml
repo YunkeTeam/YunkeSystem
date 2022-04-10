@@ -34,4 +34,10 @@
         ORDER BY count(p.id) DESC
     </select>
 
+    <update id="subComments">
+        UPDATE post
+        SET comments = comments - 1
+        WHERE id
+    </update>
+
 </mapper>
