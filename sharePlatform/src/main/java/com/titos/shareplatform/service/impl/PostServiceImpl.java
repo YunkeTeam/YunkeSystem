@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.redis.constant.RedisPrefixConst;
@@ -53,9 +52,8 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     private RedisRpc redisRpc;
 
     @Override
-    public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        List<PostVO> postList = postDao.listPost();
+    public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
+        List<PostVO> postList = postDao.listPost((pageNum - 1) * pageSize, pageSize);
         for (PostVO post : postList) {
             List<String> likes = likesDao.likesUserAvatar(post.getId());
             post.setLikesUserAvatar(likes);
@@ -74,7 +72,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     }
 
     @Override
-    public CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Integer pageNum, Integer pageSize) {
+    public CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
         Page<Post> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Post::getId, Post::getTitle, Post::getContent, Post::getPostCover, Post::getLikes, Post::getCreateTime)
@@ -86,11 +84,10 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     }
 
     @Override
-    public CommonResult<List<TalentVO>> listTalent(Integer pageNum, Integer pageSize) {
-        List<TalentVO> listTalentUser = null;
+    public CommonResult<List<TalentVO>> listTalent(Long pageNum, Long pageSize) {
+        List<TalentVO> listTalentUser;
         if (!redisRpc.hasKey(RedisPrefixConst.TALENT).getData()) {
-            PageHelper.startPage(pageNum, pageSize);
-            listTalentUser = postDao.listTalentUserId();
+            listTalentUser = postDao.listTalentUserId((pageNum - 1) * pageSize, pageSize);
             redisRpc.set(new RedisVO(RedisPrefixConst.TALENT, JSON.toJSONString(listTalentUser), null));
         } else {
             listTalentUser = JSON.parseObject(redisRpc.get(RedisPrefixConst.TALENT).getData().toString(), List.class);

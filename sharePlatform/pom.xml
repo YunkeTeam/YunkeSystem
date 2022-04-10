@@ -95,11 +95,6 @@
             <artifactId>spring-cloud-context</artifactId>
             <version>2.2.7.RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.4.1</version>
-        </dependency>
         <!--nacos客户端依赖-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

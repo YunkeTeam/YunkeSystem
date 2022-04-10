@@ -40,8 +40,8 @@ public class PostController {
     @GetMapping("/list")
     public CommonResult<List<PostVO>> listPost(
             CustomStatement customStatement,
-            @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,
-            @RequestParam(defaultValue = "10", value = "pageSize") Integer pageSize) {
+            @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
+            @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {
         return postService.listPost(customStatement, pageNum, pageSize);
     }
 
@@ -57,8 +57,8 @@ public class PostController {
     @GetMapping("/listme")
     public CommonResult<List<MyPostVO>> listMyPost(
             CustomStatement customStatement,
-            @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,
-            @RequestParam(defaultValue = "10", value = "pageSize") Integer pageSize
+            @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
+            @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize
     ) {
         return postService.listMyPost(customStatement, pageNum, pageSize);
     }
@@ -72,8 +72,8 @@ public class PostController {
      */
     @GetMapping("/talent")
     public CommonResult<List<TalentVO>> listTalent(
-            @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,
-            @RequestParam(defaultValue = "8", value = "pageSize") Integer pageSize) {
+            @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
+            @RequestParam(defaultValue = "8", value = "pageSize") Long pageSize) {
         return postService.listTalent(pageNum, pageSize);
     }
 

@@ -28,7 +28,7 @@ public interface PostService extends IService<Post> {
      * @param pageSize 每页的数量
      * @return 帖子列表
      */
-    CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Integer pageNum, Integer pageSize);
+    CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize);
 
     /**
      * 获取当前用户的帖子
@@ -38,7 +38,7 @@ public interface PostService extends IService<Post> {
      * @param pageSize        每页的数量
      * @return 帖子列表
      */
-    CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Integer pageNum, Integer pageSize);
+    CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Long pageNum, Long pageSize);
 
     /**
      * 查询活跃达人
@@ -47,7 +47,7 @@ public interface PostService extends IService<Post> {
      * @param pageSize 每页的数量
      * @return 结果
      */
-    CommonResult<List<TalentVO>> listTalent(Integer pageNum, Integer pageSize);
+    CommonResult<List<TalentVO>> listTalent(Long pageNum, Long pageSize);
 
     /**
      * 新建帖子

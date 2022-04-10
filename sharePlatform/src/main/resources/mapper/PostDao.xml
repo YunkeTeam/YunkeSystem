@@ -24,6 +24,7 @@
         JOIN user u ON p.user_id = u.id
         WHERE p.is_violation = 0
         ORDER BY p.create_time DESC
+        LIMIT #{pageNum}, #{pageSize}
     </select>
 
     <select id="listTalentUserId" resultType="com.titos.info.user.vo.TalentVO">
@@ -32,12 +33,13 @@
         LEFT JOIN user u ON p.user_id = u.id
         GROUP BY p.user_id
         ORDER BY count(p.id) DESC
+        LIMIT #{pageNum}, #{pageSize}
     </select>
 
     <update id="subComments">
-        UPDATE post
-        SET comments = comments - 1
-        WHERE id
+        UPDATE post p
+        SET p.comments = p.comments - 1
+        WHERE p.id = (SELECT id FROM comment c WHERE c.id=#{commentId})
     </update>
 
 </mapper>
