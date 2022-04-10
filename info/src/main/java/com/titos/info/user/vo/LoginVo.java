@@ -15,4 +15,5 @@ public class LoginVo {
     private String token;
     private Integer id;
     private String username;
+    private String headImage;
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author Titos
@@ -48,7 +49,7 @@ public class RegisterQuery {
     /**
      * 出生日期
      */
-    private LocalDateTime birthday;
+    private Date birthday;
     /**
      * 电话号码
      */
@@ -56,5 +57,5 @@ public class RegisterQuery {
     /**
      * 注册时间
      */
-    private LocalDateTime registryTime;
+    private Date registryTime;
 }
