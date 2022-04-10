@@ -56,12 +56,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
                 .select(Comment::getId)
                 .eq(Comment::getUserId, customStatement.getId())).stream().map(Comment::getId).collect(Collectors.toList());
 
-        for (Integer commentId : curCommentIdList) {
+        for (Integer commentId : commentIdList) {
             if (!curCommentIdList.contains(commentId)) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }
-            commentDao.deleteById(commentId);
             postDao.subComments(commentId);
+            commentDao.deleteById(commentId);
         }
         return CommonResult.success(Boolean.TRUE);
     }

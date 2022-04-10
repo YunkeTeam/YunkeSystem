@@ -39,7 +39,7 @@
     <update id="subComments">
         UPDATE post p
         SET p.comments = p.comments - 1
-        WHERE p.id = (SELECT id FROM comment c WHERE c.id=#{commentId})
+        WHERE p.id = (SELECT c.post_id FROM comment c WHERE c.id=#{commentId})
     </update>
 
 </mapper>
