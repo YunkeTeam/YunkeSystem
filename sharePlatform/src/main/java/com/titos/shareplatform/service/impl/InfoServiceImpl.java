@@ -7,8 +7,10 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Info;
+import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.dao.InfoDao;
+import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.service.InfoService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
@@ -27,11 +29,13 @@ import java.util.stream.Collectors;
  * @Date 2022/4/9 0:39
  **/
 @Service
-@Slf4j
 public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoService {
 
     @Resource
     private InfoDao infoDao;
+
+    @Resource
+    private LikesDao likesDao;
 
     @Override
     public CommonResult<List<InfoVO>> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {

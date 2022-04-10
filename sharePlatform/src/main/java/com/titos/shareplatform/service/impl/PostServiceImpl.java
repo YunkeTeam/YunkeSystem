@@ -10,10 +10,11 @@ import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
+import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.MyPostVO;
+import com.titos.info.shareplatform.vo.AddPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
-import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
 import com.titos.rpc.redis.RedisRpc;
 import com.titos.shareplatform.dao.CommentDao;
@@ -22,7 +23,6 @@ import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,27 +41,34 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     @Resource
     private PostDao postDao;
 
-    @Autowired
+    @Resource
     private LikesDao likesDao;
 
-    @Autowired
+    @Resource
     private CommentDao commentDao;
 
     @Resource
     private RedisRpc redisRpc;
 
     @Override
-    public CommonResult<List<SharePlatformVO>> listPost(Integer pageNum, Integer pageSize) {
+    public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<SharePlatformVO> listSharePlatform = postDao.listSharePlatform();
-        for (SharePlatformVO sharePlatform : listSharePlatform) {
-            List<String> likes = likesDao.likesUserAvatar(sharePlatform.getId());
-            sharePlatform.setLikesUserAvatar(likes);
+        List<PostVO> postList = postDao.listPost();
+        for (PostVO post : postList) {
+            List<String> likes = likesDao.likesUserAvatar(post.getId());
+            post.setLikesUserAvatar(likes);
 
-            List<CommentDTO> commentList = commentDao.listUserByPostId(sharePlatform.getId());
-            sharePlatform.setCommentList(commentList);
+            Boolean isLike = likesDao.selectOne(new LambdaQueryWrapper<Likes>()
+                    .eq(Likes::getUserId, customStatement.getId())
+                    .eq(Likes::getPostId, post.getId())) != null;
+            post.setIsLike(isLike);
+
+            List<CommentDTO> commentList = commentDao.listUserByPostId(post.getId());
+            post.setCommentList(commentList);
+
+            post.setCommentBox("");
         }
-        return CommonResult.success(listSharePlatform);
+        return CommonResult.success(postList);
     }
 
     @Override
@@ -90,8 +97,8 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     }
 
     @Override
-    public CommonResult<Boolean> addPost(CustomStatement customStatement, PostVO postVO) {
-        Post post = BeanCopyUtils.copyObject(postVO, Post.class);
+    public CommonResult<Boolean> addPost(CustomStatement customStatement, AddPostVO addPostVO) {
+        Post post = BeanCopyUtils.copyObject(addPostVO, Post.class);
         post.setUserId(customStatement.getId());
         postDao.insert(post);
         return CommonResult.success(Boolean.TRUE);
@@ -106,6 +113,22 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
             }
         }
         postDao.deleteBatchIds(postIdList);
+        return CommonResult.success(Boolean.TRUE);
+    }
+
+    @Override
+    public CommonResult<Boolean> savePostLike(CustomStatement customStatement, Integer postId) {
+        Likes likes = likesDao.selectOne(new LambdaQueryWrapper<Likes>()
+                .eq(Likes::getUserId, customStatement.getId())
+                .eq(Likes::getPostId, postId));
+        if (likes != null) {
+            likesDao.deleteById(likes.getId());
+        } else {
+            likesDao.insert(Likes.builder()
+                    .userId(customStatement.getId())
+                    .postId(postId)
+                    .build());
+        }
         return CommonResult.success(Boolean.TRUE);
     }
 

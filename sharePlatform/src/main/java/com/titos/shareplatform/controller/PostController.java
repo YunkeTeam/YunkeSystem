@@ -2,8 +2,8 @@ package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.vo.MyPostVO;
+import com.titos.info.shareplatform.vo.AddPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
-import com.titos.info.shareplatform.vo.SharePlatformVO;
 import com.titos.info.user.vo.TalentVO;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.annotions.InjectToken;
@@ -30,15 +30,18 @@ public class PostController {
     /**
      * 分页查询所有的帖子
      *
-     * @param pageNum  当前页
-     * @param pageSize 每页的数量
+     * @param customStatement 用户信息
+     * @param pageNum         当前页
+     * @param pageSize        每页的数量
      * @return 帖子列表
      */
+    @InjectToken
     @GetMapping("/list")
-    public CommonResult<List<SharePlatformVO>> listPost(
+    public CommonResult<List<PostVO>> listPost(
+            CustomStatement customStatement,
             @RequestParam(defaultValue = "1", value = "pageNum") Integer pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Integer pageSize) {
-        return postService.listPost(pageNum, pageSize);
+        return postService.listPost(customStatement, pageNum, pageSize);
     }
 
     /**
@@ -77,13 +80,13 @@ public class PostController {
      * 新增帖子
      *
      * @param customStatement 用户信息
-     * @param postVO          帖子信息
+     * @param addPostVO       帖子信息
      * @return 发布是否成功
      */
     @InjectToken
     @PostMapping("/add")
-    public CommonResult<Boolean> addPost(CustomStatement customStatement, @Valid @RequestBody PostVO postVO) {
-        return postService.addPost(customStatement, postVO);
+    public CommonResult<Boolean> addPost(CustomStatement customStatement, @Valid @RequestBody AddPostVO addPostVO) {
+        return postService.addPost(customStatement, addPostVO);
     }
 
     /**
@@ -97,6 +100,19 @@ public class PostController {
     @PostMapping("/delete")
     public CommonResult<Boolean> deletePosts(CustomStatement customStatement, @RequestBody List<Integer> postIdList) {
         return postService.deletePosts(customStatement, postIdList);
+    }
+
+    /**
+     * 点赞帖子
+     *
+     * @param customStatement 点赞用户信息
+     * @param postId          被点赞的帖子ID
+     * @return 是否点赞成功
+     */
+    @InjectToken
+    @PostMapping(value = "/like")
+    public CommonResult<Boolean> saveInfoLike(CustomStatement customStatement, Integer postId) {
+        return postService.savePostLike(customStatement, postId);
     }
 
 }

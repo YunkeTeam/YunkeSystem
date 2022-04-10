@@ -74,23 +74,24 @@ public class InfoController {
      * 更新信息状态
      *
      * @param customStatement 用户信息
-     * @param updateInfoVO 更新的消息
-     * @return
+     * @param updateInfoVO    更新的消息
+     * @return 是否更新成功
      */
     @InjectToken
     @PostMapping(value = "/update")
-    public CommonResult<Boolean> updateInfo(CustomStatement customStatement, @Valid @RequestBody UpdateInfoVO updateInfoVO){
+    public CommonResult<Boolean> updateInfo(CustomStatement customStatement, @Valid @RequestBody UpdateInfoVO updateInfoVO) {
         return infoService.updateInfo(customStatement, updateInfoVO);
     }
 
     /**
      * 查询消息
+     *
      * @param keywords 关键词
-     * @param userId 用户Id
+     * @param userId   用户Id
      * @return 消息列表
      */
-    @GetMapping(value="/search")
-    public CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId){
+    @GetMapping(value = "/search")
+    public CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId) {
         return infoService.searchInfo(keywords, userId);
     }
 
