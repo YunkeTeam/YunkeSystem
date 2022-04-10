@@ -1,11 +1,14 @@
 package com.titos.info.shareplatform.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 /**
  * @ClassName AddPostVO
@@ -40,5 +43,11 @@ public class AddPostVO {
      * 帖子封面图
      */
     private String postCover;
+
+    /**
+     * 发布时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime createTime;
 
 }

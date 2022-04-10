@@ -99,6 +99,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public CommonResult<Boolean> addPost(CustomStatement customStatement, AddPostVO addPostVO) {
         Post post = BeanCopyUtils.copyObject(addPostVO, Post.class);
         post.setUserId(customStatement.getId());
+        post.setCreateTime(addPostVO.getCreateTime());
         postDao.insert(post);
         return CommonResult.success(Boolean.TRUE);
     }
