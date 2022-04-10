@@ -23,7 +23,7 @@ public class TokenContent {
     /**
      * 有效时间
      */
-    private int milliSecond = 30 * 1000 * 60;
+    private int milliSecond = 7 * 1000 * 60 * 60 * 24;
     /**
      * 签发者
      */
