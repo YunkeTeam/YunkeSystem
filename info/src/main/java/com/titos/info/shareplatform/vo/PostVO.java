@@ -1,17 +1,20 @@
 package com.titos.info.shareplatform.vo;
 
+import com.titos.info.shareplatform.dto.CommentDTO;
+import com.titos.info.user.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @ClassName PostVO
- * @Description TODO
+ * @Description 帖子VO
  * @Author Kurihada
- * @Date 2022/4/7 17:05
+ * @Date 2022/3/30 22:06
  **/
 @Data
 @NoArgsConstructor
@@ -27,18 +30,56 @@ public class PostVO {
     /**
      * 帖子标题
      */
-    @NotBlank(message = "帖子标题不能为空")
     private String title;
 
     /**
      * 帖子内容
      */
-    @NotBlank(message = "帖子内容不能为空")
     private String content;
 
     /**
-     * 帖子封面图
+     * 帖子封面图片
      */
     private String postCover;
+
+    /**
+     * 评论量
+     */
+    private Integer comments;
+
+    /**
+     * 点赞量
+     */
+    private Integer likes;
+
+    /**
+     * 是否点赞
+     */
+    private Boolean isLike;
+
+    /**
+     * 帖子发表时间
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 发布帖子的用户消息
+     */
+    private UserDTO user;
+
+    /**
+     * 帖子点赞用户头像（最近五名）
+     */
+    private List<String> likesUserAvatar;
+
+    /**
+     * 评论信息
+     */
+    private List<CommentDTO> commentList;
+
+    /**
+     * 评论框
+     */
+    private String commentBox;
 
 }

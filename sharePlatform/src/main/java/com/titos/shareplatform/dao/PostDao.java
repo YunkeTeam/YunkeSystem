@@ -2,7 +2,7 @@ package com.titos.shareplatform.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.titos.info.shareplatform.entity.Post;
-import com.titos.info.shareplatform.vo.SharePlatformVO;
+import com.titos.info.shareplatform.vo.PostVO;
 import com.titos.info.user.vo.TalentVO;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +22,7 @@ public interface PostDao extends BaseMapper<Post> {
      *
      * @return 帖子集合
      */
-    List<SharePlatformVO> listSharePlatform();
+    List<PostVO> listPost();
 
     /**
      * 查询活跃达人的ID
