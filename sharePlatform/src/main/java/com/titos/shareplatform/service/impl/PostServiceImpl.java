@@ -12,10 +12,7 @@ import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
-import com.titos.info.shareplatform.vo.LikesVO;
-import com.titos.info.shareplatform.vo.MyPostVO;
-import com.titos.info.shareplatform.vo.AddPostVO;
-import com.titos.info.shareplatform.vo.PostVO;
+import com.titos.info.shareplatform.vo.*;
 import com.titos.info.user.vo.TalentVO;
 import com.titos.rpc.redis.RedisRpc;
 import com.titos.shareplatform.dao.CommentDao;
@@ -106,13 +103,13 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, List<Integer> postIdList) {
-        for (Integer postId : postIdList) {
+    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, DeleteVO deleteVO) {
+        for (Integer postId : deleteVO.getIdList()) {
             if (!customStatement.getId().equals(postDao.selectById(postId).getUserId())) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }
         }
-        postDao.deleteBatchIds(postIdList);
+        postDao.deleteBatchIds(deleteVO.getIdList());
         return CommonResult.success(Boolean.TRUE);
     }
 
