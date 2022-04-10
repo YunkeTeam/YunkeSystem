@@ -1,10 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
-import com.titos.info.shareplatform.vo.LikesVO;
-import com.titos.info.shareplatform.vo.MyPostVO;
-import com.titos.info.shareplatform.vo.AddPostVO;
-import com.titos.info.shareplatform.vo.PostVO;
+import com.titos.info.shareplatform.vo.*;
 import com.titos.info.user.vo.TalentVO;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.annotions.InjectToken;
@@ -94,13 +91,13 @@ public class PostController {
      * 批量删除帖子
      *
      * @param customStatement 用户信息
-     * @param postIdList      帖子列表
+     * @param deleteVO        帖子列表
      * @return 删除是否成功
      */
     @InjectToken
     @PostMapping("/delete")
-    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, @RequestBody List<Integer> postIdList) {
-        return postService.deletePosts(customStatement, postIdList);
+    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, @RequestBody DeleteVO deleteVO) {
+        return postService.deletePosts(customStatement, deleteVO);
     }
 
     /**

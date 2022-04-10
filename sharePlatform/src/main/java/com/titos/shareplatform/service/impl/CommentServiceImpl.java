@@ -1,7 +1,6 @@
 package com.titos.shareplatform.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
@@ -9,6 +8,7 @@ import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Comment;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.AddCommentVO;
+import com.titos.info.shareplatform.vo.DeleteVO;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.CommentService;
@@ -42,6 +42,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
                 .userId(customStatement.getId())
                 .postId(addCommentVO.getPostId())
                 .content(addCommentVO.getCommentContent())
+                .createTime(addCommentVO.getCreateTime())
                 .build());
         Post post = new Post();
         post.setId(addCommentVO.getPostId());
@@ -51,12 +52,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> deleteComments(CustomStatement customStatement, List<Integer> commentIdList) {
+    public CommonResult<Boolean> deleteComments(CustomStatement customStatement, DeleteVO deleteVO) {
         List<Integer> curCommentIdList = commentDao.selectList(new LambdaQueryWrapper<Comment>()
                 .select(Comment::getId)
                 .eq(Comment::getUserId, customStatement.getId())).stream().map(Comment::getId).collect(Collectors.toList());
 
-        for (Integer commentId : commentIdList) {
+        for (Integer commentId : deleteVO.getIdList()) {
             if (!curCommentIdList.contains(commentId)) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }

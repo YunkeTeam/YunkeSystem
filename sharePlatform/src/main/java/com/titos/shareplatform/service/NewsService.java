@@ -3,10 +3,7 @@ package com.titos.shareplatform.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.News;
-import com.titos.info.shareplatform.vo.ConditionVO;
-import com.titos.info.shareplatform.vo.FilterInfoVO;
-import com.titos.info.shareplatform.vo.NewsDetailVO;
-import com.titos.info.shareplatform.vo.NewsVO;
+import com.titos.info.shareplatform.vo.*;
 import com.titos.tool.token.CustomStatement;
 
 import java.util.List;
@@ -48,8 +45,8 @@ public interface NewsService extends IService<News> {
      * 删除新闻
      *
      * @param customStatement 用户信息
-     * @param newsIdList      新闻ID列表
+     * @param deleteVO        新闻ID列表
      * @return 是否删除成功
      */
-    CommonResult<Boolean> deleteNews(CustomStatement customStatement, List<Integer> newsIdList);
+    CommonResult<Boolean> deleteNews(CustomStatement customStatement, DeleteVO deleteVO);
 }
