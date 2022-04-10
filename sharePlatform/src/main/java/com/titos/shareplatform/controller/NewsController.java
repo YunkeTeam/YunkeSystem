@@ -5,6 +5,8 @@ import com.titos.info.shareplatform.vo.ConditionVO;
 import com.titos.info.shareplatform.vo.NewsDetailVO;
 import com.titos.info.shareplatform.vo.NewsVO;
 import com.titos.shareplatform.service.NewsService;
+import com.titos.tool.annotions.InjectToken;
+import com.titos.tool.token.CustomStatement;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -12,7 +14,7 @@ import java.util.List;
 
 /**
  * @ClassName NewsController
- * @Description TODO
+ * @Description 新闻Controller
  * @Author Kurihada
  * @Date 2022/4/9 17:46
  **/
@@ -59,6 +61,21 @@ public class NewsController {
     @GetMapping(value = "/search")
     public CommonResult<List<NewsVO>> searchNews(String keywords) {
         return newsService.searchNews(keywords);
+    }
+
+    /**
+     * 删除新闻
+     *
+     * @param customStatement 用户信息
+     * @param newsIdList      新闻ID列表
+     * @return 是否删除成功
+     */
+    @InjectToken
+    @DeleteMapping(value = "/delete")
+    public CommonResult<Boolean> deleteNews(
+            CustomStatement customStatement,
+            @RequestBody List<Integer> newsIdList) {
+        return newsService.deleteNews(customStatement, newsIdList);
     }
 
 }

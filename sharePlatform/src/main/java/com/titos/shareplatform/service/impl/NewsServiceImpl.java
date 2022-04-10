@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.constant.CommonConst;
+import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.News;
 import com.titos.info.shareplatform.vo.ConditionVO;
 import com.titos.info.shareplatform.vo.NewsDetailVO;
@@ -12,6 +13,8 @@ import com.titos.info.shareplatform.vo.NewsVO;
 import com.titos.shareplatform.dao.NewsDao;
 import com.titos.shareplatform.service.NewsService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.token.CustomStatement;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
  * @Date 2022/4/9 21:50
  **/
 @Service
+@Slf4j
 public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsService {
 
     @Resource
@@ -84,5 +88,15 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
                     .build();
         }).collect(Collectors.toList());
         return CommonResult.success(newsVOList);
+    }
+
+    @Override
+    public CommonResult<Boolean> deleteNews(CustomStatement customStatement, List<Integer> newsIdList) {
+        log.info(customStatement.getRole().toString());
+        if (!customStatement.getRole().equals(1)) {
+            return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+        }
+        newsDao.deleteBatchIds(newsIdList);
+        return CommonResult.success(Boolean.TRUE);
     }
 }
