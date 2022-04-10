@@ -35,7 +35,6 @@ public class InfoController {
     @GetMapping(value = "/list")
     public CommonResult<List<InfoVO>> listInfo(
             FilterInfoVO filterInfo,
-
             @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {
         return infoService.listInfo(filterInfo, pageNum, pageSize);
@@ -76,7 +75,7 @@ public class InfoController {
      *
      * @param customStatement 用户信息
      * @param updateInfoVO    更新的消息
-     * @return
+     * @return 是否更新成功
      */
     @InjectToken
     @PostMapping(value = "/update")

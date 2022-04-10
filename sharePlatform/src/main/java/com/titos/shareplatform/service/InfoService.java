@@ -50,16 +50,15 @@ public interface InfoService extends IService<Info> {
      *
      * @param customStatement 用户信息
      * @param updateInfoVO    更新的消息
-     * @return
+     * @return 是否更新成功
      */
     CommonResult<Boolean> updateInfo(CustomStatement customStatement, UpdateInfoVO updateInfoVO);
 
     /**
      * 查询消息
-     *
      * @param keywords 关键词
+     * @param userId 用户ID
      * @return 消息列表
      */
     CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId);
-
 }

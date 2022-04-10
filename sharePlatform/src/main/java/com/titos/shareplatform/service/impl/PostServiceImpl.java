@@ -1,7 +1,10 @@
 package com.titos.shareplatform.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -10,6 +13,7 @@ import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
+import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
@@ -41,10 +45,10 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     @Resource
     private PostDao postDao;
 
-    @Autowired
+    @Resource
     private LikesDao likesDao;
 
-    @Autowired
+    @Resource
     private CommentDao commentDao;
 
     @Resource
@@ -57,6 +61,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
         for (SharePlatformVO sharePlatform : listSharePlatform) {
             List<String> likes = likesDao.likesUserAvatar(sharePlatform.getId());
             sharePlatform.setLikesUserAvatar(likes);
+
 
             List<CommentDTO> commentList = commentDao.listUserByPostId(sharePlatform.getId());
             sharePlatform.setCommentList(commentList);
@@ -106,6 +111,22 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
             }
         }
         postDao.deleteBatchIds(postIdList);
+        return CommonResult.success(Boolean.TRUE);
+    }
+
+    @Override
+    public CommonResult<Boolean> savePostLike(CustomStatement customStatement, Integer postId) {
+        Likes likes = likesDao.selectOne(new LambdaQueryWrapper<Likes>()
+                .eq(Likes::getUserId, customStatement.getId())
+                .eq(Likes::getPostId, postId));
+        if (likes != null) {
+            likesDao.deleteById(likes.getId());
+        } else {
+            likesDao.insert(Likes.builder()
+                    .userId(customStatement.getId())
+                    .postId(postId)
+                    .build());
+        }
         return CommonResult.success(Boolean.TRUE);
     }
 

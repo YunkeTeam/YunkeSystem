@@ -99,4 +99,17 @@ public class PostController {
         return postService.deletePosts(customStatement, postIdList);
     }
 
+    /**
+     * 点赞帖子
+     *
+     * @param customStatement 点赞用户信息
+     * @param postId          被点赞的帖子ID
+     * @return 是否点赞成功
+     */
+    @InjectToken
+    @PostMapping(value = "/like")
+    public CommonResult<Boolean> saveInfoLike(CustomStatement customStatement, Integer postId) {
+        return postService.savePostLike(customStatement, postId);
+    }
+
 }

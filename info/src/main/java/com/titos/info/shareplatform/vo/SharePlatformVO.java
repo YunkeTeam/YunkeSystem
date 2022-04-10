@@ -52,6 +52,7 @@ public class SharePlatformVO {
      */
     private Integer likes;
 
+
     /**
      * 帖子发表时间
      */
