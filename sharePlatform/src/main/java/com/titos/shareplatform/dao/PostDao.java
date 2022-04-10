@@ -30,4 +30,10 @@ public interface PostDao extends BaseMapper<Post> {
      * @return 活跃达人的Id集合
      */
     List<TalentVO> listTalentUserId();
+
+    /**
+     * 帖子减少评论数
+     * @param commentId 评论ID
+     */
+    void subComments(Integer commentId);
 }

@@ -13,6 +13,7 @@ import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
+import com.titos.info.shareplatform.vo.LikesVO;
 import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.AddPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
@@ -118,22 +119,22 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     }
 
     @Override
-    public CommonResult<Boolean> savePostLike(CustomStatement customStatement, Integer postId) {
+    public CommonResult<Boolean> savePostLike(CustomStatement customStatement, LikesVO likesVO) {
         Likes likes = likesDao.selectOne(new LambdaQueryWrapper<Likes>()
                 .eq(Likes::getUserId, customStatement.getId())
-                .eq(Likes::getPostId, postId));
+                .eq(Likes::getPostId, likesVO.getPostId()));
         if (likes != null) {
             likesDao.deleteById(likes.getId());
             Post post = new Post();
-            post.setId(postId);
+            post.setId(likesVO.getPostId());
             postDao.update(post, Wrappers.update(post).setSql("`likes`=`likes`-1"));
         } else {
             likesDao.insert(Likes.builder()
                     .userId(customStatement.getId())
-                    .postId(postId)
+                    .postId(likesVO.getPostId())
                     .build());
             Post post = new Post();
-            post.setId(postId);
+            post.setId(likesVO.getPostId());
             postDao.update(post, Wrappers.update(post).setSql("`likes`=`likes`+1"));
         }
         return CommonResult.success(Boolean.TRUE);

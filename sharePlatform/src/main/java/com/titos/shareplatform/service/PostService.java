@@ -3,6 +3,7 @@ package com.titos.shareplatform.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Post;
+import com.titos.info.shareplatform.vo.LikesVO;
 import com.titos.info.shareplatform.vo.MyPostVO;
 import com.titos.info.shareplatform.vo.AddPostVO;
 import com.titos.info.shareplatform.vo.PostVO;
@@ -70,9 +71,9 @@ public interface PostService extends IService<Post> {
      * 点赞帖子
      *
      * @param customStatement 点赞用户信息
-     * @param postId          被点赞的帖子ID
+     * @param likesVO         被点赞的帖子信息
      * @return 是否点赞成功
      */
-    CommonResult<Boolean> savePostLike(CustomStatement customStatement, Integer postId);
+    CommonResult<Boolean> savePostLike(CustomStatement customStatement, LikesVO likesVO);
 
 }
