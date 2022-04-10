@@ -5,9 +5,9 @@ import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.service.InfoService;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/info")
 public class InfoController {
 
-    @Autowired
+    @Resource
     private InfoService infoService;
 
     /**
