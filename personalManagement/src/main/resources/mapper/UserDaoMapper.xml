@@ -39,7 +39,7 @@
     </select>
 
     <select id="selectUserToLogin" resultMap="BaseResult">
-        select id, username, email, person_type, password
+        select id, head_image, username, email, person_type, password
         from user
         <where>
             <choose>
@@ -60,7 +60,7 @@
                 username = #{username, jdbcType=VARCHAR},
             </if>
             <if test="password != null">
-                password = #{pssword, jdbcType=VARCHAR},
+                password = #{password, jdbcType=VARCHAR},
             </if>
             <if test="gender != null">
                 gender = #{gender, jdbcType=CHAR},
@@ -81,16 +81,24 @@
                 job_title = #{jobTitle, jdbcType=VARCHAR},
             </if>
             <if test="description != null">
-                description = #{descrption, jdbcType=VARCHAR }
+                description = #{description, jdbcType=VARCHAR }
             </if>
         </set>
         where id = #{id, jdbcType=INTEGER}
     </update>
 
-    <select id="selectUserInfoById" resultType="com.titos.personalmanagement.model.User">
+    <select id="selectUserInfoById" resultMap="BaseResult">
         select
         <include refid="Base_Column_List"/>
         from user
         where id = #{id, jdbcType=INTEGER}
+    </select>
+    <select id="selectUserForUpdate" resultMap="BaseResult">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id, jdbcType = INTEGER} and
+              username = #{username, jdbcType = VARCHAR} and
+              email = #{email, jdbcType = VARCHAR};
     </select>
 </mapper>

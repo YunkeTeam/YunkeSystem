@@ -4,6 +4,7 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
 import com.titos.info.user.query.RegisterQuery;
+import com.titos.info.user.query.ResetPasswordQuery;
 import com.titos.info.user.query.UserPassword;
 import com.titos.info.user.vo.LoginVo;
 import com.titos.personalmanagement.model.User;
@@ -83,4 +84,17 @@ public interface UserService {
      * @return 用户的信息
      */
     CommonResult<UserInfoDomain> getUserInfo(CustomStatement customStatement);
+
+    /**
+     * 处理用户发送的重置密码请求
+     * @param resetPasswordQuery
+     * @return
+     */
+    public CommonResult resetPassword(ResetPasswordQuery resetPasswordQuery);
+    /**
+     * 重置用户密码
+     * @param resetPasswordQuery
+     * @return 重置的结果
+     */
+    public CommonResult doResetPassword(ResetPasswordQuery resetPasswordQuery);
 }

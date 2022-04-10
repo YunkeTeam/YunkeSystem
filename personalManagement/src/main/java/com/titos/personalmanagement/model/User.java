@@ -49,7 +49,7 @@ public class User {
     /**
      * 出生日期
      */
-    private LocalDateTime birthday;
+    private Date birthday;
     /**
      * 电话号码
      */
@@ -57,7 +57,7 @@ public class User {
     /**
      * 注册时间
      */
-    private LocalDateTime registryTime;
+    private Date registryTime;
     /**
      * 职位
      */

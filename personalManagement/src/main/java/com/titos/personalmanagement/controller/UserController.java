@@ -5,6 +5,7 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
 import com.titos.info.user.query.RegisterQuery;
+import com.titos.info.user.query.ResetPasswordQuery;
 import com.titos.info.user.query.UserPassword;
 import com.titos.info.user.vo.LoginVo;
 import com.titos.personalmanagement.cache.verifycode.VerifyCodeCache;
@@ -122,6 +123,13 @@ public class UserController {
     public CommonResult modifyUserPassword(CustomStatement customStatement, @RequestBody UserPassword userPassword) {
         return userService.modifyUserPassword(customStatement, userPassword);
     }
+
+    /**
+     * 生成验证码
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @GetMapping("/verifyCode")
     public void verifyCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ServletOutputStream servletOutputStream = response.getOutputStream();
@@ -147,5 +155,16 @@ public class UserController {
         } finally {
             servletOutputStream.close();
         }
+    }
+
+    @ParamVerify(notNull = {"resetPasswordQuery.email"})
+    @PostMapping("/resetPassword")
+    public CommonResult resetPassword(@RequestBody ResetPasswordQuery resetPasswordQuery) {
+        return userService.resetPassword(resetPasswordQuery);
+    }
+
+    @PostMapping("/verifyResetPassword")
+    public CommonResult verifyResetPassword(@RequestBody ResetPasswordQuery resetPasswordQuery) {
+        return userService.doResetPassword(resetPasswordQuery);
     }
 }

@@ -1,10 +1,13 @@
 package com.titos.info.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 修改用户信息是接收参数封装成的实体类
@@ -44,7 +47,8 @@ public class UserInfoDomain {
     /**
      * 出生日期
      */
-    private LocalDateTime birthday;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date birthday;
     /**
      * 电话号码
      */

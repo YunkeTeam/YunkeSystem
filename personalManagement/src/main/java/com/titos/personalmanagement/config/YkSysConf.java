@@ -21,4 +21,6 @@ public class YkSysConf {
     private String mailSender;
     @Value("${YK.token.secretKey}")
     private String tokenSecretKey;
+    @Value("${YK.sys-conf.front-host-url}")
+    private String frontHostUrl;
 }

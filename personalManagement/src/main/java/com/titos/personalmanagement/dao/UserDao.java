@@ -47,4 +47,13 @@ public interface UserDao {
      * @return 查询的用户对象
      */
     User selectUserInfoById(Integer id);
+
+    /**
+     * 根据用户id，用户名和邮箱同时查询该用户是否存在
+     * @param id 用户id
+     * @param username 用户名
+     * @param email 邮箱
+     * @return 用户信息
+     */
+    User selectUserForUpdate(Integer id, String username, String email);
 }

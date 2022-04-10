@@ -6,6 +6,7 @@ import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.user.entity.UserInfoDomain;
 import com.titos.info.user.query.LoginQuery;
 import com.titos.info.user.query.RegisterQuery;
+import com.titos.info.user.query.ResetPasswordQuery;
 import com.titos.info.user.query.UserPassword;
 import com.titos.info.user.vo.LoginVo;
 import com.titos.personalmanagement.cache.userinfo.UserInfoCache;
@@ -21,6 +22,7 @@ import com.titos.personalmanagement.service.UserService;
 import com.titos.rpc.file.FileRpc;
 import com.titos.tool.check.VerifyPasswordUtil;
 import com.titos.tool.check.VerifyStringUtil;
+import com.titos.tool.exception.ParameterException;
 import com.titos.tool.token.CustomStatement;
 import com.titos.tool.token.TokenContent;
 import com.titos.tool.token.TokenUtil;
@@ -143,7 +145,7 @@ public class UserServiceImpl implements UserService {
                 customStatement.setRole(user.getPersonType());
                 TokenContent tokenContent = new TokenContent(customStatement, ykSysConf.getTokenSecretKey());
                 String token = TokenUtil.buildToken(tokenContent);
-                LoginVo loginVo = new LoginVo(token, user.getId(), user.getUsername());
+                LoginVo loginVo = new LoginVo(token, user.getId(), user.getUsername(), user.getHeadImage());
                 return new CommonResult<>(StatusEnum.SUCCESS.getCode(), loginVo, "登录成功");
             } else {
                 return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "密码错误");
@@ -211,12 +213,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public CommonResult modifyUserPassword(CustomStatement customStatement, UserPassword userPassword) {
         // 根据用户id获取用户的信息
-        User user = userDao.selectUserInfoById(customStatement.getId());
+        User user = userDao.selectUserForUpdate(customStatement.getId(), userPassword.getUsername(), userPassword.getEmail());
         if (user == null) {
-            return CommonResult.fail(StatusEnum.PASSWORD_WRONG,StatusEnum.PASSWORD_WRONG.getMsg());
+            return CommonResult.fail("用户名或邮箱填写有误");
         }
         User userQuery = new User();
-        userQuery.setId(userPassword.getUserID());
+        userQuery.setId(customStatement.getId());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // 验证用户的密码是否正确
         if (passwordEncoder.matches(userPassword.getOldPassword(), user.getPassword())) {
@@ -229,6 +231,8 @@ public class UserServiceImpl implements UserService {
             // 修改成功
             if (res == 1) {
                 return CommonResult.success("密码修改成功");
+            } else {
+                return CommonResult.fail("用户信息填写有误");
             }
         }
         return CommonResult.fail(StatusEnum.PASSWORD_WRONG, StatusEnum.PASSWORD_WRONG.getMsg());
@@ -294,6 +298,63 @@ public class UserServiceImpl implements UserService {
             return CommonResult.success("验证成功");
         } else {
             return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");
+        }
+    }
+
+    /**
+     * 处理用户发送的重置密码请求
+     * @param resetPasswordQuery
+     * @return
+     */
+    @Override
+    public CommonResult resetPassword(ResetPasswordQuery resetPasswordQuery) {
+        LoginQuery loginQuery = new LoginQuery();
+        loginQuery.setEmail(resetPasswordQuery.getEmail());
+        // 根据邮箱获取用户信息
+        User user = userDao.selectUserToLogin(loginQuery);
+        if (user == null) {
+            return CommonResult.fail("邮箱账号错误");
+        }
+        // 将用户数据暂时存储到redis
+        String key = userInfoCache.cacheInfo(user);
+        boolean isSuccess = mailHandler.sendResetPasswordVerify(user, key);
+        if (isSuccess) {
+            return new CommonResult(StatusEnum.SUCCESS.getCode(), "发送重置密码邮件成功");
+        } else {
+            return new CommonResult(StatusEnum.MAIL_ERROR.getCode(), "邮件发送失败");
+        }
+    }
+
+    /**
+     * 重置用户密码
+     * @param resetPasswordQuery
+     * @return 重置的结果
+     */
+    @Override
+    public CommonResult doResetPassword(ResetPasswordQuery resetPasswordQuery) {
+        if (resetPasswordQuery.getKey() == null) {
+            throw new ParameterException("参数异常");
+        }
+        // 在redis中获取用户信息
+        User user = userInfoCache.getInfoByKey(resetPasswordQuery.getKey());
+        if (user == null) {
+            return new CommonResult(StatusEnum.USER_UNEXISTED.getCode(), "重置密码时间已过期");
+        }
+        if (user.getEmail().equals(resetPasswordQuery.getEmail()) && user.getUsername().equals(resetPasswordQuery.getUsername())) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodePwd = passwordEncoder.encode(resetPasswordQuery.getPassword());
+            user.setPassword(encodePwd);
+            UserFactory userFactory = new UserFactory();
+            User newUser = userFactory.build(user);
+            // 重置密码
+            int res = userDao.updateUserInfoByIdSelective(newUser);
+            if (res == 1) {
+                return CommonResult.success("重置密码成功");
+            } else {
+                return new CommonResult(StatusEnum.PARAM_ERROR.getCode(), "重置密码失败");
+            }
+        } else {
+            return new CommonResult(StatusEnum.PARAM_ERROR.getCode(), "参数传递错误");
         }
     }
 }

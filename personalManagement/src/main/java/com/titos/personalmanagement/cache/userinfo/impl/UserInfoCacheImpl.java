@@ -32,7 +32,6 @@ public class UserInfoCacheImpl implements UserInfoCache {
     public User getInfoByKey(String key) {
         Assert.notNull(key, "key can't be null");
         User user = (User) redisTemplate.opsForValue().get(key);
-        redisTemplate.delete(key);
         return user;
     }
 }
