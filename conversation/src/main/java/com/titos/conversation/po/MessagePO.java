@@ -17,7 +17,7 @@ public class MessagePO {
     private Integer receiveId;
     private String content;
     private String imageAddr;
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime releaseTime;
     private Integer isComplete;
 }
