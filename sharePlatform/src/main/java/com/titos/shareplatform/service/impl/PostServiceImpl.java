@@ -2,6 +2,7 @@ package com.titos.shareplatform.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -123,11 +124,17 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
                 .eq(Likes::getPostId, postId));
         if (likes != null) {
             likesDao.deleteById(likes.getId());
+            Post post = new Post();
+            post.setId(postId);
+            postDao.update(post, Wrappers.update(post).setSql("`likes`=`likes`-1"));
         } else {
             likesDao.insert(Likes.builder()
                     .userId(customStatement.getId())
                     .postId(postId)
                     .build());
+            Post post = new Post();
+            post.setId(postId);
+            postDao.update(post, Wrappers.update(post).setSql("`likes`=`likes`+1"));
         }
         return CommonResult.success(Boolean.TRUE);
     }
