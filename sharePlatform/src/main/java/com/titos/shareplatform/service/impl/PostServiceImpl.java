@@ -14,6 +14,7 @@ import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.info.shareplatform.vo.TalentVO;
 import com.titos.info.user.entity.User;
+import com.titos.shareplatform.async.ServiceAsync;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
@@ -54,6 +55,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Resource
     private UserDao userDao;
+
+    @Resource
+    private ServiceAsync serviceAsync;
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -138,6 +142,10 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
             }
         }
         postDao.deleteBatchIds(deleteVO.getIdList());
+
+        // 删除帖子时，排行榜score-1
+        serviceAsync.subTalentScore(customStatement);
+        log.info("删除帖子完成");
         return CommonResult.success(Boolean.TRUE);
     }
 
