@@ -2,7 +2,7 @@ package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.vo.*;
-import com.titos.info.user.vo.TalentVO;
+import com.titos.info.shareplatform.vo.TalentVO;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;

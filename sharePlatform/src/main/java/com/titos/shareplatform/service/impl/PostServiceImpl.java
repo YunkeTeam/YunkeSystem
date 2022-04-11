@@ -12,7 +12,7 @@ import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
-import com.titos.info.user.vo.TalentVO;
+import com.titos.info.shareplatform.vo.TalentVO;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
@@ -74,9 +74,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
         queryWrapper.select(Post::getId, Post::getTitle, Post::getContent, Post::getPostCover, Post::getLikes, Post::getCreateTime)
                 .orderByDesc(Post::getCreateTime)
                 .eq(Post::getUserId, customStatement.getId());
-        Page<Post> postPage = postDao.selectPage(page, queryWrapper);
-        List<MyPostVO> postList = BeanCopyUtils.copyList(postPage.getRecords(), MyPostVO.class);
-        return CommonResult.success(postList);
+        //Page<Post> postPage = postDao.selectPage(page, queryWrapper);
+        //List<MyPostVO> postList = BeanCopyUtils.copyList(postPage.getRecords(), MyPostVO.class);
+        return CommonResult.success(BeanCopyUtils.copyList(postDao.selectList(queryWrapper), MyPostVO.class));
     }
 
     @Override

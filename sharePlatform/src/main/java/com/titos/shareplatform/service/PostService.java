@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
-import com.titos.info.user.vo.TalentVO;
+import com.titos.info.shareplatform.vo.TalentVO;
 import com.titos.tool.token.CustomStatement;
 
 import java.util.List;

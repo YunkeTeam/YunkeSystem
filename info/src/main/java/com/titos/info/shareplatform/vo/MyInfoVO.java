@@ -25,6 +25,11 @@ public class MyInfoVO {
     private Integer id;
 
     /**
+     * 信息标题
+     */
+    private String infoTitle;
+
+    /**
      * 信息的类型
      * 1二手商品 2兼职信息 3失物招领
      */

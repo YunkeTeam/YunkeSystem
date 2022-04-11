@@ -3,7 +3,7 @@ package com.titos.shareplatform.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.PostVO;
-import com.titos.info.user.vo.TalentVO;
+import com.titos.info.shareplatform.vo.TalentVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

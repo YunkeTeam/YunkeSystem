@@ -27,7 +27,7 @@
         LIMIT #{pageNum}, #{pageSize}
     </select>
 
-    <select id="listTalentUserId" resultType="com.titos.info.user.vo.TalentVO">
+    <select id="listTalentUserId" resultType="com.titos.info.shareplatform.vo.TalentVO">
         SELECT p.user_id, u.username, u.head_image, count(p.id) as post_count
         FROM post p
         LEFT JOIN user u ON p.user_id = u.id

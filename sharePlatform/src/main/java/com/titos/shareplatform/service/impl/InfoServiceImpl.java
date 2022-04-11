@@ -7,14 +7,11 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Info;
-import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.dao.InfoDao;
-import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.service.InfoService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +31,6 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     @Resource
     private InfoDao infoDao;
 
-    @Resource
-    private LikesDao likesDao;
 
     @Override
     public CommonResult<List<InfoVO>> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {
@@ -45,11 +40,13 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
 
     @Override
     public CommonResult<List<MyInfoVO>> listMyInfo(CustomStatement customStatement, Integer pageNum, Integer pageSize) {
-        Page<Info> infoPage = infoDao.selectPage(new Page<>(pageNum, pageSize), new LambdaQueryWrapper<Info>()
-                .select(Info::getId, Info::getType, Info::getStatus, Info::getCreateTime)
+        Page<Info> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<Info> queryWrapper = new LambdaQueryWrapper<Info>()
+                .select(Info::getId, Info::getInfoTitle, Info::getType, Info::getStatus, Info::getCreateTime)
                 .orderByDesc(Info::getCreateTime)
-                .eq(Info::getUserId, customStatement.getId()));
-        return CommonResult.success(BeanCopyUtils.copyList(infoPage.getRecords(), MyInfoVO.class));
+                .eq(Info::getUserId, customStatement.getId());
+        //Page<Info> infoPage = infoDao.selectPage(page, queryWrapper);
+        return CommonResult.success(BeanCopyUtils.copyList(infoDao.selectList(queryWrapper), MyInfoVO.class));
     }
 
     @Override

@@ -1,9 +1,11 @@
-package com.titos.info.user.vo;
+package com.titos.info.shareplatform.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @ClassName TalentVO
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TalentVO {
+public class TalentVO implements Serializable {
 
     /**
      * 用户ID
