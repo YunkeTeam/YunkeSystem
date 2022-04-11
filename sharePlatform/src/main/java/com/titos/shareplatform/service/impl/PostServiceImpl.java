@@ -13,18 +13,25 @@ import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.info.shareplatform.vo.TalentVO;
+import com.titos.info.user.entity.User;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
+import com.titos.shareplatform.dao.UserDao;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName PostServiceImpl
@@ -33,6 +40,7 @@ import java.util.List;
  * @Date 2022/3/30 21:51
  **/
 @Service
+@Slf4j
 public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostService {
 
     @Resource
@@ -43,6 +51,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Resource
     private CommentDao commentDao;
+
+    @Resource
+    private UserDao userDao;
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -81,23 +92,41 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Override
     public CommonResult<List<TalentVO>> listTalent(Long pageNum, Long pageSize) {
-        List<TalentVO> listTalentUser;
-        if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisPrefixConst.TALENT))) {
-            listTalentUser = postDao.listTalentUserId((pageNum - 1) * pageSize, pageSize);
-            redisTemplate.opsForValue().set(RedisPrefixConst.TALENT, JSON.toJSONString(listTalentUser));
-        } else {
-            listTalentUser = JSON.parseObject((String) redisTemplate.opsForValue().get(RedisPrefixConst.TALENT), List.class);
+        Set<ZSetOperations.TypedTuple<Object>> tupleSet = redisTemplate.opsForZSet().reverseRangeWithScores(
+                RedisPrefixConst.TALENT, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
+
+        if (tupleSet == null) {
+            return CommonResult.success(null);
         }
-        return CommonResult.success(listTalentUser);
+        List<TalentVO> talentList = new ArrayList<>(tupleSet.size());
+        long rank = 1;
+        for (ZSetOperations.TypedTuple<Object> sub : tupleSet) {
+            User user = JSON.parseObject((String) sub.getValue(), User.class);
+            talentList.add(TalentVO.builder()
+                    .rank(rank++)
+                    .postCount(sub.getScore().intValue())
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .headImage(user.getHeadImage())
+                    .build());
+        }
+        return CommonResult.success(talentList);
+
     }
 
+    @Async
     @Override
-    public CommonResult<Boolean> addPost(CustomStatement customStatement, AddPostVO addPostVO) {
+    public void addPost(CustomStatement customStatement, AddPostVO addPostVO) {
         Post post = BeanCopyUtils.copyObject(addPostVO, Post.class);
         post.setUserId(customStatement.getId());
         post.setCreateTime(addPostVO.getCreateTime());
         postDao.insert(post);
-        return CommonResult.success(Boolean.TRUE);
+
+        User user = userDao.selectOne(new LambdaQueryWrapper<User>()
+                .select(User::getId, User::getUsername, User::getHeadImage)
+                .eq(User::getId, customStatement.getId()));
+        log.info(JSON.toJSONString(user));
+        redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.TALENT, JSON.toJSONString(user), 1.0D);
     }
 
     @Transactional(rollbackFor = Exception.class)

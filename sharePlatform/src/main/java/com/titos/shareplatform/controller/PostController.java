@@ -85,7 +85,8 @@ public class PostController {
     @InjectToken
     @PostMapping("/add")
     public CommonResult<Boolean> addPost(CustomStatement customStatement, @Valid @RequestBody AddPostVO addPostVO) {
-        return postService.addPost(customStatement, addPostVO);
+        postService.addPost(customStatement, addPostVO);
+        return CommonResult.success(Boolean.TRUE);
     }
 
     /**

@@ -51,9 +51,8 @@ public interface PostService extends IService<Post> {
      *
      * @param customStatement 用户信息
      * @param addPostVO          帖子信息
-     * @return 新建结果
      */
-    CommonResult<Boolean> addPost(CustomStatement customStatement, AddPostVO addPostVO);
+    void addPost(CustomStatement customStatement, AddPostVO addPostVO);
 
     /**
      * 批量删除帖子

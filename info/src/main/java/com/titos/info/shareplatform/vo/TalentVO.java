@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * @ClassName TalentVO
- * @Description TODO
+ * @Description 活跃达人VO
  * @Author Kurihada
  * @Date 2022/4/3 21:40
  **/
@@ -18,6 +18,18 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class TalentVO implements Serializable {
+
+    private static final long serialVersionUID = -8525063809930062980L;
+
+    /**
+     * 排名
+     */
+    private Long rank;
+
+    /**
+     * 发表帖子数量
+     */
+    private Integer postCount;
 
     /**
      * 用户ID
@@ -33,11 +45,5 @@ public class TalentVO implements Serializable {
      * 用户头像
      */
     private String headImage;
-
-    /**
-     * 用户发表的帖子数量
-     */
-    private Integer postCount;
-
 
 }
