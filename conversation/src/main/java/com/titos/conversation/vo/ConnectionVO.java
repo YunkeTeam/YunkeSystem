@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class ConnectionVO {
+    Boolean isSystem;
     Integer fromId;
     Integer toId;
     String message;

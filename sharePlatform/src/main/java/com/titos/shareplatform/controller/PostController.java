@@ -39,6 +39,7 @@ public class PostController {
             CustomStatement customStatement,
             @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {
+        System.out.println("pageNum = " + pageNum);
         return postService.listPost(customStatement, pageNum, pageSize);
     }
 
