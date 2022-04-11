@@ -149,7 +149,8 @@ public class UserController {
             response.setContentType("image/jpeg");
             servletOutputStream.write(bytes);
             servletOutputStream.flush();
-        } catch (Exception e) {
+        } catch (Exception exc) {
+            exc.printStackTrace();
             // 出错的话跳转到错误页面
             response.sendError(HttpServletResponse.SC_NO_CONTENT);
         } finally {

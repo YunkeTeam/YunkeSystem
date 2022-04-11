@@ -6,6 +6,8 @@ import com.titos.conversation.dao.ConversationDao;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
 import com.titos.conversation.vo.ConnectionVO;
+import com.titos.conversation.vo.ReceiveMessageVO;
+import com.titos.conversation.vo.ToMessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
@@ -25,7 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/conversation/chat/{id}",configurator = CustomSpringConfigurator.class)
 @Component
 public class WebSocketServer {
+    /**
+     * 用来存储每一个客户端对象对应的ChatEndpoint对象
+     */
     private static ConcurrentHashMap<Integer,Session> webSocketMap = new ConcurrentHashMap<>();
+    /**
+     * 声明session对象，通过该对象可以发送消息给指定的用户
+     */
     private Session session;
     @Autowired
     ConversationService conversationService;
@@ -37,6 +45,7 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("id") String id) {
+        // 将局部的session对象赋值给成员session
         this.session = session;
         int userId = Integer.parseInt(id);
         // 将当前用户的 session 加入到 map 里面
@@ -59,17 +68,18 @@ public class WebSocketServer {
 
     @OnMessage
     public void onMessage(@PathParam("id") String id, String message) {
-        ConnectionVO connectionVO = JSONObject.parseObject(message, ConnectionVO.class);
+        ReceiveMessageVO connectionVO = JSONObject.parseObject(message, ReceiveMessageVO.class);
         if(connectionVO.getMessage() == null || "".equals(connectionVO.getMessage())) {
             return;
         }
         Integer userId = Integer.parseInt(id);
-        Integer toId = connectionVO.getToId();
+        Integer toId = connectionVO.getToUserId();
         if(webSocketMap.containsKey(toId)) {
             // 在线，则通过 session 的
             try {
                 conversationService.sendDialog(userId, toId, connectionVO.getMessage(), 1);
-                webSocketMap.get(toId).getAsyncRemote().sendText(message);
+                ToMessageVO toMessageVO = new ToMessageVO(false, userId, toId, connectionVO.getMessage());
+                webSocketMap.get(toId).getAsyncRemote().sendText(JSONObject.toJSONString(toMessageVO));
             } catch (Exception e) {
                 e.printStackTrace();
             }
