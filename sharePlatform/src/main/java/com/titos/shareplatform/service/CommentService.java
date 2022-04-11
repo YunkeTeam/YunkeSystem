@@ -20,9 +20,8 @@ public interface CommentService extends IService<Comment> {
      *
      * @param customStatement 用户消息
      * @param addCommentVO    评论内容
-     * @return 是否新增成功
      */
-    CommonResult<Boolean> addComment(CustomStatement customStatement, AddCommentVO addCommentVO);
+    void addComment(CustomStatement customStatement, AddCommentVO addCommentVO);
 
     /**
      * 批量删除评论

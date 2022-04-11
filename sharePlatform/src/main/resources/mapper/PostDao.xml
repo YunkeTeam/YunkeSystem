@@ -28,7 +28,7 @@
     </select>
 
     <select id="listTalentUserId" resultType="com.titos.info.user.vo.TalentVO">
-        SELECT p.user_id, u.head_image, count(p.id) as post_count
+        SELECT p.user_id, u.username, u.head_image, count(p.id) as post_count
         FROM post p
         LEFT JOIN user u ON p.user_id = u.id
         GROUP BY p.user_id

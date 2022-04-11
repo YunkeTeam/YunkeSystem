@@ -8,19 +8,18 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.redis.constant.RedisPrefixConst;
-import com.titos.info.redis.vo.RedisVO;
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.info.user.vo.TalentVO;
-import com.titos.rpc.redis.RedisRpc;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +45,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     private CommentDao commentDao;
 
     @Resource
-    private RedisRpc redisRpc;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
@@ -83,11 +82,11 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     @Override
     public CommonResult<List<TalentVO>> listTalent(Long pageNum, Long pageSize) {
         List<TalentVO> listTalentUser;
-        if (!redisRpc.hasKey(RedisPrefixConst.TALENT).getData()) {
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisPrefixConst.TALENT))) {
             listTalentUser = postDao.listTalentUserId((pageNum - 1) * pageSize, pageSize);
-            redisRpc.set(new RedisVO(RedisPrefixConst.TALENT, JSON.toJSONString(listTalentUser), null));
+            redisTemplate.opsForValue().set(RedisPrefixConst.TALENT, JSON.toJSONString(listTalentUser));
         } else {
-            listTalentUser = JSON.parseObject(redisRpc.get(RedisPrefixConst.TALENT).getData().toString(), List.class);
+            listTalentUser = JSON.parseObject((String) redisTemplate.opsForValue().get(RedisPrefixConst.TALENT), List.class);
         }
         return CommonResult.success(listTalentUser);
     }

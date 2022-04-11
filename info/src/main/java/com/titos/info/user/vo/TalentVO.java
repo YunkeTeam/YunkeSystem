@@ -23,6 +23,11 @@ public class TalentVO {
     private Integer userId;
 
     /**
+     * 用户名
+     */
+    private String username;
+
+    /**
      * 用户头像
      */
     private String headImage;

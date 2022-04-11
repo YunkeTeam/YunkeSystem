@@ -6,6 +6,7 @@ import com.titos.info.shareplatform.vo.DeleteVO;
 import com.titos.shareplatform.service.CommentService;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
  **/
 @RestController
 @RequestMapping("/comment")
+@Slf4j
 public class CommentController {
 
     @Resource
@@ -36,14 +38,15 @@ public class CommentController {
     public CommonResult<Boolean> addComment(
             CustomStatement customStatement,
             @Valid @RequestBody AddCommentVO addCommentVO) {
-        return commentService.addComment(customStatement, addCommentVO);
+        commentService.addComment(customStatement, addCommentVO);
+        return CommonResult.success(Boolean.TRUE);
     }
 
     /**
      * 批量删除评论
      *
      * @param customStatement 用户消息
-     * @param deleteVO   需要删除的评论ID列表
+     * @param deleteVO        需要删除的评论ID列表
      * @return 是否删除成功
      */
     @InjectToken

@@ -13,6 +13,8 @@ import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.CommentService;
 import com.titos.tool.token.CustomStatement;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
  * @Date 2022/4/10 11:54
  **/
 @Service
+@Slf4j
 public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> implements CommentService {
 
     @Resource
@@ -35,9 +38,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
     @Resource
     private PostDao postDao;
 
+
+    @Async
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> addComment(CustomStatement customStatement, AddCommentVO addCommentVO) {
+    public void addComment(CustomStatement customStatement, AddCommentVO addCommentVO) {
         commentDao.insert(Comment.builder()
                 .userId(customStatement.getId())
                 .postId(addCommentVO.getPostId())
@@ -47,7 +52,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
         Post post = new Post();
         post.setId(addCommentVO.getPostId());
         postDao.update(post, Wrappers.update(post).setSql("`comments`=`comments`+1"));
-        return CommonResult.success(Boolean.TRUE);
     }
 
     @Transactional(rollbackFor = Exception.class)
