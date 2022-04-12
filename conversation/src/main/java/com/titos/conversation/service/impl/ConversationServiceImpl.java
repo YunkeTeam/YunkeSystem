@@ -3,6 +3,7 @@ package com.titos.conversation.service.impl;
 import com.titos.conversation.dao.ConversationDao;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
+import com.titos.conversation.utils.CheckUtil;
 import com.titos.conversation.vo.SimpleInformationVO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class ConversationServiceImpl implements ConversationService {
             messagePoList = conversationDao.selectAllDialog(id, otherId);
         } catch (DataAccessException e) {
             e.printStackTrace();
-            messagePoList = null;
+            messagePoList = CheckUtil.defaultErrorMessagePoList;
         }
         return messagePoList;
     }
@@ -132,7 +133,7 @@ public class ConversationServiceImpl implements ConversationService {
         } catch (DataAccessException e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             e.printStackTrace();
-            list = null;
+            list = CheckUtil.defaultErrorMessagePoList;
         }
         return list;
     }
@@ -180,7 +181,7 @@ public class ConversationServiceImpl implements ConversationService {
             simpleInformationVO = conversationDao.selectSimpleInformation(id);
         } catch (DataAccessException e) {
             e.printStackTrace();
-            simpleInformationVO = null;
+            simpleInformationVO = CheckUtil.defaultErrorSimpleInformationVO;
         }
         return simpleInformationVO;
     }
