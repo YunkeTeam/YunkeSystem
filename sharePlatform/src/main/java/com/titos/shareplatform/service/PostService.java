@@ -21,8 +21,8 @@ public interface PostService extends IService<Post> {
      * 分页查询所有的帖子
      *
      * @param customStatement 用户信息
-     * @param pageNum  当前页
-     * @param pageSize 每页的数量
+     * @param pageNum         当前页
+     * @param pageSize        每页的数量
      * @return 帖子列表
      */
     CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize);
@@ -50,7 +50,7 @@ public interface PostService extends IService<Post> {
      * 新建帖子
      *
      * @param customStatement 用户信息
-     * @param addPostVO          帖子信息
+     * @param addPostVO       帖子信息
      */
     void addPost(CustomStatement customStatement, AddPostVO addPostVO);
 
@@ -58,7 +58,7 @@ public interface PostService extends IService<Post> {
      * 批量删除帖子
      *
      * @param customStatement 用户信息
-     * @param deleteVO      帖子列表
+     * @param deleteVO        帖子列表
      * @return 删除是否成功
      */
     CommonResult<Boolean> deletePosts(CustomStatement customStatement, DeleteVO deleteVO);
@@ -68,8 +68,7 @@ public interface PostService extends IService<Post> {
      *
      * @param customStatement 点赞用户信息
      * @param likesVO         被点赞的帖子信息
-     * @return 是否点赞成功
      */
-    CommonResult<Boolean> savePostLike(CustomStatement customStatement, LikesVO likesVO);
+    void savePostLike(CustomStatement customStatement, LikesVO likesVO);
 
 }

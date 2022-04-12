@@ -112,7 +112,8 @@ public class PostController {
     @InjectToken
     @PostMapping(value = "/like")
     public CommonResult<Boolean> saveInfoLike(CustomStatement customStatement, @RequestBody LikesVO likesVO) {
-        return postService.savePostLike(customStatement, likesVO);
+        postService.savePostLike(customStatement, likesVO);
+        return CommonResult.success(Boolean.TRUE);
     }
 
 }

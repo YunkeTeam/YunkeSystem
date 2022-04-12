@@ -10,4 +10,6 @@ public class RedisPrefixConst {
 
     public static final String TALENT = "talent";
 
+    public static final String LIKE_KEY = "postLike:";
+
 }
