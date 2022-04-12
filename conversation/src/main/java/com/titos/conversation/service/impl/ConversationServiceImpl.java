@@ -33,13 +33,16 @@ public class ConversationServiceImpl implements ConversationService {
      * @param otherId 接收者的id
      * @return
      */
+    @Transactional
     @Override
     public List<MessagePO> selectAllDialog(Integer id, Integer otherId) {
         List<MessagePO> messagePoList = null;
         try {
             messagePoList = conversationDao.selectAllDialog(id, otherId);
+            conversationDao.updateComplete(id, otherId);
         } catch (DataAccessException e) {
             e.printStackTrace();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             messagePoList = CheckUtil.defaultErrorMessagePoList;
         }
         return messagePoList;
@@ -188,6 +191,18 @@ public class ConversationServiceImpl implements ConversationService {
             simpleInformationVO = CheckUtil.defaultErrorSimpleInformationVO;
         }
         return simpleInformationVO;
+    }
+
+    @Override
+    public int updateCompleteByChange(Integer id, Integer otherId, LocalDateTime time) {
+        int cnt = 0;
+        try {
+            cnt = conversationDao.updateCompleteByChange(id, otherId, time);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            cnt = 0;
+        }
+        return cnt;
     }
 
 }

@@ -90,4 +90,9 @@
                           on b.uid = a.uid;
     </select>
 
+    <update id="updateCompleteByChange">
+        update message set is_complete = 0
+        where (send_id = #{otherId} and receive_id = #{id} and release_time = #{time})
+    </update>
+
 </mapper>

@@ -9,6 +9,9 @@ import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -103,6 +106,18 @@ public class ConversationController {
             return CommonResult.fail();
         }
         return CommonResult.success(messagePOList);
+    }
+
+    @InjectToken
+    @PostMapping("/setComplete")
+    public CommonResult<Boolean> setComplete(CustomStatement customStatement, Integer toId, String time) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(time, df);
+        int cnt = service.updateCompleteByChange(customStatement.getId(), toId, localDateTime);
+        if(cnt == -1) {
+            return CommonResult.fail(false);
+        }
+        return CommonResult.success(true);
     }
 
 }

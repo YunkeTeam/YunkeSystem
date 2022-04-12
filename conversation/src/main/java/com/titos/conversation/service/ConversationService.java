@@ -92,4 +92,13 @@ public interface ConversationService {
      */
     List<SimpleInformationVO> getSimpleInformation(Integer id);
 
+    /**
+     * 修改为unread
+     * @param id
+     * @param otherId
+     * @param time
+     * @return
+     */
+    int updateCompleteByChange(Integer id, Integer otherId, LocalDateTime time);
+
 }

@@ -4,6 +4,7 @@ import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.vo.SimpleInformationVO;
 import org.springframework.dao.DataAccessException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -101,4 +102,15 @@ public interface ConversationDao {
      * @throws DataAccessException
      */
     List<SimpleInformationVO> selectSimpleInformation(Integer id) throws DataAccessException;
+
+    /**
+     * 更新为unread
+     * @param id
+     * @param otherId
+     * @param time
+     * @return
+     * @throws DataAccessException
+     */
+    int updateCompleteByChange(Integer id, Integer otherId, LocalDateTime time) throws DataAccessException;
+
 }
