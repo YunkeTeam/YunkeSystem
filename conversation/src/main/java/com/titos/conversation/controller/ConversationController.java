@@ -2,6 +2,7 @@ package com.titos.conversation.controller;
 
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
+import com.titos.conversation.utils.CheckUtil;
 import com.titos.conversation.vo.SimpleInformationVO;
 import com.titos.info.global.CommonResult;
 import com.titos.tool.annotions.InjectToken;
@@ -34,8 +35,8 @@ public class ConversationController {
         Integer userId = customStatement.getId();
         Integer otherUserId = Integer.parseInt(toId);
         List<MessagePO> result = service.selectAllDialog(userId, otherUserId);
-        if(result == null) {
-            return CommonResult.fail(null);
+        if(result == CheckUtil.defaultErrorMessagePoList) {
+            return CommonResult.fail();
         }
         return CommonResult.success(result);
     }
@@ -81,8 +82,8 @@ public class ConversationController {
     @PostMapping("/getSimpleInformation")
     public CommonResult<List<SimpleInformationVO>> getSimpleInformationVO(CustomStatement customStatement) {
         List<SimpleInformationVO> simpleInformationVO = service.getSimpleInformation(customStatement.getId());
-        if(simpleInformationVO == null) {
-            return CommonResult.fail(null);
+        if(simpleInformationVO == CheckUtil.defaultErrorSimpleInformationVO) {
+            return CommonResult.fail();
         }
         return CommonResult.success(simpleInformationVO);
     }
@@ -98,8 +99,8 @@ public class ConversationController {
     public CommonResult<List<MessagePO>> getAllDialogReceiveNotComplete(CustomStatement customStatement, Integer toId) {
         // 从数据库里面拿看是否有 toId 向 id 发送过离线消息，按时间顺序从小到大
         List<MessagePO> messagePOList = service.selectAllDialogReceiveNotComplete(toId, customStatement.getId());
-        if(messagePOList == null) {
-            return CommonResult.fail(null);
+        if(messagePOList == CheckUtil.defaultErrorMessagePoList) {
+            return CommonResult.fail();
         }
         return CommonResult.success(messagePOList);
     }

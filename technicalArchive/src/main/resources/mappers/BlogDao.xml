@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 写接口的全限定名 -->
+<mapper namespace="com.titos.technicalarchive.dao.BlogDao">
+    <insert id="insertBlog">
+        insert into blog(user_id, article_title, article_content, article_cover, category, status, create_time)
+                values(#{userId}, #{articleTitle}, #{articleContent}, #{articleCover}, #{category}, #{status}, now())
+    </insert>
+
+    <delete id="deleteBlog">
+        delete from blog where id = #{blogId}
+    </delete>
+
+    <select id="selectBlog" resultType="com.titos.technicalarchive.vo.SimpleBlogVO">
+        select id,
+               article_title as articleTitle,
+               article_content as articleContent,
+               category,
+               create_time as createTime
+            from blog where user_id = #{id}
+    </select>
+
+    <select id="selectBlogByPattern" resultType="com.titos.technicalarchive.vo.SimpleBlogVO">
+        select id,
+               article_title as articleTitle,
+               article_content as articleContent,
+               category,
+               create_time as createTime
+        from blog where article_title like CONCAT(CONCAT('%', #{pattern}), '%')
+    </select>
+
+
+    <select id="selectBlogByCategory" resultType="com.titos.technicalarchive.vo.SimpleBlogVO">
+        select id,
+               article_title as articleTitle,
+               article_content as articleContent,
+               category,
+               create_time as createTime
+        from blog where category = #{category}
+    </select>
+
+    <select id="selectBlogByPatternAndCategory" resultType="com.titos.technicalarchive.vo.SimpleBlogVO">
+        select id,
+               article_title as articleTitle,
+               article_content as articleContent,
+               category,
+               create_time as createTime
+        from blog where category = #{category} and article_title like CONCAT(CONCAT('%', #{pattern}), '%')
+    </select>
+
+    <select id="selectBlogDetail" resultType="com.titos.technicalarchive.vo.DetailBlogVO">
+        select id,
+               article_title as articleTitle,
+               article_content as articleContent,
+               article_cover as articleCover,
+               create_time as createTime
+        from blog where id = #{blogId}
+    </select>
+
+</mapper>

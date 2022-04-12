@@ -1,27 +1,49 @@
 package com.titos.technicalarchive.Service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.titos.info.global.CommonResult;
-import com.titos.info.technicalarchive.entity.Blog;
-import com.titos.info.technicalarchive.vo.BlogVO;
+import com.titos.technicalarchive.vo.BlogVO;
+import com.titos.technicalarchive.vo.DetailBlogVO;
+import com.titos.technicalarchive.vo.SimpleBlogVO;
 
 import java.util.List;
 
 /**
- * @ClassName BlogService
- * @Description TODO
- * @Author Kurihada
- * @Date 2022/4/8 14:38
- **/
-public interface BlogService extends IService<Blog> {
+ * @Author: ddgo
+ * @DateTime: 2022/4/11 20:45
+ * @Version: 1.0.0
+ * @Description:
+ */
+public interface BlogService {
 
     /**
-     * 分页查询所有的博客文章
-     *
-     * @param pageNum  当前页
-     * @param pageSize 每页的数量
-     * @return 博客文章列表
+     * 插入某用户的一篇博客
+     * @param userId
+     * @param blogVO
+     * @return
      */
-    CommonResult<List<BlogVO>> listBlog(Integer pageNum, Integer pageSize);
+    int insertBlog(Integer userId, BlogVO blogVO);
+
+    /**
+     * 删除谋篇博客
+     * @param blogId
+     * @return
+     */
+    int deleteBlog(Integer blogId);
+
+    /**
+     * 模糊查询当前用户的pattern,分类category的博客
+     * 没有选择默认全查询
+     * @param id
+     * @param pattern
+     * @param category
+     * @return
+     */
+    List<SimpleBlogVO> selectBlog(Integer id, String pattern, String category);
+
+    /**
+     * 得到当前博客的内容信息
+     * @param blogId
+     * @return
+     */
+    DetailBlogVO selectBlogDetail(Integer blogId);
 
 }

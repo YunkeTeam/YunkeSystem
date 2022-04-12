@@ -2,20 +2,14 @@ package com.titos.conversation.component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.titos.conversation.config.CustomSpringConfigurator;
-import com.titos.conversation.dao.ConversationDao;
-import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.service.ConversationService;
-import com.titos.conversation.vo.ConnectionVO;
 import com.titos.conversation.vo.ReceiveMessageVO;
 import com.titos.conversation.vo.ToMessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

@@ -3,7 +3,6 @@ package com.titos.conversation;
 import com.titos.tool.token.CustomStatement;
 import com.titos.tool.token.TokenContent;
 import com.titos.tool.token.TokenUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
