@@ -2,21 +2,18 @@ package com.titos.shareplatform.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.shareplatform.dto.CommentDTO;
-import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.info.shareplatform.vo.TalentVO;
 import com.titos.info.user.entity.User;
 import com.titos.shareplatform.async.ServiceAsync;
 import com.titos.shareplatform.dao.CommentDao;
-import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.dao.UserDao;
 import com.titos.shareplatform.service.PostService;
@@ -32,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -46,9 +44,6 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Resource
     private PostDao postDao;
-
-    @Resource
-    private LikesDao likesDao;
 
     @Resource
     private CommentDao commentDao;
@@ -66,17 +61,25 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
         List<PostVO> postList = postDao.listPost((pageNum - 1) * pageSize, pageSize);
         for (PostVO post : postList) {
-            List<String> likes = likesDao.likesUserAvatar(post.getId());
-            post.setLikesUserAvatar(likes);
 
-            Boolean isLike = likesDao.selectOne(new LambdaQueryWrapper<Likes>()
-                    .eq(Likes::getUserId, customStatement.getId())
-                    .eq(Likes::getPostId, post.getId())) != null;
-            post.setIsLike(isLike);
+            // 包装点赞该帖子的用户头像
+            Set<Object> set = redisTemplate.opsForSet().members(RedisPrefixConst.LIKE_KEY + post.getId());
+            if (set != null) {
+                List<String> likes = new ArrayList<>(set.size());
+                set.forEach(item -> {
+                    likes.add(userDao.selectOne(new LambdaQueryWrapper<User>()
+                            .select(User::getHeadImage)
+                            .eq(User::getId, item)).getHeadImage());
+                });
+                post.setLikesUserAvatar(likes);
+            }
 
+            // 包装当前用户是否点赞该帖子
+            post.setIsLike(isLike(post.getId(), customStatement.getId()));
+
+            // 包装该帖子的评论列表
             List<CommentDTO> commentList = commentDao.listUserByPostId(post.getId());
             post.setCommentList(commentList);
-
             post.setCommentBox("");
         }
         return CommonResult.success(postList);
@@ -98,7 +101,6 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public CommonResult<List<TalentVO>> listTalent(Long pageNum, Long pageSize) {
         Set<ZSetOperations.TypedTuple<Object>> tupleSet = redisTemplate.opsForZSet().reverseRangeWithScores(
                 RedisPrefixConst.TALENT, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
-
         if (tupleSet == null) {
             return CommonResult.success(null);
         }
@@ -106,16 +108,17 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
         long rank = 1;
         for (ZSetOperations.TypedTuple<Object> sub : tupleSet) {
             User user = JSON.parseObject((String) sub.getValue(), User.class);
-            talentList.add(TalentVO.builder()
-                    .rank(rank++)
-                    .postCount(sub.getScore().intValue())
-                    .userId(user.getId())
-                    .username(user.getUsername())
-                    .headImage(user.getHeadImage())
-                    .build());
+            if (user != null) {
+                talentList.add(TalentVO.builder()
+                        .rank(rank++)
+                        .postCount(Objects.requireNonNull(sub.getScore()).intValue())
+                        .userId(user.getId())
+                        .username(user.getUsername())
+                        .headImage(user.getHeadImage())
+                        .build());
+            }
         }
         return CommonResult.success(talentList);
-
     }
 
     @Async
@@ -149,26 +152,32 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
         return CommonResult.success(Boolean.TRUE);
     }
 
+    @Async
     @Override
-    public CommonResult<Boolean> savePostLike(CustomStatement customStatement, LikesVO likesVO) {
-        Likes likes = likesDao.selectOne(new LambdaQueryWrapper<Likes>()
-                .eq(Likes::getUserId, customStatement.getId())
-                .eq(Likes::getPostId, likesVO.getPostId()));
-        if (likes != null) {
-            likesDao.deleteById(likes.getId());
-            Post post = new Post();
-            post.setId(likesVO.getPostId());
-            postDao.update(post, Wrappers.update(post).setSql("`likes`=`likes`-1"));
+    public void savePostLike(CustomStatement customStatement, LikesVO likesVO) {
+        Integer userId = customStatement.getId();
+        Integer postId = likesVO.getPostId();
+
+        if (Boolean.TRUE.equals(isLike(postId, userId))) {
+            // 若点赞了则取消点赞，并对应帖子的点赞量-1
+            redisTemplate.opsForSet().remove(RedisPrefixConst.LIKE_KEY + postId, userId);
+            redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.LIKE_COUNT, postId, -1D);
         } else {
-            likesDao.insert(Likes.builder()
-                    .userId(customStatement.getId())
-                    .postId(likesVO.getPostId())
-                    .build());
-            Post post = new Post();
-            post.setId(likesVO.getPostId());
-            postDao.update(post, Wrappers.update(post).setSql("`likes`=`likes`+1"));
+            // 若未点赞则点赞，并对应帖子的点赞量+1
+            redisTemplate.opsForSet().add(RedisPrefixConst.LIKE_KEY + postId, userId);
+            redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.LIKE_COUNT, postId, 1D);
         }
-        return CommonResult.success(Boolean.TRUE);
+    }
+
+    /**
+     * 判断帖子是否被某个用户点赞
+     *
+     * @param postId 帖子ID
+     * @param userId 用户ID
+     * @return 该用户是否点赞该帖子
+     */
+    private Boolean isLike(Integer postId, Integer userId) {
+        return redisTemplate.opsForSet().isMember(RedisPrefixConst.LIKE_KEY + postId, userId);
     }
 
 }
