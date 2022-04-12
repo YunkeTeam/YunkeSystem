@@ -1,9 +1,12 @@
 package com.titos.conversation.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * @author Titos
@@ -28,4 +31,9 @@ public class ToMessageVO {
      * 发送的消息
      */
     private String message;
+    /**
+     * 发送时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime sendTime;
 }

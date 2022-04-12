@@ -3,6 +3,7 @@ package com.titos.conversation.service;
 import com.titos.conversation.po.MessagePO;
 import com.titos.conversation.vo.SimpleInformationVO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,10 +37,11 @@ public interface ConversationService {
      * @param id 发送者id
      * @param otherId 接收者id
      * @param message 发送的消息
+     * @param time 发送时间
      * @param isComplete 是否成功发送
      * @return 返回接收情况
      */
-    int sendDialog(Integer id, Integer otherId, String message, Integer isComplete);
+    int sendDialog(Integer id, Integer otherId, String message, LocalDateTime time, Integer isComplete);
 
     /**
      * 添加好友
@@ -85,6 +87,7 @@ public interface ConversationService {
 
     /**
      * 返回id 对应聊天用户的简单信息
+     * @param id id用户所有好友的聊天信息
      * @return
      */
     List<SimpleInformationVO> getSimpleInformation(Integer id);

@@ -15,6 +15,7 @@ public class SimpleInformationVO {
     private String headImage;
     private String userName;
     private String content;
+    private String friendId;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime sendTime;
 }

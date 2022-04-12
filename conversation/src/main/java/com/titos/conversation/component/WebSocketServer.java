@@ -62,24 +62,25 @@ public class WebSocketServer {
 
     @OnMessage
     public void onMessage(@PathParam("id") String id, String message) {
-        ReceiveMessageVO connectionVO = JSONObject.parseObject(message, ReceiveMessageVO.class);
-        if(connectionVO.getMessage() == null || "".equals(connectionVO.getMessage())) {
+        ReceiveMessageVO receiveMessageVO = JSONObject.parseObject(message, ReceiveMessageVO.class);
+        if(receiveMessageVO.getMessage() == null || "".equals(receiveMessageVO.getMessage())) {
             return;
         }
         Integer userId = Integer.parseInt(id);
-        Integer toId = connectionVO.getToUserId();
+        Integer toId = receiveMessageVO.getToUserId();
         if(webSocketMap.containsKey(toId)) {
             // 在线，则通过 session 的
             try {
-                conversationService.sendDialog(userId, toId, connectionVO.getMessage(), 1);
-                ToMessageVO toMessageVO = new ToMessageVO(false, userId, toId, connectionVO.getMessage());
+                conversationService.sendDialog(userId, toId, receiveMessageVO.getMessage(), receiveMessageVO.getSendTime(), 1);
+                ToMessageVO toMessageVO = new ToMessageVO(false, userId, toId, receiveMessageVO.getMessage(),
+                        receiveMessageVO.getSendTime());
                 webSocketMap.get(toId).getAsyncRemote().sendText(JSONObject.toJSONString(toMessageVO));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             // 不在线，存到数据库，保存为 0
-            conversationService.sendDialog(userId, toId, connectionVO.getMessage(), 0);
+            conversationService.sendDialog(userId, toId, receiveMessageVO.getMessage(), receiveMessageVO.getSendTime(), 0);
         }
     }
 

@@ -26,7 +26,7 @@
 
     <insert id="insertDialog" parameterType="com.titos.conversation.po.MessagePO" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into message(send_id, receive_id, content, image_addr, release_time, is_complete)
-        values(#{sendId}, #{receiveId}, #{content}, #{imageAddr}, now(), #{isComplete})
+        values(#{sendId}, #{receiveId}, #{content}, #{imageAddr}, #{releaseTime}, #{isComplete})
     </insert>
 
     <insert id="insertFriend">
@@ -71,7 +71,11 @@
     </update>
 
     <select id="selectSimpleInformation" resultType="com.titos.conversation.vo.SimpleInformationVO">
-        select user.username as userName, user.head_image as headImage, message.content as content, message.release_time as sendTime
+        select user.username as userName,
+               user.head_image as headImage,
+               message.content as content,
+               message.release_time as sendTime,
+               a.uid as friendId
         from
             (select friend_id as uid, message_id from contactperson where user_id = #{id}
              union select user_id as uid, message_id from contactperson where friend_id = #{id}) as a

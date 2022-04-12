@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -70,12 +71,13 @@ public class ConversationServiceImpl implements ConversationService {
      * @param id 发送者id
      * @param otherId 接收者id
      * @param message 发送的消息
+     * @param time 发送时间
      * @param isComplete 是否成功
      * @return
      */
     @Transactional
     @Override
-    public int sendDialog(Integer id, Integer otherId, String message, Integer isComplete) {
+    public int sendDialog(Integer id, Integer otherId, String message, LocalDateTime time, Integer isComplete) {
         int cnt = 0;
         MessagePO messagePO = new MessagePO();
         messagePO.setSendId(id);
@@ -83,6 +85,7 @@ public class ConversationServiceImpl implements ConversationService {
         messagePO.setContent(message);
         messagePO.setImageAddr(message);
         messagePO.setIsComplete(isComplete);
+        messagePO.setReleaseTime(time);
         try {
             cnt = conversationDao.insertDialog(messagePO);
             conversationDao.updateFriend(id, otherId, messagePO.getId());
