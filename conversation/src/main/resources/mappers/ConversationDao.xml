@@ -75,12 +75,19 @@
                user.head_image as headImage,
                message.content as content,
                message.release_time as sendTime,
-               a.uid as friendId
+               a.uid as friendId,
+               b.notReadNum as notReadNum
         from
             (select friend_id as uid, message_id from contactperson where user_id = #{id}
              union select user_id as uid, message_id from contactperson where friend_id = #{id}) as a
-            left join message on a.message_id = message.id
-            left join user on user.id = a.uid;
+                left join message on a.message_id = message.id
+                left join user on user.id = a.uid
+                left join ( select send_id as uid, count(*) as notReadNum from message
+                            where send_id in
+                                  ( select friend_id as uid from contactperson where user_id = #{id}
+                                    union select user_id as uid from contactperson where friend_id = #{id} )
+                              and receive_id = #{id} and is_complete = 0 group by send_id) as b
+                          on b.uid = a.uid;
     </select>
 
 </mapper>

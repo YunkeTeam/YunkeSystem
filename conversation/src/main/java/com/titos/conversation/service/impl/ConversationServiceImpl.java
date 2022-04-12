@@ -182,6 +182,7 @@ public class ConversationServiceImpl implements ConversationService {
         List<SimpleInformationVO> simpleInformationVO = null;
         try {
             simpleInformationVO = conversationDao.selectSimpleInformation(id);
+
         } catch (DataAccessException e) {
             e.printStackTrace();
             simpleInformationVO = CheckUtil.defaultErrorSimpleInformationVO;
