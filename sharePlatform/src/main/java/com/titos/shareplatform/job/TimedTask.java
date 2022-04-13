@@ -31,7 +31,7 @@ public class TimedTask {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Async
-    @Scheduled(cron = "* * 0/2 * * ?", zone = "Asia/Shanghai")
+    @Scheduled(cron = "* * 0/3 * * ? ", zone = "Asia/Shanghai")
     public void saveLikes2DB() {
         log.info("========================================");
         log.info("开始同步redis的点赞数据到mysql！");
