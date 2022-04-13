@@ -8,6 +8,7 @@ import com.titos.tool.token.CustomStatement;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -74,6 +75,21 @@ public class TaskController {
             @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {
         return taskService.listTaskByCondition(customStatement, keywords, pageNum, pageSize);
+    }
+
+    /**
+     * 添加或者修改任务
+     *
+     * @param taskVO 任务
+     * @return 是否成功
+     */
+    @InjectToken
+    @PostMapping("/add")
+    public CommonResult<Boolean> addOrUpdateTask(
+            CustomStatement customStatement,
+            @Valid @RequestBody TaskVO taskVO) {
+        taskService.addOrUpdateTask(customStatement, taskVO);
+        return CommonResult.success(Boolean.TRUE);
     }
 
 }

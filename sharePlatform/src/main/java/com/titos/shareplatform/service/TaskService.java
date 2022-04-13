@@ -48,4 +48,12 @@ public interface TaskService extends IService<Task> {
      * @return 任务列表
      */
     CommonResult<List<TaskVO>> listTaskByCondition(CustomStatement customStatement, String keywords, Long pageNum, Long pageSize);
+
+    /**
+     * 添加或者修改任务
+     *
+     * @param customStatement 用户信息
+     * @param taskVO          任务
+     */
+    void addOrUpdateTask(CustomStatement customStatement, TaskVO taskVO);
 }

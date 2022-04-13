@@ -4,11 +4,11 @@
 <mapper namespace="com.titos.shareplatform.dao.TaskDao">
 
     <select id="listTaskByTagName" resultType="com.titos.info.shareplatform.vo.TaskVO">
-        SELECT tk.id, tk.task_title, tk.task_desc, tk.is_important, tk.is_starred, tk.is_trashed
+        SELECT tk.id, tk.task_title, tk.task_desc, tk.is_important, tk.is_starred, tk.is_done
         FROM task tk
         LEFT JOIN task_tag tt ON tk.id=tt.task_id
         LEFT JOIN tag tg ON tt.tag_id = tg.id
-        WHERE tk.user_id = #{userId} AND tg.tag_name=#{tagName}
+        WHERE tk.user_id = #{userId} AND tg.tag_name = #{tagName} AND tk.is_trashed = 0
         ORDER BY tk.create_time
         LIMIT #{pageNum}, #{pageSize}
     </select>
