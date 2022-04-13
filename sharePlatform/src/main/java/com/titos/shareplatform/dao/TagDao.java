@@ -21,4 +21,11 @@ public interface TagDao extends BaseMapper<Tag> {
      * @return 分类名列表
      */
     List<String> listTagNameByTaskId(Integer taskId);
+
+    /**
+     * 根据日历事件ID查询分类名列表
+     * @param calendarId 日历事件ID
+     * @return 分类名
+     */
+    String listTagNameByCalendarId(Integer calendarId);
 }

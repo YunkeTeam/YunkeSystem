@@ -10,4 +10,11 @@
         WHERE tt.task_id = #{taskId}
     </select>
 
+    <select id="listTagNameByCalendarId" resultType="java.lang.String">
+        SELECT t.tag_name
+        FROM tag t
+        LEFT JOIN calendar_tag ct ON t.id=ct.tag_id
+        WHERE ct.calendar_id = #{calendarId}
+    </select>
+
 </mapper>

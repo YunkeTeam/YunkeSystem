@@ -26,7 +26,7 @@ public interface TaskService extends IService<Task> {
     CommonResult<List<TaskVO>> listTask(CustomStatement customStatement, Long pageNum, Long pageSize);
 
     /**
-     * 根据分类名查询任务
+     * 根据分类名分页查询当前用户的任务
      *
      * @param customStatement 用户信息
      * @param tagName         分类名

@@ -42,10 +42,12 @@ public class TaskController {
     }
 
     /**
-     * 根据分类名查询任务
+     * 根据分类名分页查询当前用户的任务
      *
      * @param customStatement 用户信息
      * @param tagName         分类名
+     * @param pageNum         当前页
+     * @param pageSize        每页的数量
      * @return 任务列表
      */
     @InjectToken
@@ -80,7 +82,8 @@ public class TaskController {
     /**
      * 添加或者修改任务
      *
-     * @param taskVO 任务
+     * @param customStatement 用户信息
+     * @param taskVO          任务
      * @return 是否成功
      */
     @InjectToken
