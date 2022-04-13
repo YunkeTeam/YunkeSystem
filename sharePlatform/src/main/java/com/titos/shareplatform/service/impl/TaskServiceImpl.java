@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
-import com.titos.info.shareplatform.entity.Tag;
 import com.titos.info.shareplatform.entity.Task;
 import com.titos.info.shareplatform.enums.TaskAttributes;
-import com.titos.info.shareplatform.vo.TagNameVO;
 import com.titos.info.shareplatform.vo.TaskVO;
 import com.titos.shareplatform.dao.TagDao;
 import com.titos.shareplatform.dao.TaskDao;
@@ -52,10 +50,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     }
 
     @Override
-    public CommonResult<List<TaskVO>> listTaskByTagName(CustomStatement customStatement, TagNameVO tagNameVO,
+    public CommonResult<List<TaskVO>> listTaskByTagName(CustomStatement customStatement, String tagName,
                                                         Long pageNum, Long pageSize) {
-        List<TaskVO> taskVoList = taskDao.listTaskByTagName(customStatement.getId(), tagNameVO.getTagName(),
-                pageNum, pageSize);
+        List<TaskVO> taskVoList = taskDao.listTaskByTagName(customStatement.getId(), tagName,
+                (pageNum - 1) * pageSize, pageSize);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
         });

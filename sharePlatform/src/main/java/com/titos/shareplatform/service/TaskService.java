@@ -3,7 +3,6 @@ package com.titos.shareplatform.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Task;
-import com.titos.info.shareplatform.vo.TagNameVO;
 import com.titos.info.shareplatform.vo.TaskVO;
 import com.titos.tool.token.CustomStatement;
 
@@ -30,12 +29,12 @@ public interface TaskService extends IService<Task> {
      * 根据分类名查询任务
      *
      * @param customStatement 用户信息
-     * @param tagNameVO       分类名
+     * @param tagName         分类名
      * @param pageNum         当前页
      * @param pageSize        每页的数量
      * @return 任务列表
      */
-    CommonResult<List<TaskVO>> listTaskByTagName(CustomStatement customStatement, TagNameVO tagNameVO,
+    CommonResult<List<TaskVO>> listTaskByTagName(CustomStatement customStatement, String tagName,
                                                  Long pageNum, Long pageSize);
 
 
