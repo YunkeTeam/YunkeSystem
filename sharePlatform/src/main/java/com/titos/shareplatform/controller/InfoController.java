@@ -95,4 +95,19 @@ public class InfoController {
         return infoService.searchInfo(keywords, userId);
     }
 
+    /**
+     * 批量删除消息
+     *
+     * @param customStatement 用户消息
+     * @param deleteVO        需要删除的消息的ID列表
+     * @return 是否删除成功
+     */
+    @InjectToken
+    @DeleteMapping(value = "/delete")
+    public CommonResult<Boolean> deleteInfo(
+            CustomStatement customStatement,
+            @RequestBody DeleteVO deleteVO) {
+        return infoService.deleteInfo(customStatement, deleteVO);
+    }
+
 }

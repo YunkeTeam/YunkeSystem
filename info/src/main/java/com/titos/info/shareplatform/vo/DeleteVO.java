@@ -20,7 +20,7 @@ import java.util.List;
 public class DeleteVO {
 
     /**
-     * 评论ID列表
+     * ID列表
      */
     private List<Integer> idList;
 

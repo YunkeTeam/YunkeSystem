@@ -56,9 +56,19 @@ public interface InfoService extends IService<Info> {
 
     /**
      * 查询消息
+     *
      * @param keywords 关键词
-     * @param userId 用户ID
+     * @param userId   用户ID
      * @return 消息列表
      */
     CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId);
+
+    /**
+     * 批量删除消息
+     *
+     * @param customStatement 用户消息
+     * @param deleteVO        需要删除的消息的ID列表
+     * @return 是否删除成功
+     */
+    CommonResult<Boolean> deleteInfo(CustomStatement customStatement, DeleteVO deleteVO);
 }

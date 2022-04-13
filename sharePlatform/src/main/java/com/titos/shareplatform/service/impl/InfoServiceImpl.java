@@ -12,6 +12,7 @@ import com.titos.shareplatform.dao.InfoDao;
 import com.titos.shareplatform.service.InfoService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  * @Date 2022/4/9 0:39
  **/
 @Service
+@Slf4j
 public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoService {
 
     @Resource
@@ -85,5 +87,21 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
             return infoVO;
         }).collect(Collectors.toList());
         return CommonResult.success(infoVOList);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Boolean> deleteInfo(CustomStatement customStatement, DeleteVO deleteVO) {
+        List<Integer> curInfoIdList = infoDao.selectList(new LambdaQueryWrapper<Info>()
+                .select(Info::getId)
+                .eq(Info::getUserId, customStatement.getId())).stream().map(Info::getId).collect(Collectors.toList());
+        log.info(deleteVO.toString());
+        for (Integer infoId : deleteVO.getIdList()) {
+            if (!curInfoIdList.contains(infoId)) {
+                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+            }
+            infoDao.deleteById(infoId);
+        }
+        return CommonResult.success(Boolean.TRUE);
     }
 }
