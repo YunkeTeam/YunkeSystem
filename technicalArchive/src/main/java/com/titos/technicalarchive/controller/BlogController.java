@@ -35,6 +35,7 @@ public class BlogController {
      * @param jsonObject
      * @return
      */
+
     @InjectToken
     @PostMapping("/publishBlog")
     public CommonResult<Boolean> publishBlog(CustomStatement customStatement, String jsonObject) {
@@ -76,6 +77,11 @@ public class BlogController {
         return CommonResult.success(blogVOList);
     }
 
+    /***
+     * 通过id查找博客
+     * @param blogId
+     * @return
+     */
     @PostMapping("/getBlogDetail")
     public CommonResult<DetailBlogVO> getBlogDetail(Integer blogId) {
         DetailBlogVO detailBlogVO = blogService.selectBlogDetail(blogId);

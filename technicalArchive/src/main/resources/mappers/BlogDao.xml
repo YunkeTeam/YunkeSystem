@@ -5,8 +5,8 @@
 <!-- namespace 写接口的全限定名 -->
 <mapper namespace="com.titos.technicalarchive.dao.BlogDao">
     <insert id="insertBlog">
-        insert into blog(user_id, article_title, article_content, article_cover, category, status, create_time)
-                values(#{userId}, #{articleTitle}, #{articleContent}, #{articleCover}, #{category}, #{status}, now())
+        insert into blog(user_id, article_title, article_content, article_cover, category, status, create_time, article_text)
+                values(#{userId}, #{articleTitle}, #{articleContent}, #{articleCover}, #{category}, #{status}, now(), #{articleText})
     </insert>
 
     <delete id="deleteBlog">
@@ -18,7 +18,8 @@
                article_title as articleTitle,
                article_content as articleContent,
                category,
-               create_time as createTime
+               create_time as createTime,
+               article_text as articleText
             from blog where user_id = #{id}
     </select>
 
