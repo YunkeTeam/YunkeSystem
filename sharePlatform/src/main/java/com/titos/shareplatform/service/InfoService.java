@@ -2,6 +2,7 @@ package com.titos.shareplatform.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.PageResult;
 import com.titos.info.shareplatform.entity.Info;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.tool.token.CustomStatement;
@@ -22,9 +23,9 @@ public interface InfoService extends IService<Info> {
      * @param filterInfo 条件
      * @param pageNum    当前页
      * @param pageSize   每页的数量
-     * @return 信息列表
+     * @return 分页信息列表
      */
-    CommonResult<List<InfoVO>> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize);
+    PageResult<InfoVO> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize);
 
     /**
      * 获取当前用户的信息

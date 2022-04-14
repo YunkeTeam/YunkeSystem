@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.PageResult;
 import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Info;
@@ -35,9 +36,12 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
 
 
     @Override
-    public CommonResult<List<InfoVO>> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {
+    public PageResult<InfoVO> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {
         List<InfoVO> infoList = infoDao.listInfo(filterInfo, pageNum - 1, pageSize);
-        return CommonResult.success(infoList);
+        Page<Info> page = new Page<>(pageNum, pageSize);
+        Page<Info> infoPage = infoDao.selectPage(page, new LambdaQueryWrapper<Info>().select(Info::getId));
+        infoPage.getTotal();
+        return new PageResult<InfoVO>(infoList, (int) ((int) (infoPage.getTotal() + pageSize - 1) / pageSize));
     }
 
     @Override

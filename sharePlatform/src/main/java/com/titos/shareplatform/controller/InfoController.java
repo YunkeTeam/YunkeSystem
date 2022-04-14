@@ -1,6 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.PageResult;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.service.InfoService;
 import com.titos.tool.annotions.InjectToken;
@@ -33,11 +34,12 @@ public class InfoController {
      * @return 信息列表
      */
     @GetMapping(value = "/list")
-    public CommonResult<List<InfoVO>> listInfo(
+    public CommonResult<PageResult<InfoVO>> listInfo(
             FilterInfoVO filterInfo,
             @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {
-        return infoService.listInfo(filterInfo, pageNum, pageSize);
+        PageResult<InfoVO> infoList = infoService.listInfo(filterInfo, pageNum, pageSize);
+        return CommonResult.success(infoList);
     }
 
     /**
