@@ -38,10 +38,8 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     @Override
     public PageResult<InfoVO> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {
         List<InfoVO> infoList = infoDao.listInfo(filterInfo, (pageNum - 1) * pageSize, pageSize);
-        Page<Info> page = new Page<>(pageNum, pageSize);
-        Page<Info> infoPage = infoDao.selectPage(page, new LambdaQueryWrapper<Info>().select(Info::getId));
-        infoPage.getTotal();
-        return new PageResult<InfoVO>(infoList, (int) ((int) (infoPage.getTotal() + pageSize - 1) / pageSize));
+        Integer totalCount = infoDao.listInfoTotal(filterInfo, (pageNum - 1) * pageSize, pageSize);
+        return new PageResult<>(infoList, (int) ((int) (totalCount + pageSize - 1) / pageSize));
     }
 
     @Override
