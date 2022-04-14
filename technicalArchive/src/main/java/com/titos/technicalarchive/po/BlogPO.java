@@ -29,6 +29,12 @@ public class BlogPO {
      * 文章内容
      */
     String articleContent;
+
+    /**
+     * 文章纯文本
+     */
+    String articleText;
+
     /**
      * 文章封面地址
      */

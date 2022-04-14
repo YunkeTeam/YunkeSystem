@@ -22,6 +22,10 @@ public class BlogVO {
      */
     String articleContent;
     /**
+     * 文章纯文本
+     */
+    String articleText;
+    /**
      * 文章封面地址
      */
     String articleCover;

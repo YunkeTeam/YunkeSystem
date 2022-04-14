@@ -26,6 +26,10 @@ public class SimpleBlogVO {
      */
     String articleContent;
     /**
+     * 文章纯文本
+     */
+    String articleText;
+    /**
      * 分类
      */
     String category;

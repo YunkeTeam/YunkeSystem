@@ -29,6 +29,7 @@ public class BlogServiceImpl implements BlogService {
     public int insertBlog(Integer userId, BlogVO blogVO) {
         BlogPO blogPO = new BlogPO();
         blogPO.setUserId(userId);
+        blogPO.setArticleText(blogVO.getArticleText());
         blogPO.setArticleTitle(blogVO.getArticleTitle());
         blogPO.setArticleContent(blogVO.getArticleContent());
         blogPO.setArticleCover(blogVO.getArticleCover());
