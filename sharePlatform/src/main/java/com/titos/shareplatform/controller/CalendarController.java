@@ -31,15 +31,13 @@ public class CalendarController {
      * 按照时间查询日历事件
      *
      * @param customStatement 用户信息
-     * @param filterTimeVO    时间段
      * @return 日历时间列表
      */
     @InjectToken
     @GetMapping("/list")
     public CommonResult<List<CalendarVO>> listCalendar(
-            CustomStatement customStatement,
-            FilterTimeVO filterTimeVO) {
-        return calendarService.listCalendar(customStatement, filterTimeVO);
+            CustomStatement customStatement) {
+        return calendarService.listCalendar(customStatement);
     }
 
     /**
