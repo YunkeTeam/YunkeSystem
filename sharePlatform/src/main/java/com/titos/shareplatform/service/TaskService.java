@@ -3,6 +3,7 @@ package com.titos.shareplatform.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Task;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.info.shareplatform.vo.TaskVO;
 import com.titos.tool.token.CustomStatement;
 

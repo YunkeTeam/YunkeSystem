@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.enums.StatusEnum;
+import com.titos.info.shareplatform.entity.Info;
 import com.titos.info.shareplatform.entity.Tag;
 import com.titos.info.shareplatform.entity.Task;
 import com.titos.info.shareplatform.entity.TaskTag;
 import com.titos.info.shareplatform.enums.TaskAttributes;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.info.shareplatform.vo.TaskVO;
 import com.titos.shareplatform.dao.TagDao;
 import com.titos.shareplatform.dao.TaskDao;
@@ -22,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -65,8 +69,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                         Task::getIsImportant, Task::getIsStarred, Task::getIsDone)
                 .eq(Task::getIsTrashed, 0)
                 .orderByDesc(Task::getCreateTime);
-        Page<Task> taskPage = taskDao.selectPage(page, queryWrapper);
-        List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskPage.getRecords(), TaskVO.class);
+//        Page<Task> taskPage = taskDao.selectPage(page, queryWrapper);
+        List<Task> taskList = taskDao.selectList(queryWrapper);
+        List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
         });
@@ -112,7 +117,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         // 保存任务的tag
         saveTaskTag(taskVO, task.getId());
     }
-
 
     private void saveTaskTag(TaskVO taskVO, Integer taskId) {
         // 更新任务则删除任务的所有标签

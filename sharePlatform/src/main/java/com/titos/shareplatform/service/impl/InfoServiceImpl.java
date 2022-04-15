@@ -65,12 +65,12 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     @Override
     public CommonResult<Boolean> updateInfo(CustomStatement customStatement, UpdateInfoVO updateInfoVO) {
         List<Integer> infoIdList = updateInfoVO.getIdList();
-        for(Integer infoId: infoIdList){
-            if(!infoDao.selectById(infoId).getUserId().equals(customStatement.getId())){
+        for (Integer infoId : infoIdList) {
+            if (!infoDao.selectById(infoId).getUserId().equals(customStatement.getId())) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }
         }
-        updateInfoVO.getIdList().forEach(infoId->{
+        updateInfoVO.getIdList().forEach(infoId -> {
             Info info = Info.builder()
                     .id(infoId)
                     .status(updateInfoVO.getInfoStatus())
@@ -102,13 +102,12 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
         List<Integer> curInfoIdList = infoDao.selectList(new LambdaQueryWrapper<Info>()
                 .select(Info::getId)
                 .eq(Info::getUserId, customStatement.getId())).stream().map(Info::getId).collect(Collectors.toList());
-        log.info(idListVO.toString());
         for (Integer infoId : idListVO.getIdList()) {
             if (!curInfoIdList.contains(infoId)) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }
-            infoDao.deleteById(infoId);
         }
+        infoDao.deleteBatchIds(idListVO.getIdList());
         return CommonResult.success(Boolean.TRUE);
     }
 }
