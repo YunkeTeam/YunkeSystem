@@ -90,4 +90,15 @@ public class BlogController {
         }
         return CommonResult.success(detailBlogVO);
     }
+
+    @InjectToken
+    @PostMapping("/getAllCategory")
+    public CommonResult<List<String>> getAllCategory(CustomStatement customStatement) {
+        List<String> stringList = blogService.selectAllCategory(customStatement.getId());
+        if(stringList == CheckUtil.defaultErrorStringList) {
+            return CommonResult.fail();
+        }
+        return CommonResult.success(stringList);
+    }
+
 }
