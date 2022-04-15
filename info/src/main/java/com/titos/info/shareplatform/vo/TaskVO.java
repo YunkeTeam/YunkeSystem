@@ -46,9 +46,14 @@ public class TaskVO {
     private Boolean isStarred;
 
     /**
-     * 任务是否已删除
+     * 任务是否已完成
      */
     private Boolean isDone;
+
+    /**
+     * 任务是否已删除
+     */
+    private Boolean isTrashed;
 
     /**
      * 任务的标签名列表

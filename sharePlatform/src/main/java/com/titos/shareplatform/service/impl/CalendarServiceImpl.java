@@ -49,13 +49,11 @@ public class CalendarServiceImpl extends ServiceImpl<CalendarDao, Calendar> impl
     private CalendarTagDao calendarTagDao;
 
     @Override
-    public CommonResult<List<CalendarVO>> listCalendar(CustomStatement customStatement, FilterTimeVO filterTimeVO) {
+    public CommonResult<List<CalendarVO>> listCalendar(CustomStatement customStatement) {
         List<Calendar> calendarList = calendarDao.selectList(new LambdaQueryWrapper<Calendar>()
                 .select(Calendar::getId, Calendar::getCalendarTitle, Calendar::getCalendarDesc,
                         Calendar::getStartTime, Calendar::getEndTime)
-                .eq(Calendar::getUserId, customStatement.getId())
-                .ge(Calendar::getStartTime, filterTimeVO.getStartTime())
-                .lt(Calendar::getEndTime, filterTimeVO.getEndTime()));
+                .eq(Calendar::getUserId, customStatement.getId()));
         List<CalendarVO> calendarVOList = BeanCopyUtils.copyList(calendarList, CalendarVO.class);
         calendarVOList.forEach(item -> {
             item.setTagName(tagDao.listTagNameByCalendarId(item.getId()));
