@@ -5,6 +5,7 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Calendar;
 import com.titos.info.shareplatform.vo.CalendarVO;
 import com.titos.info.shareplatform.vo.FilterTimeVO;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.tool.token.CustomStatement;
 
 import java.util.List;
@@ -31,4 +32,12 @@ public interface CalendarService extends IService<Calendar> {
      * @param calendarVO 日历事件
      */
     void addOrUpdateCalendar(CustomStatement customStatement, CalendarVO calendarVO);
+
+    /**
+     * 批量删除日历事件
+     * @param customStatement 用户信息
+     * @param idListVO 日历事件ID列表
+     * @return 是否删除成功
+     */
+    CommonResult<Boolean> deleteCalendar(CustomStatement customStatement, IdListVO idListVO);
 }

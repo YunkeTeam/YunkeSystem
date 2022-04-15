@@ -1,6 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.info.shareplatform.vo.TaskVO;
 import com.titos.shareplatform.service.TaskService;
 import com.titos.tool.annotions.InjectToken;
