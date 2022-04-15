@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * @ClassName UpdateInfoVO
@@ -22,13 +24,11 @@ public class UpdateInfoVO {
     /**
      * 消息Id
      */
-    @NotBlank(message = "消息ID不能为空")
-    private Integer infoId;
+    private List<Integer> idList;
 
     /**
      * 消息状态
      */
-    @NotBlank(message = "消息状态不能为空")
     private Integer infoStatus;
 
 }
