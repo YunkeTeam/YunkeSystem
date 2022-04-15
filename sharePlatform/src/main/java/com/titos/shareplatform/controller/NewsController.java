@@ -2,7 +2,7 @@ package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.vo.ConditionVO;
-import com.titos.info.shareplatform.vo.DeleteVO;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.info.shareplatform.vo.NewsDetailVO;
 import com.titos.info.shareplatform.vo.NewsVO;
 import com.titos.shareplatform.service.NewsService;
@@ -68,15 +68,15 @@ public class NewsController {
      * 删除新闻
      *
      * @param customStatement 用户信息
-     * @param deleteVO        新闻ID列表
+     * @param idListVO        新闻ID列表
      * @return 是否删除成功
      */
     @InjectToken
     @DeleteMapping(value = "/delete")
     public CommonResult<Boolean> deleteNews(
             CustomStatement customStatement,
-            @RequestBody DeleteVO deleteVO) {
-        return newsService.deleteNews(customStatement, deleteVO);
+            @RequestBody IdListVO idListVO) {
+        return newsService.deleteNews(customStatement, idListVO);
     }
 
 }

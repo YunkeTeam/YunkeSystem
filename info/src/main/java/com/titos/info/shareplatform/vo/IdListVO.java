@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * @ClassName DeleteVO
+ * @ClassName IdListVO
  * @Description 删除时传递的ID列表VO
  * @Author Kurihada
  * @Date 2022/4/10 21:26
@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DeleteVO {
+public class IdListVO {
 
     /**
      * ID列表

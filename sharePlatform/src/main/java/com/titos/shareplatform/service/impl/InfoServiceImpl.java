@@ -64,14 +64,19 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CommonResult<Boolean> updateInfo(CustomStatement customStatement, UpdateInfoVO updateInfoVO) {
-        if (!infoDao.selectById(updateInfoVO.getInfoId()).getUserId().equals(customStatement.getId())) {
-            return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+        List<Integer> infoIdList = updateInfoVO.getIdList();
+        for(Integer infoId: infoIdList){
+            if(!infoDao.selectById(infoId).getUserId().equals(customStatement.getId())){
+                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+            }
         }
-        Info info = Info.builder()
-                .id(updateInfoVO.getInfoId())
-                .status(updateInfoVO.getInfoStatus())
-                .build();
-        infoDao.updateById(info);
+        updateInfoVO.getIdList().forEach(infoId->{
+            Info info = Info.builder()
+                    .id(infoId)
+                    .status(updateInfoVO.getInfoStatus())
+                    .build();
+            infoDao.updateById(info);
+        });
         return CommonResult.success(Boolean.TRUE);
     }
 
@@ -93,12 +98,12 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> deleteInfo(CustomStatement customStatement, DeleteVO deleteVO) {
+    public CommonResult<Boolean> deleteInfo(CustomStatement customStatement, IdListVO idListVO) {
         List<Integer> curInfoIdList = infoDao.selectList(new LambdaQueryWrapper<Info>()
                 .select(Info::getId)
                 .eq(Info::getUserId, customStatement.getId())).stream().map(Info::getId).collect(Collectors.toList());
-        log.info(deleteVO.toString());
-        for (Integer infoId : deleteVO.getIdList()) {
+        log.info(idListVO.toString());
+        for (Integer infoId : idListVO.getIdList()) {
             if (!curInfoIdList.contains(infoId)) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }

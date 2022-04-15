@@ -138,13 +138,13 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, DeleteVO deleteVO) {
-        for (Integer postId : deleteVO.getIdList()) {
+    public CommonResult<Boolean> deletePosts(CustomStatement customStatement, IdListVO idListVO) {
+        for (Integer postId : idListVO.getIdList()) {
             if (!customStatement.getId().equals(postDao.selectById(postId).getUserId())) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }
         }
-        postDao.deleteBatchIds(deleteVO.getIdList());
+        postDao.deleteBatchIds(idListVO.getIdList());
 
         // 删除帖子时，排行榜score-1
         serviceAsync.subTalentScore(customStatement);

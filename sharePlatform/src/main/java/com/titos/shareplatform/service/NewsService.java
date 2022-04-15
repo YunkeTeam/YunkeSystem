@@ -45,8 +45,8 @@ public interface NewsService extends IService<News> {
      * 删除新闻
      *
      * @param customStatement 用户信息
-     * @param deleteVO        新闻ID列表
+     * @param idListVO        新闻ID列表
      * @return 是否删除成功
      */
-    CommonResult<Boolean> deleteNews(CustomStatement customStatement, DeleteVO deleteVO);
+    CommonResult<Boolean> deleteNews(CustomStatement customStatement, IdListVO idListVO);
 }
