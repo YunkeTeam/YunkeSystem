@@ -93,12 +93,12 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> deleteInfo(CustomStatement customStatement, DeleteVO deleteVO) {
+    public CommonResult<Boolean> deleteInfo(CustomStatement customStatement, IdListVO idListVO) {
         List<Integer> curInfoIdList = infoDao.selectList(new LambdaQueryWrapper<Info>()
                 .select(Info::getId)
                 .eq(Info::getUserId, customStatement.getId())).stream().map(Info::getId).collect(Collectors.toList());
-        log.info(deleteVO.toString());
-        for (Integer infoId : deleteVO.getIdList()) {
+        log.info(idListVO.toString());
+        for (Integer infoId : idListVO.getIdList()) {
             if (!curInfoIdList.contains(infoId)) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }

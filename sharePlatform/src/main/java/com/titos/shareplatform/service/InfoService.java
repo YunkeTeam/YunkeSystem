@@ -68,8 +68,8 @@ public interface InfoService extends IService<Info> {
      * 批量删除消息
      *
      * @param customStatement 用户消息
-     * @param deleteVO        需要删除的消息的ID列表
+     * @param idListVO        需要删除的消息的ID列表
      * @return 是否删除成功
      */
-    CommonResult<Boolean> deleteInfo(CustomStatement customStatement, DeleteVO deleteVO);
+    CommonResult<Boolean> deleteInfo(CustomStatement customStatement, IdListVO idListVO);
 }

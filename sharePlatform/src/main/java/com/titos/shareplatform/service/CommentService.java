@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.entity.Comment;
 import com.titos.info.shareplatform.vo.AddCommentVO;
-import com.titos.info.shareplatform.vo.DeleteVO;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.tool.token.CustomStatement;
 
 /**
@@ -27,8 +27,8 @@ public interface CommentService extends IService<Comment> {
      * 批量删除评论
      *
      * @param customStatement 用户消息
-     * @param deleteVO   需要删除的评论ID列表
+     * @param idListVO   需要删除的评论ID列表
      * @return 是否删除成功
      */
-    CommonResult<Boolean> deleteComments(CustomStatement customStatement, DeleteVO deleteVO);
+    CommonResult<Boolean> deleteComments(CustomStatement customStatement, IdListVO idListVO);
 }

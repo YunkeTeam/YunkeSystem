@@ -8,7 +8,7 @@ import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.Comment;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.AddCommentVO;
-import com.titos.info.shareplatform.vo.DeleteVO;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.CommentService;
@@ -56,12 +56,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> deleteComments(CustomStatement customStatement, DeleteVO deleteVO) {
+    public CommonResult<Boolean> deleteComments(CustomStatement customStatement, IdListVO idListVO) {
         List<Integer> curCommentIdList = commentDao.selectList(new LambdaQueryWrapper<Comment>()
                 .select(Comment::getId)
                 .eq(Comment::getUserId, customStatement.getId())).stream().map(Comment::getId).collect(Collectors.toList());
 
-        for (Integer commentId : deleteVO.getIdList()) {
+        for (Integer commentId : idListVO.getIdList()) {
             if (!curCommentIdList.contains(commentId)) {
                 return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
             }

@@ -2,7 +2,7 @@ package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
 import com.titos.info.shareplatform.vo.AddCommentVO;
-import com.titos.info.shareplatform.vo.DeleteVO;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.shareplatform.service.CommentService;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
@@ -46,15 +46,15 @@ public class CommentController {
      * 批量删除评论
      *
      * @param customStatement 用户消息
-     * @param deleteVO        需要删除的评论ID列表
+     * @param idListVO        需要删除的评论ID列表
      * @return 是否删除成功
      */
     @InjectToken
     @DeleteMapping(value = "/delete")
     public CommonResult<Boolean> deleteComments(
             CustomStatement customStatement,
-            @RequestBody DeleteVO deleteVO) {
-        return commentService.deleteComments(customStatement, deleteVO);
+            @RequestBody IdListVO idListVO) {
+        return commentService.deleteComments(customStatement, idListVO);
     }
 
 }

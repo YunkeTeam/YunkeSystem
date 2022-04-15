@@ -8,12 +8,11 @@ import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.News;
 import com.titos.info.shareplatform.vo.ConditionVO;
-import com.titos.info.shareplatform.vo.DeleteVO;
+import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.info.shareplatform.vo.NewsDetailVO;
 import com.titos.info.shareplatform.vo.NewsVO;
 import com.titos.shareplatform.dao.NewsDao;
 import com.titos.shareplatform.service.NewsService;
-import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -92,12 +91,12 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
     }
 
     @Override
-    public CommonResult<Boolean> deleteNews(CustomStatement customStatement, DeleteVO deleteVO) {
+    public CommonResult<Boolean> deleteNews(CustomStatement customStatement, IdListVO idListVO) {
         log.info(customStatement.getRole().toString());
         if (!customStatement.getRole().equals(1)) {
             return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
         }
-        newsDao.deleteBatchIds(deleteVO.getIdList());
+        newsDao.deleteBatchIds(idListVO.getIdList());
         return CommonResult.success(Boolean.TRUE);
     }
 }
