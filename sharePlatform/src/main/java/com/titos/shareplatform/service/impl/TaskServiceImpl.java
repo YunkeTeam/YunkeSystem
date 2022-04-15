@@ -74,6 +74,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
+            item.setIsTrashed(false);
         });
         return CommonResult.success(taskVoList);
     }
@@ -85,6 +86,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 (pageNum - 1) * pageSize, pageSize);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
+            item.setIsTrashed(false);
         });
         return CommonResult.success(taskVoList);
     }
@@ -95,7 +97,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Page<Task> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<Task>()
                 .select(Task::getId, Task::getTaskTitle, Task::getTaskDesc,
-                        Task::getIsImportant, Task::getIsStarred, Task::getIsDone)
+                        Task::getIsImportant, Task::getIsStarred, Task::getIsDone, Task::getIsTrashed)
                 .eq(keywords.equals(TaskAttributes.IMPORTANT.getAttributes()), Task::getIsImportant, 1)
                 .eq(keywords.equals(TaskAttributes.STARRED.getAttributes()), Task::getIsStarred, 1)
                 .eq(keywords.equals(TaskAttributes.DONE.getAttributes()), Task::getIsDone, 1)

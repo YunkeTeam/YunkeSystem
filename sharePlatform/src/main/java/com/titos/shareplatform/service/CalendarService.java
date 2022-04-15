@@ -21,10 +21,9 @@ public interface CalendarService extends IService<Calendar> {
      * 按照时间查询日历事件
      *
      * @param customStatement 用户信息
-     * @param filterTimeVO    时间段
      * @return 日历时间列表
      */
-    CommonResult<List<CalendarVO>> listCalendar(CustomStatement customStatement, FilterTimeVO filterTimeVO);
+    CommonResult<List<CalendarVO>> listCalendar(CustomStatement customStatement);
 
     /**
      * 新增或者更新日历事件
