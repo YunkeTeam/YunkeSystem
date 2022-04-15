@@ -16,4 +16,5 @@ public class CheckUtil {
     private CheckUtil(){}
     public static List<SimpleBlogVO> defaultErrorBlogVOList = new ArrayList<>();
     public static DetailBlogVO defaultErrorDetailBlogVO = new DetailBlogVO();
+    public static List<String> defaultErrorStringList = new ArrayList<>();
 }

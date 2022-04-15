@@ -77,4 +77,11 @@ public interface BlogDao {
      */
     DetailBlogVO selectBlogDetail(Integer blogId) throws DataAccessException;
 
+    /**
+     * 获取当前用户自定义的标签
+     * @param id
+     * @return
+     * @throws DataAccessException
+     */
+    List<String> selectAllCategory(Integer id) throws DataAccessException;
 }

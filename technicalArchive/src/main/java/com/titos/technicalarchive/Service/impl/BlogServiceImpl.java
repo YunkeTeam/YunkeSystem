@@ -10,6 +10,7 @@ import com.titos.technicalarchive.vo.SimpleBlogVO;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,5 +88,17 @@ public class BlogServiceImpl implements BlogService {
             detailBlogVO = CheckUtil.defaultErrorDetailBlogVO;
         }
         return detailBlogVO;
+    }
+
+    @Override
+    public List<String> selectAllCategory(Integer id) {
+        List<String> stringList = null;
+        try {
+            stringList = blogDao.selectAllCategory(id);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            stringList = CheckUtil.defaultErrorStringList;
+        }
+        return stringList;
     }
 }

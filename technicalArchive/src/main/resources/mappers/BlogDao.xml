@@ -60,4 +60,7 @@
         from blog where id = #{blogId}
     </select>
 
+    <select id="selectAllCategory" resultType="String">
+        select distinct category from blog where user_id = #{id}
+    </select>
 </mapper>

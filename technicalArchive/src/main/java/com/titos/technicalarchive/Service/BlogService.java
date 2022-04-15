@@ -46,4 +46,10 @@ public interface BlogService {
      */
     DetailBlogVO selectBlogDetail(Integer blogId);
 
+    /**
+     * 得到用户自定义的所有标签
+     * @param id
+     * @return
+     */
+    List<String> selectAllCategory(Integer id);
 }
