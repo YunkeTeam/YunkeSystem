@@ -10,7 +10,6 @@
         LEFT JOIN tag tg ON tt.tag_id = tg.id
         WHERE tk.user_id = #{userId} AND tg.tag_name = #{tagName} AND tk.is_trashed = 0
         ORDER BY tk.create_time
-        LIMIT #{pageNum}, #{pageSize}
     </select>
 
 </mapper>

@@ -82,8 +82,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public CommonResult<List<TaskVO>> listTaskByTagName(CustomStatement customStatement, String tagName,
                                                         Long pageNum, Long pageSize) {
-        List<TaskVO> taskVoList = taskDao.listTaskByTagName(customStatement.getId(), tagName,
-                (pageNum - 1) * pageSize, pageSize);
+        List<TaskVO> taskVoList = taskDao.listTaskByTagName(customStatement.getId(), tagName);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
             item.setIsTrashed(false);
@@ -103,7 +102,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 .eq(keywords.equals(TaskAttributes.DONE.getAttributes()), Task::getIsDone, 1)
                 .eq(keywords.equals(TaskAttributes.TRASHED.getAttributes()), Task::getIsTrashed, 1)
                 .orderByDesc(Task::getCreateTime);
-        List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskDao.selectPage(page, queryWrapper).getRecords(), TaskVO.class);
+        List<Task> taskList = taskDao.selectList(queryWrapper);
+        List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
         });
