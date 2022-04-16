@@ -20,9 +20,7 @@ public interface TaskDao extends BaseMapper<Task> {
      *
      * @param userId   用户ID
      * @param tagName  分类名
-     * @param pageNum  当前页
-     * @param pageSize 每页的数量
      * @return 任务列表
      */
-    List<TaskVO> listTaskByTagName(Integer userId, String tagName, Long pageNum, Long pageSize);
+    List<TaskVO> listTaskByTagName(Integer userId, String tagName);
 }
