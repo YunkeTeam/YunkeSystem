@@ -57,4 +57,12 @@ public interface TaskService extends IService<Task> {
      * @param taskVO          任务
      */
     void addOrUpdateTask(CustomStatement customStatement, TaskVO taskVO);
+
+    /**
+     * 批量删除任务
+     * @param customStatement 用户信息
+     * @param idListVO 任务ID列表
+     * @return 是否删除成功
+     */
+    CommonResult<Boolean> deleteTask(CustomStatement customStatement, IdListVO idListVO);
 }

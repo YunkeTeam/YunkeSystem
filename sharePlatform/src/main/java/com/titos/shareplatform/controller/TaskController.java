@@ -96,4 +96,18 @@ public class TaskController {
         return CommonResult.success(Boolean.TRUE);
     }
 
+    /**
+     * 批量删除任务
+     * @param customStatement 用户信息
+     * @param idListVO 任务ID列表
+     * @return 是否删除成功
+     */
+    @InjectToken
+    @DeleteMapping("/delete")
+    public CommonResult<Boolean> deleteTask(
+            CustomStatement customStatement,
+            @RequestBody IdListVO idListVO) {
+        return taskService.deleteTask(customStatement, idListVO);
+    }
+
 }

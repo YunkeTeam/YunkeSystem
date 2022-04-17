@@ -63,7 +63,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
 
         for (Integer commentId : idListVO.getIdList()) {
             if (!curCommentIdList.contains(commentId)) {
-                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+                return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
             postDao.subComments(commentId);
             commentDao.deleteById(commentId);

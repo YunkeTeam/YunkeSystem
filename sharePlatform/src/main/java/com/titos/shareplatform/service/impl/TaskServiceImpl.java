@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
-import com.titos.info.shareplatform.entity.Info;
-import com.titos.info.shareplatform.entity.Tag;
-import com.titos.info.shareplatform.entity.Task;
-import com.titos.info.shareplatform.entity.TaskTag;
+import com.titos.info.shareplatform.entity.*;
 import com.titos.info.shareplatform.enums.TaskAttributes;
 import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.info.shareplatform.vo.TaskVO;
@@ -66,15 +63,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         Page<Task> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<Task>()
                 .select(Task::getId, Task::getTaskTitle, Task::getTaskDesc,
-                        Task::getIsImportant, Task::getIsStarred, Task::getIsDone)
-                .eq(Task::getIsTrashed, 0)
+                        Task::getIsImportant, Task::getIsStarred, Task::getIsDone, Task::getIsTrashed)
                 .orderByDesc(Task::getCreateTime);
 //        Page<Task> taskPage = taskDao.selectPage(page, queryWrapper);
         List<Task> taskList = taskDao.selectList(queryWrapper);
         List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
-            item.setIsTrashed(false);
         });
         return CommonResult.success(taskVoList);
     }
@@ -82,8 +77,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Override
     public CommonResult<List<TaskVO>> listTaskByTagName(CustomStatement customStatement, String tagName,
                                                         Long pageNum, Long pageSize) {
-        List<TaskVO> taskVoList = taskDao.listTaskByTagName(customStatement.getId(), tagName,
-                (pageNum - 1) * pageSize, pageSize);
+        List<TaskVO> taskVoList = taskDao.listTaskByTagName(customStatement.getId(), tagName);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
             item.setIsTrashed(false);
@@ -103,7 +97,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 .eq(keywords.equals(TaskAttributes.DONE.getAttributes()), Task::getIsDone, 1)
                 .eq(keywords.equals(TaskAttributes.TRASHED.getAttributes()), Task::getIsTrashed, 1)
                 .orderByDesc(Task::getCreateTime);
-        List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskDao.selectPage(page, queryWrapper).getRecords(), TaskVO.class);
+        List<Task> taskList = taskDao.selectList(queryWrapper);
+        List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
         taskVoList.forEach(item -> {
             item.setTagNameList(tagDao.listTagNameByTaskId(item.getId()));
         });
@@ -118,6 +113,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         taskService.saveOrUpdate(task);
         // 保存任务的tag
         saveTaskTag(taskVO, task.getId());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Boolean> deleteTask(CustomStatement customStatement, IdListVO idListVO) {
+        List<Integer> curTaskIdList = taskDao.selectList(new LambdaQueryWrapper<Task>()
+                .select(Task::getId)
+                .eq(Task::getUserId, customStatement.getId())).stream().map(Task::getId).collect(Collectors.toList());
+        for (Integer taskId : idListVO.getIdList()) {
+            if (!curTaskIdList.contains(taskId)) {
+                return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
+            }
+        }
+        List<Integer> curTaskTagIdList = taskTagDao.selectList(new LambdaQueryWrapper<TaskTag>()
+                .select(TaskTag::getId)
+                .in(TaskTag::getTaskId, idListVO.getIdList())).stream().map(TaskTag::getId).collect(Collectors.toList());
+        taskTagDao.deleteBatchIds(curTaskTagIdList);
+        taskDao.deleteBatchIds(idListVO.getIdList());
+        return CommonResult.success(Boolean.TRUE);
     }
 
     private void saveTaskTag(TaskVO taskVO, Integer taskId) {
