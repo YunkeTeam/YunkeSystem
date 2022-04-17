@@ -67,7 +67,7 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
         List<Integer> infoIdList = updateInfoVO.getIdList();
         for (Integer infoId : infoIdList) {
             if (!infoDao.selectById(infoId).getUserId().equals(customStatement.getId())) {
-                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+                return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
         }
         updateInfoVO.getIdList().forEach(infoId -> {
@@ -104,7 +104,7 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
                 .eq(Info::getUserId, customStatement.getId())).stream().map(Info::getId).collect(Collectors.toList());
         for (Integer infoId : idListVO.getIdList()) {
             if (!curInfoIdList.contains(infoId)) {
-                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+                return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
         }
         infoDao.deleteBatchIds(idListVO.getIdList());

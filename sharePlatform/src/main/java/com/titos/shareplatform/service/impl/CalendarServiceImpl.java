@@ -84,7 +84,7 @@ public class CalendarServiceImpl extends ServiceImpl<CalendarDao, Calendar> impl
                 .eq(Calendar::getUserId, customStatement.getId())).stream().map(Calendar::getId).collect(Collectors.toList());
         for (Integer calendarId : idListVO.getIdList()) {
             if (!curCalendarIdList.contains(calendarId)) {
-                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+                return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
         }
         List<Integer> curCalendarTagIdList = calendarTagDao.selectList(new LambdaQueryWrapper<CalendarTag>()
