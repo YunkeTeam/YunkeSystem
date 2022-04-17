@@ -141,7 +141,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public CommonResult<Boolean> deletePosts(CustomStatement customStatement, IdListVO idListVO) {
         for (Integer postId : idListVO.getIdList()) {
             if (!customStatement.getId().equals(postDao.selectById(postId).getUserId())) {
-                return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+                return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
         }
         postDao.deleteBatchIds(idListVO.getIdList());

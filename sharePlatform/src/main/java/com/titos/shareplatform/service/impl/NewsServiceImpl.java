@@ -94,7 +94,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
     public CommonResult<Boolean> deleteNews(CustomStatement customStatement, IdListVO idListVO) {
         log.info(customStatement.getRole().toString());
         if (!customStatement.getRole().equals(1)) {
-            return CommonResult.fail(StatusEnum.FAIL_DEL_POST.getCode(), StatusEnum.FAIL_DEL_POST.getMsg());
+            return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
         }
         newsDao.deleteBatchIds(idListVO.getIdList());
         return CommonResult.success(Boolean.TRUE);
