@@ -7,19 +7,24 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.News;
-import com.titos.info.shareplatform.vo.ConditionVO;
-import com.titos.info.shareplatform.vo.IdListVO;
-import com.titos.info.shareplatform.vo.NewsDetailVO;
-import com.titos.info.shareplatform.vo.NewsVO;
+import com.titos.info.shareplatform.entity.NewsTag;
+import com.titos.info.shareplatform.entity.NewsTagMap;
+import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.dao.NewsDao;
+import com.titos.shareplatform.dao.NewsTagDao;
+import com.titos.shareplatform.dao.NewsTagMapDao;
 import com.titos.shareplatform.service.NewsService;
+import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -35,13 +40,31 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
     @Resource
     private NewsDao newsDao;
 
+    @Resource
+    private NewsTagDao newsTagDao;
+
+    @Resource
+    private NewsTagMapDao newsTagMapDao;
+
     @Override
     public CommonResult<List<NewsVO>> listNews(ConditionVO conditionVO, Long pageNum, Long pageSize) {
-        Page<News> newsPage = newsDao.selectPage(new Page<>(pageNum, pageSize), new LambdaQueryWrapper<News>()
+        List<Integer> newsIdList = null;
+        if (Objects.nonNull(conditionVO.getTagId())) {
+            newsIdList = newsTagMapDao.selectList(new LambdaQueryWrapper<NewsTagMap>()
+                    .select(NewsTagMap::getNewsId)
+                    .eq(NewsTagMap::getTagId, conditionVO.getTagId())).stream().map(NewsTagMap::getNewsId).collect(Collectors.toList());
+            if (newsIdList.size() == 0) {
+                return CommonResult.success(Collections.emptyList());
+            }
+        }
+        Page<News> page = new Page<>(pageNum, pageSize);
+        Page<News> newsPage = newsDao.selectPage(page, new LambdaQueryWrapper<News>()
                 .select(News::getId, News::getNewsCover, News::getNewsTitle, News::getNewsContent)
+                .in(newsIdList != null, News::getId, newsIdList)
                 .gt(conditionVO.getStartTime() != null, News::getCreateTime, conditionVO.getStartTime())
                 .le(conditionVO.getEndTime() != null, News::getCreateTime, conditionVO.getEndTime())
                 .orderByDesc(News::getCreateTime));
+
         List<NewsVO> newsVOList = newsPage.getRecords().stream().map(
                 item -> NewsVO.builder()
                         .id(item.getId())
@@ -49,12 +72,17 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
                         .newsTitle(StringUtils.substring(item.getNewsTitle(), 0, 10))
                         .newsContent(StringUtils.substring(item.getNewsContent(), 0, 50))
                         .build()).collect(Collectors.toList());
+        newsVOList.forEach(item -> {
+            item.setTagName(newsTagDao.listTagNameByNewsId(item.getId()));
+        });
         return CommonResult.success(newsVOList);
     }
 
     @Override
     public CommonResult<NewsDetailVO> listNewsById(Integer newsId) {
-        return CommonResult.success(newsDao.listNewsById(newsId));
+        NewsDetailVO newsDetailVO = newsDao.listNewsById(newsId);
+        newsDetailVO.setTagName(newsTagDao.listTagNameByNewsId(newsId));
+        return CommonResult.success(newsDetailVO);
     }
 
     @Override
@@ -90,6 +118,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
         return CommonResult.success(newsVOList);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public CommonResult<Boolean> deleteNews(CustomStatement customStatement, IdListVO idListVO) {
         log.info(customStatement.getRole().toString());
@@ -97,6 +126,15 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
             return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
         }
         newsDao.deleteBatchIds(idListVO.getIdList());
+        newsTagMapDao.delete(new LambdaQueryWrapper<NewsTagMap>()
+                .in(NewsTagMap::getNewsId, idListVO.getIdList()));
         return CommonResult.success(Boolean.TRUE);
+    }
+
+    @Override
+    public CommonResult<List<NewsTagVO>> listNewsTag() {
+        List<NewsTag> newsTagList = newsTagDao.selectList(new LambdaQueryWrapper<NewsTag>()
+                .select(NewsTag::getId, NewsTag::getTagName));
+        return CommonResult.success(BeanCopyUtils.copyList(newsTagList, NewsTagVO.class));
     }
 }

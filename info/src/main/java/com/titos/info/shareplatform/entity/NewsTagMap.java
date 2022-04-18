@@ -8,16 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @ClassName CalendarTag
+ * @ClassName NewsTagMap
  * @Description TODO
  * @Author Kurihada
- * @Date 2022/4/12 23:27
+ * @Date 2022/4/18 19:28
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CalendarTag {
+public class NewsTagMap {
 
     /**
      * 主键ID
@@ -26,9 +26,9 @@ public class CalendarTag {
     private Integer id;
 
     /**
-     * 日历ID
+     * 新闻ID
      */
-    private Integer calendarId;
+    private Integer newsId;
 
     /**
      * 标签ID

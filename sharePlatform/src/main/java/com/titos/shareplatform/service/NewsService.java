@@ -49,4 +49,10 @@ public interface NewsService extends IService<News> {
      * @return 是否删除成功
      */
     CommonResult<Boolean> deleteNews(CustomStatement customStatement, IdListVO idListVO);
+
+    /**
+     * 查询所有的新闻的标签
+     * @return 标签列表
+     */
+    CommonResult<List<NewsTagVO>> listNewsTag();
 }
