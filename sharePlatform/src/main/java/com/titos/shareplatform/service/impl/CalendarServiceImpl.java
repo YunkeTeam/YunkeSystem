@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -67,11 +68,19 @@ public class CalendarServiceImpl extends ServiceImpl<CalendarDao, Calendar> impl
         Calendar calendar = BeanCopyUtils.copyObject(calendarVO, Calendar.class);
         calendar.setUserId(customStatement.getId());
         calendarService.saveOrUpdate(calendar);
+        saveCalendarTag(calendarVO, calendar.getId());
+    }
+
+    private void saveCalendarTag(CalendarVO calendarVO, Integer calendarId) {
+        if (Objects.nonNull(calendarVO.getId())) {
+            calendarTagDao.delete(new LambdaQueryWrapper<CalendarTag>()
+                    .eq(CalendarTag::getCalendarId, calendarVO.getId()));
+        }
         Integer tagId = tagDao.selectOne(new LambdaQueryWrapper<Tag>()
                 .select(Tag::getId)
                 .eq(Tag::getTagName, calendarVO.getTagName())).getId();
         calendarTagDao.insert(CalendarTag.builder()
-                .calendarId(calendar.getId())
+                .calendarId(calendarId)
                 .tagId(tagId)
                 .build());
     }
