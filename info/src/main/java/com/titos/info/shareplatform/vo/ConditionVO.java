@@ -32,4 +32,9 @@ public class ConditionVO {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
+    /**
+     * 分类ID
+     */
+    private String tagId;
+
 }

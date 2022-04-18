@@ -1,4 +1,4 @@
-package com.titos.info.shareplatform.vo;
+package com.titos.info.shareplatform.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -12,55 +12,32 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * @ClassName NewsDetailVO
- * @Description 新闻详情
+ * @ClassName NewsTag
+ * @Description TODO
  * @Author Kurihada
- * @Date 2022/4/9 22:11
+ * @Date 2022/4/18 18:29
  **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewsDetailVO {
+public class NewsTag {
 
     /**
-     * 主键id
+     * 主键ID
      */
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 新闻封面图
-     */
-    private String newsCover;
-
-    /**
-     * 新闻标题
-     */
-    private String newsTitle;
-
-    /**
-     * 新闻内容
-     */
-    private String newsContent;
-
-    /**
-     * 发布人ID
-     */
-    private Integer userId;
-
-    /**
-     * 发布人用户名
-     */
-    private String username;
-
-    /**
-     * 新闻标签名
+     * 标签名
      */
     private String tagName;
 
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
 }

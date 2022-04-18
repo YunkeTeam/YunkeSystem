@@ -1,10 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
-import com.titos.info.shareplatform.vo.ConditionVO;
-import com.titos.info.shareplatform.vo.IdListVO;
-import com.titos.info.shareplatform.vo.NewsDetailVO;
-import com.titos.info.shareplatform.vo.NewsVO;
+import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.service.NewsService;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
@@ -77,6 +74,16 @@ public class NewsController {
             CustomStatement customStatement,
             @RequestBody IdListVO idListVO) {
         return newsService.deleteNews(customStatement, idListVO);
+    }
+
+    /**
+     * 查询所有的新闻的标签
+     *
+     * @return 标签列表
+     */
+    @GetMapping(value = "/tags")
+    public CommonResult<List<NewsTagVO>> listNewsTag() {
+        return newsService.listNewsTag();
     }
 
 }
