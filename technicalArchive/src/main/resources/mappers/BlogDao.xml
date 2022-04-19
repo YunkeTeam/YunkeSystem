@@ -66,8 +66,8 @@
 
     <select id="selectBlogNum" resultType="com.titos.technicalarchive.vo.BlogNumVO">
         SELECT a.todayNum, b.allNum
-        from (select count(id) as todayNum from blog where to_days(create_time) = to_days(now())) as a,
-             (select count(id) as allNum from blog) as b
+        from (select count(id) as todayNum from blog where to_days(create_time) = to_days(now()) and user_id = #{id}) as a,
+             (select count(id) as allNum from blog where user_id = #{id}) as b
     </select>
 
     <select id="selectBlogNumNow" resultType="com.titos.technicalarchive.vo.BlogNumMonth">
