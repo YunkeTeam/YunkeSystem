@@ -1,6 +1,7 @@
 package com.titos.technicalarchive.dao;
 
 import com.titos.technicalarchive.po.BlogPO;
+import com.titos.technicalarchive.vo.BlogNumMonth;
 import com.titos.technicalarchive.vo.BlogNumVO;
 import com.titos.technicalarchive.vo.DetailBlogVO;
 import com.titos.technicalarchive.vo.SimpleBlogVO;
@@ -93,4 +94,21 @@ public interface BlogDao {
      * @throws DataAccessException
      */
     BlogNumVO selectBlogNum(Integer id) throws DataAccessException;
+
+    /**
+     * 获取这个月当前用户的所有发布博客情况
+     * @param id
+     * @return
+     * @throws DataAccessException
+     */
+    List<BlogNumMonth> selectBlogNumNow(Integer id) throws DataAccessException;
+
+    /**
+     * 获取上个月当前用户的所有发布博客情况
+     * @param id
+     * @return
+     * @throws DataAccessException
+     */
+    List<BlogNumMonth> selectBlogNumLast(Integer id) throws DataAccessException;
+
 }

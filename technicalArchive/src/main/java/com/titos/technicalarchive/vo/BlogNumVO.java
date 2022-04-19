@@ -18,4 +18,14 @@ public class BlogNumVO {
      * 总的数量
      */
     private Integer allNum;
+
+    /**
+     * 本月发布的博客数量
+     */
+    private Integer []blogNumNow;
+
+    /**
+     * 上个月发布的帖子数量
+     */
+    private Integer []blogNumLast;
 }

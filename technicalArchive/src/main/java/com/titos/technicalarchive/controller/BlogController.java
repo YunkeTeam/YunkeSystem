@@ -108,7 +108,7 @@ BlogController {
     @GetMapping("/getBlogNum")
     public CommonResult<BlogNumVO> getBlogNum(CustomStatement customStatement) {
         BlogNumVO blogNumVO = blogService.selectBlogNum(customStatement.getId());
-        if(blogNumVO == null) {
+        if(blogNumVO == CheckUtil.defaultErrorBlogNumVO) {
             return CommonResult.fail();
         }
         return CommonResult.success(blogNumVO);

@@ -55,7 +55,7 @@ public interface BlogService {
     List<String> selectAllCategory(Integer id);
 
     /**
-     * 获取当前用户的博客今日发布量和所有发布量
+     * 获取当前用户的博客今日发布量和所有发布量,上个月和本月发布的数量情况
      * @param id
      * @return
      */
