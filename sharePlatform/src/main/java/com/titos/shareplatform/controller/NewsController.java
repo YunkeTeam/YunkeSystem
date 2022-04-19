@@ -1,6 +1,7 @@
 package com.titos.shareplatform.controller;
 
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.PageResult;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.service.NewsService;
 import com.titos.tool.annotions.InjectToken;
@@ -32,7 +33,7 @@ public class NewsController {
      * @return 新闻列表
      */
     @GetMapping(value = "/list")
-    public CommonResult<List<NewsVO>> listNews(
+    public CommonResult<PageResult<NewsVO>> listNews(
             ConditionVO conditionVO,
             @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
             @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize) {

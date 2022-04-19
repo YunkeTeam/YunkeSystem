@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
+import com.titos.info.global.PageResult;
 import com.titos.info.global.constant.CommonConst;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.shareplatform.entity.News;
@@ -47,14 +48,14 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
     private NewsTagMapDao newsTagMapDao;
 
     @Override
-    public CommonResult<List<NewsVO>> listNews(ConditionVO conditionVO, Long pageNum, Long pageSize) {
+    public CommonResult<PageResult<NewsVO>> listNews(ConditionVO conditionVO, Long pageNum, Long pageSize) {
         List<Integer> newsIdList = null;
         if (Objects.nonNull(conditionVO.getTagId())) {
             newsIdList = newsTagMapDao.selectList(new LambdaQueryWrapper<NewsTagMap>()
                     .select(NewsTagMap::getNewsId)
                     .eq(NewsTagMap::getTagId, conditionVO.getTagId())).stream().map(NewsTagMap::getNewsId).collect(Collectors.toList());
             if (newsIdList.size() == 0) {
-                return CommonResult.success(Collections.emptyList());
+                return CommonResult.success(new PageResult<>(Collections.emptyList(), 0));
             }
         }
         Page<News> page = new Page<>(pageNum, pageSize);
@@ -75,7 +76,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
         newsVOList.forEach(item -> {
             item.setTagName(newsTagDao.listTagNameByNewsId(item.getId()));
         });
-        return CommonResult.success(newsVOList);
+        return CommonResult.success(new PageResult<>(newsVOList, (int) newsPage.getTotal()));
     }
 
     @Override
