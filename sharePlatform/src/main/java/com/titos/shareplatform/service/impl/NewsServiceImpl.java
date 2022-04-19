@@ -76,7 +76,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsDao, News> implements NewsS
         newsVOList.forEach(item -> {
             item.setTagName(newsTagDao.listTagNameByNewsId(item.getId()));
         });
-        return CommonResult.success(new PageResult<>(newsVOList, (int) newsPage.getTotal()));
+        return CommonResult.success(new PageResult<>(newsVOList, (int) newsPage.getPages()));
     }
 
     @Override
