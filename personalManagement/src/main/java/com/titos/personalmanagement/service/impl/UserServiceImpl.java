@@ -357,4 +357,9 @@ public class UserServiceImpl implements UserService {
             return new CommonResult(StatusEnum.PARAM_ERROR.getCode(), "参数传递错误");
         }
     }
+
+    @Override
+    public int getAllUserNum() {
+        return userDao.getSystemUserCount();
+    }
 }

@@ -4,24 +4,29 @@ import com.titos.tool.exception.JwtExpireException;
 import com.titos.tool.exception.JwtNotExistException;
 import com.titos.tool.exception.JwtVerifyException;
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * token工具类
  * @author Titos
  */
+@Component
 public class TokenUtil {
 
     public static final String TOKEN_HEADER = "Authorization";
     public static final String ID = "id";
     public static final String ROLE = "role";
     public static final String USERNAME = "username";
+    /**
+     * 统计在线人数
+     */
+    public static Map countMap = new ConcurrentHashMap<String, Object>();
 
     /**
      * 私有方法防止构造
@@ -117,6 +122,10 @@ public class TokenUtil {
         } catch (IllegalArgumentException illegalArgumentException) {
             throw new JwtNotExistException("Token为空");
         }
+        // 解析token的签发时间
+//        Date issuedAt = claims.getIssuedAt();
+        // 以签发时间为key，当前时间+60s为value存入countMap中
+        countMap.put(claims.get("username"), System.currentTimeMillis() + 60 * 1000);
         return claims;
     }
 
@@ -139,5 +148,26 @@ public class TokenUtil {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 获取在线人数
+     * @return 在线人数
+     */
+    public static Integer getOnlineCount() {
+        int onlineCount = 0;
+        // 获取countMap的迭代器
+        Iterator iterator = countMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry<String, Object>) iterator.next();
+            Long value = (Long) entry.getValue();
+            if (value > System.currentTimeMillis()) {
+                // 过期时间大于当前时间则没有过期
+                onlineCount++;
+            } else {
+                iterator.remove();
+            }
+        }
+        return onlineCount;
     }
 }

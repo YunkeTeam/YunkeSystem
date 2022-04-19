@@ -34,7 +34,7 @@ public class ConversationController {
      */
     @InjectToken
     @PostMapping("/getAllMessage")
-    public CommonResult<List<MessagePO>> getAllMessage(CustomStatement customStatement, String toId) {
+    public CommonResult<List<MessagePO>> getAllMessage(CustomStatement customStatement, @RequestParam String toId) {
         Integer userId = customStatement.getId();
         Integer otherUserId = Integer.parseInt(toId);
         List<MessagePO> result = service.selectAllDialog(userId, otherUserId);

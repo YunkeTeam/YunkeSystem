@@ -55,7 +55,7 @@
 
     <update id="updateComplete">
         update message set is_complete = 1
-        where (send_id = #{id} and receive_id = #{otherId} and is_complete = 0)
+        where (send_id = #{otherId} and receive_id = #{id} and is_complete = 0)
     </update>
 
     <select id="selectFriend" resultType="int">

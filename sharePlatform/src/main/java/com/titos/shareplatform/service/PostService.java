@@ -31,11 +31,10 @@ public interface PostService extends IService<Post> {
      * 获取当前用户的帖子
      *
      * @param customStatement 用户信息
-     * @param pageNum         当前页
-     * @param pageSize        每页的数量
      * @return 帖子列表
      */
-    CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Long pageNum, Long pageSize);
+    CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement);
+//    CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Long pageNum, Long pageSize);
 
     /**
      * 查询活跃达人
