@@ -63,4 +63,11 @@
     <select id="selectAllCategory" resultType="String">
         select distinct category from blog where user_id = #{id}
     </select>
+
+    <select id="selectBlogNum" resultType="com.titos.technicalarchive.vo.BlogNumVO">
+        SELECT a.todayNum, b.allNum
+        from (select count(id) as todayNum from blog where to_days(create_time) = to_days(now())) as a,
+             (select count(id) as allNum from blog) as b
+    </select>
+
 </mapper>

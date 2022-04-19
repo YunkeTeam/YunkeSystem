@@ -4,6 +4,7 @@ import com.titos.technicalarchive.Service.BlogService;
 import com.titos.technicalarchive.dao.BlogDao;
 import com.titos.technicalarchive.po.BlogPO;
 import com.titos.technicalarchive.utils.CheckUtil;
+import com.titos.technicalarchive.vo.BlogNumVO;
 import com.titos.technicalarchive.vo.BlogVO;
 import com.titos.technicalarchive.vo.DetailBlogVO;
 import com.titos.technicalarchive.vo.SimpleBlogVO;
@@ -100,5 +101,17 @@ public class BlogServiceImpl implements BlogService {
             stringList = CheckUtil.defaultErrorStringList;
         }
         return stringList;
+    }
+
+    @Override
+    public BlogNumVO selectBlogNum(Integer id) {
+        BlogNumVO blogNumVO = null;
+        try {
+            blogNumVO = blogDao.selectBlogNum(id);
+        } catch (DataAccessException e) {
+            blogNumVO = null;
+            e.printStackTrace();
+        }
+        return blogNumVO;
     }
 }

@@ -1,5 +1,6 @@
 package com.titos.technicalarchive.Service;
 
+import com.titos.technicalarchive.vo.BlogNumVO;
 import com.titos.technicalarchive.vo.BlogVO;
 import com.titos.technicalarchive.vo.DetailBlogVO;
 import com.titos.technicalarchive.vo.SimpleBlogVO;
@@ -52,4 +53,12 @@ public interface BlogService {
      * @return
      */
     List<String> selectAllCategory(Integer id);
+
+    /**
+     * 获取当前用户的博客今日发布量和所有发布量
+     * @param id
+     * @return
+     */
+    BlogNumVO selectBlogNum(Integer id);
+
 }
