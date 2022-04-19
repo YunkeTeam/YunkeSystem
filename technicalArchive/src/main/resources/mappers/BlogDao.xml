@@ -70,4 +70,16 @@
              (select count(id) as allNum from blog) as b
     </select>
 
+    <select id="selectBlogNumNow" resultType="com.titos.technicalarchive.vo.BlogNumMonth">
+        select date_format(create_time,'%d') as days, count(*) as total
+        from blog where date_format(create_time, '%Y%m') = date_format(curdate(), '%Y%m') and user_id = #{id}
+        group by days
+    </select>
+
+    <select id="selectBlogNumLast" resultType="com.titos.technicalarchive.vo.BlogNumMonth">
+        select date_format(create_time,'%d') as days, count(*) as total
+        from blog where period_diff(date_format(curdate(), '%Y%m'), date_format(create_time, '%Y%m')) = 1 and user_id = #{id}
+        group by days
+    </select>
+
 </mapper>

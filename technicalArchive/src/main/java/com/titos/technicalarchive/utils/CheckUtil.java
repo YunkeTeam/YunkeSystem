@@ -1,5 +1,6 @@
 package com.titos.technicalarchive.utils;
 
+import com.titos.technicalarchive.vo.BlogNumVO;
 import com.titos.technicalarchive.vo.DetailBlogVO;
 import com.titos.technicalarchive.vo.SimpleBlogVO;
 
@@ -17,4 +18,5 @@ public class CheckUtil {
     public static List<SimpleBlogVO> defaultErrorBlogVOList = new ArrayList<>();
     public static DetailBlogVO defaultErrorDetailBlogVO = new DetailBlogVO();
     public static List<String> defaultErrorStringList = new ArrayList<>();
+    public static BlogNumVO defaultErrorBlogNumVO = new BlogNumVO();
 }

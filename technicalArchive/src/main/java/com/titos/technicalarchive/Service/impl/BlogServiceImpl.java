@@ -4,15 +4,15 @@ import com.titos.technicalarchive.Service.BlogService;
 import com.titos.technicalarchive.dao.BlogDao;
 import com.titos.technicalarchive.po.BlogPO;
 import com.titos.technicalarchive.utils.CheckUtil;
-import com.titos.technicalarchive.vo.BlogNumVO;
-import com.titos.technicalarchive.vo.BlogVO;
-import com.titos.technicalarchive.vo.DetailBlogVO;
-import com.titos.technicalarchive.vo.SimpleBlogVO;
+import com.titos.technicalarchive.vo.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -104,12 +104,29 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @Transactional
     public BlogNumVO selectBlogNum(Integer id) {
         BlogNumVO blogNumVO = null;
         try {
             blogNumVO = blogDao.selectBlogNum(id);
+            // 获取这个月的博客发布情况
+            Integer []blogNumNow = new Integer[31];
+            Arrays.fill(blogNumNow, 0);
+            List<BlogNumMonth> blogNumMonths = blogDao.selectBlogNumNow(id);
+            for(BlogNumMonth blogNumMonth : blogNumMonths) {
+                blogNumNow[blogNumMonth.getDays() - 1] = blogNumMonth.getTotal();
+            }
+            // 获取上个月的博客发布情况
+            Integer []blogNumLast = new Integer[31];
+            Arrays.fill(blogNumLast, 0);
+            blogNumMonths = blogDao.selectBlogNumLast(id);
+            for(BlogNumMonth blogNumMonth : blogNumMonths) {
+                blogNumLast[blogNumMonth.getDays() - 1] = blogNumMonth.getTotal();
+            }
+            blogNumVO.setBlogNumNow(blogNumNow);
+            blogNumVO.setBlogNumLast(blogNumLast);
         } catch (DataAccessException e) {
-            blogNumVO = null;
+            blogNumVO = CheckUtil.defaultErrorBlogNumVO;
             e.printStackTrace();
         }
         return blogNumVO;
