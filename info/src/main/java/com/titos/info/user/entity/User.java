@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * 用户的实体类信息
+ *
  * @author Titos
  */
 @Data
@@ -49,7 +50,7 @@ public class User {
     /**
      * 电话号码
      */
-    private Date  phone;
+    private String phone;
     /**
      * 注册时间
      */
