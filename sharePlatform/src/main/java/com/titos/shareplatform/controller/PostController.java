@@ -47,18 +47,24 @@ public class PostController {
      * 获取当前用户的帖子
      *
      * @param customStatement 用户信息
-     * @param pageNum         当前页
-     * @param pageSize        每页的数量
      * @return 帖子列表
      */
+//    @InjectToken
+//    @GetMapping("/listme")
+//    public CommonResult<List<MyPostVO>> listMyPost(
+//            CustomStatement customStatement,
+//            @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
+//            @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize
+//    ) {
+//        return postService.listMyPost(customStatement, pageNum, pageSize);
+//    }
+
     @InjectToken
     @GetMapping("/listme")
     public CommonResult<List<MyPostVO>> listMyPost(
-            CustomStatement customStatement,
-            @RequestParam(defaultValue = "1", value = "pageNum") Long pageNum,
-            @RequestParam(defaultValue = "10", value = "pageSize") Long pageSize
+            CustomStatement customStatement
     ) {
-        return postService.listMyPost(customStatement, pageNum, pageSize);
+        return postService.listMyPost(customStatement);
     }
 
     /**

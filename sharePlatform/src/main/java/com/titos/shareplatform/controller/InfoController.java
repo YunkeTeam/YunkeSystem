@@ -84,7 +84,7 @@ public class InfoController {
     public CommonResult<Boolean> updateInfo(
             CustomStatement customStatement,
             @Valid @RequestBody UpdateInfoVO updateInfoVO) {
-        return infoService.updateInfo(customStatement, updateInfoVO);
+            return infoService.updateInfo(customStatement, updateInfoVO);
     }
 
     /**

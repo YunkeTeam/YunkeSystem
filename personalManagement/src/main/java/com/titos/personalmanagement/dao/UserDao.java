@@ -56,4 +56,10 @@ public interface UserDao {
      * @return 用户信息
      */
     User selectUserForUpdate(Integer id, String username, String email);
+
+    /**
+     * 获取系统总人数
+     * @return 人数
+     */
+    int getSystemUserCount();
 }

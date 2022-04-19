@@ -35,7 +35,6 @@ public class FileController {
     @Headers("Content-Type: multipart/form-data")
     @PostMapping("/upload")
     public CommonResult<FileInfo> upload(@RequestParam MultipartFile file) {
-        System.out.println("接收到前端上传图片请求");
         FileService fileService = fileServiceFactory.getFileService(fileMethod);
         FileInfo fileInfo = null;
         try {

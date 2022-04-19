@@ -8,12 +8,14 @@ import com.titos.info.user.query.RegisterQuery;
 import com.titos.info.user.query.ResetPasswordQuery;
 import com.titos.info.user.query.UserPassword;
 import com.titos.info.user.vo.LoginVo;
+import com.titos.info.user.vo.OnlineUserVo;
 import com.titos.personalmanagement.cache.verifycode.VerifyCodeCache;
 import com.titos.personalmanagement.model.User;
 import com.titos.personalmanagement.service.UserService;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.annotions.ParamVerify;
 import com.titos.tool.token.CustomStatement;
+import com.titos.tool.token.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -167,5 +169,19 @@ public class UserController {
     @PostMapping("/verifyResetPassword")
     public CommonResult verifyResetPassword(@RequestBody ResetPasswordQuery resetPasswordQuery) {
         return userService.doResetPassword(resetPasswordQuery);
+    }
+
+    /**
+     * 获取在线人数和系统总人数
+     * @return
+     */
+    @InjectToken
+    @GetMapping("/getOnlineCount")
+    public CommonResult getOnlineUserCount() {
+        // 系统总人数
+        int totalNum = userService.getAllUserNum();
+        int onlineUserNum = TokenUtil.getOnlineCount();
+        OnlineUserVo onlineUserVo = new OnlineUserVo(onlineUserNum, totalNum);
+        return CommonResult.success(onlineUserVo);
     }
 }

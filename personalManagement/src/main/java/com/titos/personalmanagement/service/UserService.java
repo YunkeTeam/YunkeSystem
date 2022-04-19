@@ -90,11 +90,17 @@ public interface UserService {
      * @param resetPasswordQuery
      * @return
      */
-    public CommonResult resetPassword(ResetPasswordQuery resetPasswordQuery);
+    CommonResult resetPassword(ResetPasswordQuery resetPasswordQuery);
     /**
      * 重置用户密码
      * @param resetPasswordQuery
      * @return 重置的结果
      */
-    public CommonResult doResetPassword(ResetPasswordQuery resetPasswordQuery);
+    CommonResult doResetPassword(ResetPasswordQuery resetPasswordQuery);
+
+    /**
+     * 获取总的系统人数
+     * @return 人数
+     */
+    int getAllUserNum();
 }

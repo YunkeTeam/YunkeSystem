@@ -85,9 +85,21 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
         return CommonResult.success(postList);
     }
 
+//    @Override
+//    public CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
+//        Page<Post> page = new Page<>(pageNum, pageSize);
+//        LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.select(Post::getId, Post::getTitle, Post::getContent, Post::getPostCover, Post::getLikes, Post::getCreateTime)
+//                .orderByDesc(Post::getCreateTime)
+//                .eq(Post::getUserId, customStatement.getId());
+//        //Page<Post> postPage = postDao.selectPage(page, queryWrapper);
+//        //List<MyPostVO> postList = BeanCopyUtils.copyList(postPage.getRecords(), MyPostVO.class);
+//        return CommonResult.success(BeanCopyUtils.copyList(postDao.selectList(queryWrapper), MyPostVO.class));
+//    }
+
     @Override
-    public CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
-        Page<Post> page = new Page<>(pageNum, pageSize);
+    public CommonResult<List<MyPostVO>> listMyPost(CustomStatement customStatement) {
+        Page<Post> page = new Page<>();
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.select(Post::getId, Post::getTitle, Post::getContent, Post::getPostCover, Post::getLikes, Post::getCreateTime)
                 .orderByDesc(Post::getCreateTime)
