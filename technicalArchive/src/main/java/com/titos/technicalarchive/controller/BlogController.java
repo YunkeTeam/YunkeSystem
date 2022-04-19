@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.titos.info.global.CommonResult;
 import com.titos.technicalarchive.Service.BlogService;
 import com.titos.technicalarchive.utils.CheckUtil;
+import com.titos.technicalarchive.vo.BlogNumVO;
 import com.titos.technicalarchive.vo.BlogVO;
 import com.titos.technicalarchive.vo.DetailBlogVO;
 import com.titos.technicalarchive.vo.SimpleBlogVO;
 import com.titos.tool.annotions.InjectToken;
 import com.titos.tool.token.CustomStatement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -101,4 +103,13 @@ public class BlogController {
         return CommonResult.success(stringList);
     }
 
+    @InjectToken
+    @GetMapping("/getBlogNum")
+    public CommonResult<BlogNumVO> getBlogNum(CustomStatement customStatement) {
+        BlogNumVO blogNumVO = blogService.selectBlogNum(customStatement.getId());
+        if(blogNumVO == null) {
+            return CommonResult.fail();
+        }
+        return CommonResult.success(blogNumVO);
+    }
 }

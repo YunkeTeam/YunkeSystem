@@ -1,6 +1,7 @@
 package com.titos.technicalarchive.dao;
 
 import com.titos.technicalarchive.po.BlogPO;
+import com.titos.technicalarchive.vo.BlogNumVO;
 import com.titos.technicalarchive.vo.DetailBlogVO;
 import com.titos.technicalarchive.vo.SimpleBlogVO;
 import org.springframework.dao.DataAccessException;
@@ -84,4 +85,12 @@ public interface BlogDao {
      * @throws DataAccessException
      */
     List<String> selectAllCategory(Integer id) throws DataAccessException;
+
+    /**
+     * 获取当前用户的今日博客量和总的博客量
+     * @param id
+     * @return
+     * @throws DataAccessException
+     */
+    BlogNumVO selectBlogNum(Integer id) throws DataAccessException;
 }
