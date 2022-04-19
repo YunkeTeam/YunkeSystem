@@ -2,18 +2,21 @@ package com.titos.shareplatform.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.info.redis.constant.RedisPrefixConst;
 import com.titos.info.shareplatform.dto.CommentDTO;
+import com.titos.info.shareplatform.entity.Likes;
 import com.titos.info.shareplatform.entity.Post;
 import com.titos.info.shareplatform.vo.*;
 import com.titos.info.shareplatform.vo.TalentVO;
 import com.titos.info.user.entity.User;
 import com.titos.shareplatform.async.ServiceAsync;
 import com.titos.shareplatform.dao.CommentDao;
+import com.titos.shareplatform.dao.LikesDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.dao.UserDao;
 import com.titos.shareplatform.service.PostService;
@@ -27,10 +30,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName PostServiceImpl
@@ -56,6 +61,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource
+    private LikesDao likesDao;
 
     @Override
     public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
@@ -169,16 +177,71 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public void savePostLike(CustomStatement customStatement, LikesVO likesVO) {
         Integer userId = customStatement.getId();
         Integer postId = likesVO.getPostId();
-
         if (Boolean.TRUE.equals(isLike(postId, userId))) {
             // 若点赞了则取消点赞，并对应帖子的点赞量-1
             redisTemplate.opsForSet().remove(RedisPrefixConst.LIKE_KEY + postId, userId);
             redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.LIKE_COUNT, postId, -1D);
+            likesDao.insert(Likes.builder()
+                    .userId(userId)
+                    .postId(postId)
+                    .build());
         } else {
             // 若未点赞则点赞，并对应帖子的点赞量+1
             redisTemplate.opsForSet().add(RedisPrefixConst.LIKE_KEY + postId, userId);
             redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.LIKE_COUNT, postId, 1D);
+            likesDao.delete(new LambdaQueryWrapper<Likes>()
+                    .eq(Likes::getUserId, userId)
+                    .eq(Likes::getPostId, postId));
         }
+    }
+
+    @Override
+    public CommonResult<PostDataVO> getPostLike(CustomStatement customStatement) {
+        LocalDateTime curDate = LocalDateTime.now();
+        LocalDateTime preDate = curDate.plusDays(-31);
+        log.info(curDate.toString());
+        log.info(preDate.toString());
+        List<LocalDateTime> postLikesDateList = likesDao.selectList(new LambdaQueryWrapper<Likes>()
+                .select(Likes::getCreateTime)
+                .ge(Likes::getCreateTime, preDate)
+                .le(Likes::getCreateTime, curDate)
+                .eq(Likes::getUserId, customStatement.getId())).stream().map(Likes::getCreateTime).collect(Collectors.toList());
+        int[] postLikeList = new int[31];
+        for (LocalDateTime date : postLikesDateList) {
+            int t = (int) date.until(curDate, ChronoUnit.DAYS);
+            postLikeList[t]++;
+            log.info("" + t);
+        }
+
+        List<LocalDateTime> postPublishedDateList = postDao.selectList(new LambdaQueryWrapper<Post>()
+                .select(Post::getCreateTime)
+                .ge(Post::getCreateTime, preDate)
+                .le(Post::getCreateTime, curDate)
+                .eq(Post::getUserId, customStatement.getId())).stream().map(Post::getCreateTime).collect(Collectors.toList());
+        int[] postPublishedList = new int[31];
+        for (LocalDateTime date : postPublishedDateList) {
+            int t = (int) date.until(curDate, ChronoUnit.DAYS);
+            postPublishedList[t]++;
+        }
+        return CommonResult.success(PostDataVO.builder()
+                .postLikesTotal(postLikesDateList.size())
+                .postLikes(Arrays.stream(postLikeList).boxed().collect(Collectors.toList()))
+                .postPublishedTotal(postPublishedDateList.size())
+                .postPublished(Arrays.stream(postPublishedList).boxed().collect(Collectors.toList()))
+                .build());
+    }
+
+    /**
+     * 从redis中取值
+     *
+     * @param key    键
+     * @param postId 帖子ID
+     * @return 值
+     */
+    private Integer getCountFromRedis(String key, Integer postId) {
+        Double score = redisTemplate.opsForZSet().score(key, postId);
+        score = score == null ? 0D : score;
+        return score.intValue();
     }
 
     /**

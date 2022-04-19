@@ -110,4 +110,12 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
         infoDao.deleteBatchIds(idListVO.getIdList());
         return CommonResult.success(Boolean.TRUE);
     }
+
+    @Override
+    public CommonResult<Integer> getInfoTotal(CustomStatement customStatement) {
+        Integer infoTotal = infoDao.selectList(new LambdaQueryWrapper<Info>()
+                .select(Info::getId)
+                .eq(Info::getUserId, customStatement.getId())).size();
+        return CommonResult.success(infoTotal);
+    }
 }
