@@ -111,9 +111,20 @@ public class PostController {
      */
     @InjectToken
     @PostMapping(value = "/like")
-    public CommonResult<Boolean> saveInfoLike(CustomStatement customStatement, @RequestBody LikesVO likesVO) {
+    public CommonResult<Boolean> savePostLike(CustomStatement customStatement, @RequestBody LikesVO likesVO) {
         postService.savePostLike(customStatement, likesVO);
         return CommonResult.success(Boolean.TRUE);
+    }
+
+    /**
+     * 获取当前用户最近31天帖子每天被赞的次数列表和每天发表帖子的次数列表
+     * @param customStatement 用户信息
+     * @return 最近31天帖子每天被赞的次数列表和每天发表帖子的次数列表
+     */
+    @InjectToken
+    @GetMapping(value="/like")
+    public CommonResult<PostDataVO> getPostLike(CustomStatement customStatement){
+        return postService.getPostLike(customStatement);
     }
 
 }

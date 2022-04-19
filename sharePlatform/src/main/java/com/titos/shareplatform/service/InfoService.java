@@ -72,4 +72,11 @@ public interface InfoService extends IService<Info> {
      * @return 是否删除成功
      */
     CommonResult<Boolean> deleteInfo(CustomStatement customStatement, IdListVO idListVO);
+
+    /**
+     * 获取当前用户发表的信息总量
+     * @param customStatement 用户信息
+     * @return 当前用户发表的信息总量
+     */
+    CommonResult<Integer> getInfoTotal(CustomStatement customStatement);
 }

@@ -71,4 +71,10 @@ public interface PostService extends IService<Post> {
      */
     void savePostLike(CustomStatement customStatement, LikesVO likesVO);
 
+    /**
+     * 获取当前用户最近31天帖子每天被赞的次数列表和每天发表帖子的次数列表
+     * @param customStatement 用户信息
+     * @return 最近31天帖子每天被赞的次数列表和每天发表帖子的次数列表
+     */
+    CommonResult<PostDataVO> getPostLike(CustomStatement customStatement);
 }

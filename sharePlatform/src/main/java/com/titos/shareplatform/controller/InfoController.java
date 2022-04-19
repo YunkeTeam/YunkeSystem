@@ -114,4 +114,15 @@ public class InfoController {
         return infoService.deleteInfo(customStatement, idListVO);
     }
 
+    /**
+     * 获取当前用户发表的信息总量
+     * @param customStatement 用户信息
+     * @return 当前用户发表的信息总量
+     */
+    @InjectToken
+    @GetMapping(value = "/total")
+    public CommonResult<Integer> getInfoTotal(CustomStatement customStatement){
+        return infoService.getInfoTotal(customStatement);
+    }
+
 }
