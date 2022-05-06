@@ -201,11 +201,7 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
         LocalDateTime preDate = curDate.plusDays(-31);
         log.info(curDate.toString());
         log.info(preDate.toString());
-        List<LocalDateTime> postLikesDateList = likesDao.selectList(new LambdaQueryWrapper<Likes>()
-                .select(Likes::getCreateTime)
-                .ge(Likes::getCreateTime, preDate)
-                .le(Likes::getCreateTime, curDate)
-                .eq(Likes::getUserId, customStatement.getId())).stream().map(Likes::getCreateTime).collect(Collectors.toList());
+        List<LocalDateTime> postLikesDateList = likesDao.selectPostLikeByTime(preDate, curDate, customStatement.getId());
         int[] postLikeList = new int[31];
         for (LocalDateTime date : postLikesDateList) {
             int t = (int) date.until(curDate, ChronoUnit.DAYS);

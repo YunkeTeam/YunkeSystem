@@ -20,6 +20,7 @@ import java.util.Set;
  * @Author Kurihada
  * @Date 2022/4/12 17:29
  **/
+@Component
 @Slf4j
 public class TimedTask {
 
