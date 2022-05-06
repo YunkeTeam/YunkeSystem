@@ -73,14 +73,17 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
             // 包装点赞该帖子的用户头像
             Set<Object> set = redisTemplate.opsForSet().members(RedisPrefixConst.LIKE_KEY + post.getId());
             if (set != null) {
-                List<String> likes = new ArrayList<>(set.size());
+                List<User> likes = new ArrayList<>(set.size());
                 set.forEach(item -> {
                     likes.add(userDao.selectOne(new LambdaQueryWrapper<User>()
-                            .select(User::getHeadImage)
-                            .eq(User::getId, item)).getHeadImage());
+                            .select(User::getHeadImage, User::getUsername)
+                            .eq(User::getId, item)));
                 });
-                post.setLikesUserAvatar(likes);
+                post.setLikesUser(likes);
             }
+
+            // 封装当前帖子的点赞量
+            post.setLikes(getCountFromRedis(RedisPrefixConst.LIKE_COUNT, post.getId()));
 
             // 包装当前用户是否点赞该帖子
             post.setIsLike(isLike(post.getId(), customStatement.getId()));

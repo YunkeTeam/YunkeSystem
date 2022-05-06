@@ -2,6 +2,7 @@ package com.titos.info.shareplatform.vo;
 
 import com.titos.info.shareplatform.dto.CommentDTO;
 import com.titos.info.user.dto.UserDTO;
+import com.titos.info.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -68,9 +69,9 @@ public class PostVO {
     private UserDTO user;
 
     /**
-     * 帖子点赞用户头像（最近五名）
+     * 帖子点赞用户信息（最近五名）
      */
-    private List<String> likesUserAvatar;
+    private List<User> likesUser;
 
     /**
      * 评论信息
