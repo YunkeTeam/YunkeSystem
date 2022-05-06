@@ -38,4 +38,13 @@ public class FilterInfoVO {
      */
     private Integer type;
 
+    /**
+     * 是否为最早发布
+     */
+    private Boolean isEarliest;
+    /**
+     * 匹配标题
+     */
+    private String matchTitle;
+
 }

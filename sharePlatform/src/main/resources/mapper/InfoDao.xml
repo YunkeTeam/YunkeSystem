@@ -18,8 +18,14 @@
             <if test="filterInfo.type != null">
                 AND i.type = #{filterInfo.type}
             </if>
+            <if test="filterInfo.matchTitle != null">
+                AND i.info_title like concat('%',#{filterInfo.matchTitle},'%')
+            </if>
         </where>
-        ORDER BY i.create_time DESC
+        ORDER BY i.create_time
+        <if test="!filterInfo.isEarliest">
+            DESC
+        </if>
         LIMIT #{pageNum}, #{pageSize}
     </select>
     <select id="listInfoTotal" resultType="java.lang.Integer">

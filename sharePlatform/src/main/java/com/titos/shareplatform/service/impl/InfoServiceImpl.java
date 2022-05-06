@@ -80,22 +80,6 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
         return CommonResult.success(Boolean.TRUE);
     }
 
-    @Override
-    public CommonResult<List<InfoVO>> searchInfo(String keywords, Integer userId) {
-        List<Info> infoList = infoDao.selectList(new LambdaQueryWrapper<Info>()
-                .eq(userId != null, Info::getUserId, userId)
-                .eq(Info::getIsViolation, 0)
-                .and(i -> i.like(Info::getInfoTitle, keywords)));
-        List<InfoVO> infoVOList = infoList.stream().map(item -> {
-            String infoTitle = item.getInfoTitle().replaceAll(keywords,
-                    CommonConst.PRE_TAG + keywords + CommonConst.POST_TAG);
-            InfoVO infoVO = BeanCopyUtils.copyObject(item, InfoVO.class);
-            infoVO.setInfoTitle(infoTitle);
-            return infoVO;
-        }).collect(Collectors.toList());
-        return CommonResult.success(infoVOList);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CommonResult<Boolean> deleteInfo(CustomStatement customStatement, IdListVO idListVO) {

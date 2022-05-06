@@ -18,7 +18,7 @@ class ConversationApplicationTests {
         CustomStatement customStatement = new CustomStatement();
         customStatement.setId(1);
         customStatement.setUsername("kurihada");
-        customStatement.setRole(1);
+        customStatement.setRole(3);
         TokenContent tokenContent = new TokenContent(customStatement, "YUNKE");
         String token = TokenUtil.buildToken(tokenContent);
         System.out.println(token);
