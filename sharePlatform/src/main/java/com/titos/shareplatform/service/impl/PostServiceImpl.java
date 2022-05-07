@@ -186,17 +186,17 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
             // 若点赞了则取消点赞，并对应帖子的点赞量-1
             redisTemplate.opsForSet().remove(RedisPrefixConst.LIKE_KEY + postId, userId);
             redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.LIKE_COUNT, postId, -1D);
-            likesDao.insert(Likes.builder()
-                    .userId(userId)
-                    .postId(postId)
-                    .build());
+            likesDao.delete(new LambdaQueryWrapper<Likes>()
+                    .eq(Likes::getUserId, userId)
+                    .eq(Likes::getPostId, postId));
         } else {
             // 若未点赞则点赞，并对应帖子的点赞量+1
             redisTemplate.opsForSet().add(RedisPrefixConst.LIKE_KEY + postId, userId);
             redisTemplate.opsForZSet().incrementScore(RedisPrefixConst.LIKE_COUNT, postId, 1D);
-            likesDao.delete(new LambdaQueryWrapper<Likes>()
-                    .eq(Likes::getUserId, userId)
-                    .eq(Likes::getPostId, postId));
+            likesDao.insert(Likes.builder()
+                    .userId(userId)
+                    .postId(postId)
+                    .build());
         }
     }
 
