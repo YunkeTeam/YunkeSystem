@@ -64,8 +64,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<Task>()
                 .select(Task::getId, Task::getTaskTitle, Task::getTaskDesc,
                         Task::getIsImportant, Task::getIsStarred, Task::getIsDone, Task::getIsTrashed)
-                .orderByDesc(Task::getCreateTime)
-                .eq(customStatement.getId() != null, Task::getUserId, customStatement.getId());
+                .eq(Task::getUserId, customStatement.getId())
+                .orderByDesc(Task::getCreateTime);
 //        Page<Task> taskPage = taskDao.selectPage(page, queryWrapper);
         List<Task> taskList = taskDao.selectList(queryWrapper);
         List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
@@ -97,6 +97,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 .eq(keywords.equals(TaskAttributes.STARRED.getAttributes()), Task::getIsStarred, 1)
                 .eq(keywords.equals(TaskAttributes.DONE.getAttributes()), Task::getIsDone, 1)
                 .eq(keywords.equals(TaskAttributes.TRASHED.getAttributes()), Task::getIsTrashed, 1)
+                .eq(Task::getUserId, customStatement.getId())
                 .orderByDesc(Task::getCreateTime);
         List<Task> taskList = taskDao.selectList(queryWrapper);
         List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
