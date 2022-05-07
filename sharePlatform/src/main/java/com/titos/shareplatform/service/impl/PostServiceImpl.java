@@ -69,7 +69,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
         List<PostVO> postList = postDao.listPost((pageNum - 1) * pageSize, pageSize);
         for (PostVO post : postList) {
-
+            // 包装点赞量
+            Double likesCount = redisTemplate.opsForZSet().score(RedisPrefixConst.LIKE_COUNT, post.getId());
+            post.setLikes(likesCount == null ? 0 : likesCount.intValue());
             // 包装点赞该帖子的用户头像
             Set<Object> set = redisTemplate.opsForSet().members(RedisPrefixConst.LIKE_KEY + post.getId());
             if (set != null) {
