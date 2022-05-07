@@ -64,7 +64,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
         LambdaQueryWrapper<Task> queryWrapper = new LambdaQueryWrapper<Task>()
                 .select(Task::getId, Task::getTaskTitle, Task::getTaskDesc,
                         Task::getIsImportant, Task::getIsStarred, Task::getIsDone, Task::getIsTrashed)
-                .orderByDesc(Task::getCreateTime);
+                .orderByDesc(Task::getCreateTime)
+                .eq(customStatement.getId() != null, Task::getUserId, customStatement.getId());
 //        Page<Task> taskPage = taskDao.selectPage(page, queryWrapper);
         List<Task> taskList = taskDao.selectList(queryWrapper);
         List<TaskVO> taskVoList = BeanCopyUtils.copyList(taskList, TaskVO.class);
