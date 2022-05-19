@@ -128,10 +128,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
                 return CommonResult.fail(StatusEnum.FAIL_DEL.getCode(), StatusEnum.FAIL_DEL.getMsg());
             }
         }
-        List<Integer> curTaskTagIdList = taskTagDao.selectList(new LambdaQueryWrapper<TaskTag>()
-                .select(TaskTag::getId)
-                .in(TaskTag::getTaskId, idListVO.getIdList())).stream().map(TaskTag::getId).collect(Collectors.toList());
-        taskTagDao.deleteBatchIds(curTaskTagIdList);
+//        List<Integer> curTaskTagIdList = taskTagDao.selectList(new LambdaQueryWrapper<TaskTag>()
+//                .select(TaskTag::getId)
+//                .in(TaskTag::getTaskId, idListVO.getIdList())).stream().map(TaskTag::getId).collect(Collectors.toList());
+//        taskTagDao.deleteBatchIds(curTaskTagIdList);
         taskDao.deleteBatchIds(idListVO.getIdList());
         return CommonResult.success(Boolean.TRUE);
     }
