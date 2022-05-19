@@ -6,12 +6,10 @@ import com.titos.info.global.CommonResult;
 import com.titos.info.global.enums.StatusEnum;
 import com.titos.tool.exception.JwtExpireException;
 import com.titos.tool.exception.JwtNotExistException;
-import com.titos.tool.exception.JwtVerifyException;
 import com.titos.tool.exception.ParameterException;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,20 +22,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
- * 统一拦截异常
- * @author JirathLiu
- * @date 2020/11/15
- * @description:
+ * 全局异常处理
+ * @author Titos
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    /**
-     * ===============================================================
-     * =                    参数错误拦截模块                          =
-     * ===============================================================
-     */
-
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -49,18 +38,10 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ExceptionHandler(JwtExpireException.class)
-    public CommonResult jwtExpireExceptionHandler(JwtExpireException e) {
-        String msg = getMsgFromException(e, "登录过期");
-        return new CommonResult(StatusEnum.UN_LOGIN.getCode(), msg);
+    public CommonResult jwtExpiredExceptionHandler(JwtExpireException e) {
+        String msg = getMsgFromException(e, "用户登录状态过期");
+        return new CommonResult(StatusEnum.TOKEN_EXPIRED.getCode(), msg);
     }
-
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @ExceptionHandler(JwtVerifyException.class)
-    public CommonResult jwtVerifyExceptionHandler(JwtVerifyException e) {
-        String msg = getMsgFromException(e, "token校验异常");
-        return new CommonResult(StatusEnum.UN_LOGIN.getCode(), msg);
-    }
-
     /**
      * 参数错误的最高拦截器
      * BindException是MVC在注入参数时发生的错误
@@ -75,13 +56,11 @@ public class GlobalExceptionHandler {
         return new CommonResult(StatusEnum.PARAM_ERROR.getCode(), msg);
     }
 
-
     /**
      * ===============================================================
      * =                    系统错误拦截模块                          =
      * ===============================================================
      */
-
     /**
      * 所有异常的最高级拦截器
      * 被该拦截器捕捉，将打印异常信息
@@ -98,7 +77,7 @@ public class GlobalExceptionHandler {
 
         StatusEnum statusEnum = null;
         String msg = null;
-        if (e.responseBody().isPresent()) {
+        if (!e.responseBody().isPresent()) {
             statusEnum=StatusEnum.ERROR;
             msg = "服务器错误";
         } else {
@@ -114,7 +93,7 @@ public class GlobalExceptionHandler {
             } catch (IOException ioException) {
                 statusEnum=StatusEnum.ERROR;
                 msg = "服务器错误";
-                LOGGER.error("JSON解析错误,UTF-8格式JSON:\n{}",Charset.forName("utf-8").decode(byteBuffer).toString());
+                LOGGER.error("JSON解析错误,UTF-8格式JSON:\n{}", Charset.forName("utf-8").decode(byteBuffer).toString());
             }
         }
 
@@ -123,8 +102,6 @@ public class GlobalExceptionHandler {
 
         return new CommonResult(statusEnum.getCode(),msg);
     }
-
-
     /**
      * 所有异常的最高级拦截器
      * 被该拦截器捕捉，将打印异常信息
@@ -137,7 +114,7 @@ public class GlobalExceptionHandler {
     public CommonResult exceptionHandler(Exception e) {
         LOGGER.error("==============发生异常==============");
         printErr(e);
-        return new CommonResult(StatusEnum.ERROR.getCode(),"服务器错误");
+        return new CommonResult(StatusEnum.ERROR.getCode(),StatusEnum.ERROR.getMsg());
     }
 
     private void printErr(Exception e) {
