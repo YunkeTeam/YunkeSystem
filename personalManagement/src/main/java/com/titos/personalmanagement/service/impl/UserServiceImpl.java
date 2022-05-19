@@ -148,10 +148,10 @@ public class UserServiceImpl implements UserService {
                 LoginVo loginVo = new LoginVo(token, user.getId(), user.getPersonType(), user.getUsername(), user.getHeadImage());
                 return new CommonResult<>(StatusEnum.SUCCESS.getCode(), loginVo, "登录成功");
             } else {
-                return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "密码错误");
+                return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "用户名或密码错误");
             }
         }
-        return new CommonResult<>(StatusEnum.USER_UNEXISTED.getCode(), "用户名不存在");
+        return new CommonResult<>(StatusEnum.USER_UNEXISTED.getCode(), "用户名或密码错误");
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
