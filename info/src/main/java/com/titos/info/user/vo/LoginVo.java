@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class LoginVo {
     private String token;
     private Integer id;
+    private Integer role;
     private String username;
     private String headImage;
 }

@@ -11,15 +11,20 @@
 
     <groupId>com.titos</groupId>
     <artifactId>yunke_system</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
 
     <modules>
+        <module>personalManagement</module>
+        <module>tool</module>
+        <module>info</module>
+        <module>conversation</module>
+        <module>gateway</module>
         <module>admin</module>
         <module>rpc</module>
         <module>sharePlatform</module>
-        <module>kuri-common</module>
-        <module>kuri-admin</module>
-        <module>kuri-rpc</module>
+        <module>common</module>
+        <module>technicalArchive</module>
     </modules>
 
     <build>

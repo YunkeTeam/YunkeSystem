@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.titos</groupId>
     <artifactId>rpc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>rpc</name>
     <description>rpc</description>
     <properties>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>com.titos</groupId>
             <artifactId>info</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>

@@ -12,6 +12,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,7 +47,9 @@ public class VerifyAspect {
                 JSONObject data = new JSONObject();
                 //KV组成
                 for(int i = 0; i < names.length; ++i) {
-                    data.put(names[i], values[i]);
+                    if (!(values[i] instanceof HttpServletRequest) && !(values[i] instanceof HttpServletResponse)) {
+                        data.put(names[i], values[i]);
+                    }
                 }
                 /**
                  * 将对象重新使用JsonObject包装，这样每个对象内部的参数就可以成为节点

@@ -13,7 +13,7 @@
 
     <groupId>com.titos</groupId>
     <artifactId>common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>common</name>
     <description>common</description>
     <properties>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.titos</groupId>
             <artifactId>info</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
         <!--nacos客户端依赖-->
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>com.titos</groupId>
             <artifactId>tool</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun.oss</groupId>

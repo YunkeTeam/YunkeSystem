@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
                 customStatement.setRole(user.getPersonType());
                 TokenContent tokenContent = new TokenContent(customStatement, ykSysConf.getTokenSecretKey());
                 String token = TokenUtil.buildToken(tokenContent);
-                LoginVo loginVo = new LoginVo(token, user.getId(), user.getUsername(), user.getHeadImage());
+                LoginVo loginVo = new LoginVo(token, user.getId(), user.getPersonType(), user.getUsername(), user.getHeadImage());
                 return new CommonResult<>(StatusEnum.SUCCESS.getCode(), loginVo, "登录成功");
             } else {
                 return new CommonResult<>(StatusEnum.PASSWORD_WRONG.getCode(), "密码错误");
@@ -294,7 +294,7 @@ public class UserServiceImpl implements UserService {
         if (code == null) {
             return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码过期");
         }
-        if (code.equals(verifyCode)) {
+        if (code.equalsIgnoreCase(verifyCode)) {
             return CommonResult.success("验证成功");
         } else {
             return new CommonResult<>(StatusEnum.VERIFY_ERROR.getCode(), "验证码错误");

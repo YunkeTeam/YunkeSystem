@@ -62,7 +62,6 @@ public class CalendarServiceImpl extends ServiceImpl<CalendarDao, Calendar> impl
         return CommonResult.success(calendarVOList);
     }
 
-    @Async
     @Override
     public void addOrUpdateCalendar(CustomStatement customStatement, CalendarVO calendarVO) {
         Calendar calendar = BeanCopyUtils.copyObject(calendarVO, Calendar.class);

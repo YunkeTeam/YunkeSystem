@@ -48,7 +48,7 @@ public class UserController {
      * @param registerQuery
      * @return
      */
-    @ParamVerify(notNull = {"user.username", "user.email", "user.password"})
+    @ParamVerify(notNull = {"registerQuery.username", "registerQuery.email", "registerQuery.password"})
     @PostMapping("/signUp")
     public CommonResult register(@RequestBody RegisterQuery registerQuery, HttpServletRequest request) {
         String redisKey = request.getHeader("Redis-Key");
