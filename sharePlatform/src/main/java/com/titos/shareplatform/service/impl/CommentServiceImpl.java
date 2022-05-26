@@ -12,6 +12,7 @@ import com.titos.info.shareplatform.vo.IdListVO;
 import com.titos.shareplatform.dao.CommentDao;
 import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.service.CommentService;
+import com.titos.tool.sensitive.SensitiveFilter;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -38,11 +39,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
     @Resource
     private PostDao postDao;
 
+    @Resource
+    private SensitiveFilter sensitiveFilter;
+
 
     @Async
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void addComment(CustomStatement customStatement, AddCommentVO addCommentVO) {
+        // 过滤敏感词
+        addCommentVO.setCommentContent(sensitiveFilter.filter(addCommentVO.getCommentContent()));
         commentDao.insert(Comment.builder()
                 .userId(customStatement.getId())
                 .postId(addCommentVO.getPostId())

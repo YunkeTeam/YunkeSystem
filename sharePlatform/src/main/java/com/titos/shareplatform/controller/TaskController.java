@@ -107,6 +107,7 @@ public class TaskController {
     public CommonResult<Boolean> deleteTask(
             CustomStatement customStatement,
             @RequestBody IdListVO idListVO) {
+        System.out.println("删除的任务列表: " + idListVO);
         return taskService.deleteTask(customStatement, idListVO);
     }
 

@@ -5,6 +5,7 @@ import com.titos.technicalarchive.dao.BlogDao;
 import com.titos.technicalarchive.po.BlogPO;
 import com.titos.technicalarchive.utils.CheckUtil;
 import com.titos.technicalarchive.vo.*;
+import com.titos.tool.sensitive.SensitiveFilter;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +28,15 @@ public class BlogServiceImpl implements BlogService {
     @Resource
     private BlogDao blogDao;
 
+    @Resource
+    private SensitiveFilter sensitiveFilter;
+
     @Override
     public int insertBlog(Integer userId, BlogVO blogVO) {
+        // 过滤敏感词
+        blogVO.setArticleContent(sensitiveFilter.filter(blogVO.getArticleContent()));
+        blogVO.setArticleText(sensitiveFilter.filter(blogVO.getArticleText()));
+        blogVO.setArticleTitle(sensitiveFilter.filter(blogVO.getArticleTitle()));
         BlogPO blogPO = new BlogPO();
         blogPO.setUserId(userId);
         blogPO.setArticleText(blogVO.getArticleText());

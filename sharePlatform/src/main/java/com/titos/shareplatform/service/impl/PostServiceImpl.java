@@ -21,6 +21,7 @@ import com.titos.shareplatform.dao.PostDao;
 import com.titos.shareplatform.dao.UserDao;
 import com.titos.shareplatform.service.PostService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.sensitive.SensitiveFilter;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -64,6 +65,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
 
     @Resource
     private LikesDao likesDao;
+
+    @Resource
+    private SensitiveFilter sensitiveFilter;
 
     @Override
     public CommonResult<List<PostVO>> listPost(CustomStatement customStatement, Long pageNum, Long pageSize) {
@@ -149,6 +153,9 @@ public class PostServiceImpl extends ServiceImpl<PostDao, Post> implements PostS
     @Async
     @Override
     public void addPost(CustomStatement customStatement, AddPostVO addPostVO) {
+        // 过滤敏感词
+        addPostVO.setContent(sensitiveFilter.filter(addPostVO.getContent()));
+        addPostVO.setTitle(sensitiveFilter.filter(addPostVO.getTitle()));
         Post post = BeanCopyUtils.copyObject(addPostVO, Post.class);
         post.setUserId(customStatement.getId());
         post.setCreateTime(addPostVO.getCreateTime());

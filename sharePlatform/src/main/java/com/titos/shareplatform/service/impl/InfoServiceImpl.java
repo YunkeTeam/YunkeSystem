@@ -12,6 +12,7 @@ import com.titos.info.shareplatform.vo.*;
 import com.titos.shareplatform.dao.InfoDao;
 import com.titos.shareplatform.service.InfoService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.sensitive.SensitiveFilter;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,9 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
     @Resource
     private InfoDao infoDao;
 
+    @Resource
+    private SensitiveFilter sensitiveFilter;
+
 
     @Override
     public PageResult<InfoVO> listInfo(FilterInfoVO filterInfo, Long pageNum, Long pageSize) {
@@ -55,6 +59,9 @@ public class InfoServiceImpl extends ServiceImpl<InfoDao, Info> implements InfoS
 
     @Override
     public CommonResult<Boolean> addInfo(CustomStatement customStatement, AddInfoVO addInfoVO) {
+        // 敏感词过滤
+        addInfoVO.setInfoContent(sensitiveFilter.filter(addInfoVO.getInfoContent()));
+        addInfoVO.setInfoTitle(sensitiveFilter.filter(addInfoVO.getInfoTitle()));
         Info info = BeanCopyUtils.copyObject(addInfoVO, Info.class);
         info.setUserId(customStatement.getId());
         infoDao.insert(info);

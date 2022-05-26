@@ -29,7 +29,7 @@ public class AddPostVO {
     /**
      * 帖子标题
      */
-    @NotBlank(message = "帖子标题不能为空")
+//    @NotBlank(message = "帖子标题不能为空")
     private String title;
 
     /**

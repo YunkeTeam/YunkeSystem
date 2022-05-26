@@ -16,6 +16,7 @@ import com.titos.shareplatform.dao.CalendarTagDao;
 import com.titos.shareplatform.dao.TagDao;
 import com.titos.shareplatform.service.CalendarService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.sensitive.SensitiveFilter;
 import com.titos.tool.token.CustomStatement;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -49,6 +50,9 @@ public class CalendarServiceImpl extends ServiceImpl<CalendarDao, Calendar> impl
     @Resource
     private CalendarTagDao calendarTagDao;
 
+    @Resource
+    private SensitiveFilter sensitiveFilter;
+
     @Override
     public CommonResult<List<CalendarVO>> listCalendar(CustomStatement customStatement) {
         List<Calendar> calendarList = calendarDao.selectList(new LambdaQueryWrapper<Calendar>()
@@ -64,6 +68,9 @@ public class CalendarServiceImpl extends ServiceImpl<CalendarDao, Calendar> impl
 
     @Override
     public void addOrUpdateCalendar(CustomStatement customStatement, CalendarVO calendarVO) {
+        // 敏感词过滤
+        calendarVO.setCalendarDesc(sensitiveFilter.filter(calendarVO.getCalendarDesc()));
+        calendarVO.setCalendarTitle(sensitiveFilter.filter(calendarVO.getCalendarTitle()));
         Calendar calendar = BeanCopyUtils.copyObject(calendarVO, Calendar.class);
         calendar.setUserId(customStatement.getId());
         calendarService.saveOrUpdate(calendar);

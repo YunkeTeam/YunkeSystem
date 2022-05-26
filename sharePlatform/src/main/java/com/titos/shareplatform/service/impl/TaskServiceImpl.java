@@ -17,6 +17,7 @@ import com.titos.shareplatform.service.TagService;
 import com.titos.shareplatform.service.TaskService;
 import com.titos.shareplatform.service.TaskTagService;
 import com.titos.tool.BeanCopyUtils.BeanCopyUtils;
+import com.titos.tool.sensitive.SensitiveFilter;
 import com.titos.tool.token.CustomStatement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -57,6 +58,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
 
     @Resource
     private TaskTagService taskTagService;
+
+    @Resource
+    private SensitiveFilter sensitiveFilter;
 
     @Override
     public CommonResult<List<TaskVO>> listTask(CustomStatement customStatement, Long pageNum, Long pageSize) {
@@ -110,6 +114,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskDao, Task> implements TaskS
     @Async
     @Override
     public void addOrUpdateTask(CustomStatement customStatement, TaskVO taskVO) {
+        // 过滤敏感词
+        taskVO.setTaskDesc(sensitiveFilter.filter(taskVO.getTaskDesc()));
+        taskVO.setTaskTitle(sensitiveFilter.filter(taskVO.getTaskTitle()));
         Task task = BeanCopyUtils.copyObject(taskVO, Task.class);
         task.setUserId(customStatement.getId());
         taskService.saveOrUpdate(task);
